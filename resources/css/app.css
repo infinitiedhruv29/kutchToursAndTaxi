@@ -2,8 +2,16 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
 
 @theme {
+    --color-brand-50: var(--color-teal-50);
+    --color-brand-100: var(--color-teal-100);
+    --color-brand-200: var(--color-teal-200);
+    --color-brand-500: var(--color-teal-500);
+    --color-brand-600: var(--color-teal-600);
+    --color-brand-700: var(--color-teal-700);
+    --color-brand-800: var(--color-teal-800);
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }

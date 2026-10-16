@@ -1,4 +1,30 @@
 const drawer = document.getElementById('admin-drawer');
+if (document.querySelector('[data-admin-form], [data-flash-message], [data-admin-datatable]')) {
+    import('./admin-forms.js').then(({ initializeAdminForms }) => initializeAdminForms()).catch((error) => {
+        console.error('Enhanced forms could not load; normal submissions remain available.', error);
+    });
+}
+if (document.querySelector('[data-admin-datatable]')) {
+    import('./datatable.js').then(({ initializeDatatables }) => initializeDatatables()).catch((error) => {
+        console.error('Interactive tables could not load; server-rendered controls remain available.', error);
+    });
+}
+if (document.querySelector('[data-route-form]')) {
+    import('./routes.js').catch((error) => console.error('Route controls could not load.', error));
+}
+if (document.querySelector('[data-delete-feedback], [data-route-delete-feedback]')) {
+    import('./admin-delete.js').then(({ initializeDeletion }) => initializeDeletion()).catch(() => {
+        const feedback = document.querySelector('[data-delete-feedback], [data-route-delete-feedback]');
+        feedback.textContent = 'Deletion controls could not load. No action was taken. Please reload the page.';
+        feedback.classList.remove('hidden');
+    });
+}
+if (document.querySelector('[data-vehicle-form], [data-image-upload]')) {
+    import('./vehicles.js').then(({ initializeVehicleForms, initializeImagePreviews }) => {
+        initializeVehicleForms();
+        initializeImagePreviews();
+    }).catch((error) => console.error('Vehicle enhancements could not load; normal form submissions remain available.', error));
+}
 const drawerTrigger = document.querySelector('[data-drawer-open]');
 
 if (drawer && drawerTrigger) {

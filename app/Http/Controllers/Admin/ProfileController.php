@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\AdminFeedback;
 use App\Http\Requests\Admin\UpdatePasswordRequest;
 use App\Http\Requests\Admin\UpdateProfileRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +24,7 @@ class ProfileController extends Controller
         return view('admin.profile', ['user' => $request->user()]);
     }
 
-    public function update(UpdateProfileRequest $request): RedirectResponse
+    public function update(UpdateProfileRequest $request): RedirectResponse|JsonResponse
     {
         $user = $request->user();
         $oldAvatar = $user->avatar_path;
@@ -54,10 +56,10 @@ class ProfileController extends Controller
             Storage::disk('public')->delete($oldAvatar);
         }
 
-        return redirect()->route('admin.profile.edit')->with('status', 'Your profile has been updated.');
+        return AdminFeedback::success($request, 'Your profile has been updated.', route('admin.profile.edit'));
     }
 
-    public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
+    public function updatePassword(UpdatePasswordRequest $request): RedirectResponse|JsonResponse
     {
         $user = $request->user();
         $user->forceFill([
@@ -67,6 +69,6 @@ class ProfileController extends Controller
         Auth::logoutOtherDevices($request->validated('password'));
         $request->session()->regenerate();
 
-        return redirect()->route('admin.profile.edit')->with('status', 'Your password has been changed. Other sessions have been signed out.');
+        return AdminFeedback::success($request, 'Your password has been changed. Other sessions have been signed out.', route('admin.profile.edit'));
     }
 }

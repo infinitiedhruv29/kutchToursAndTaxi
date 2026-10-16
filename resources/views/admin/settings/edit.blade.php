@@ -1,10 +1,10 @@
 <x-admin.layout title="Business settings" subtitle="Manage the business details used across your website and documents.">
-    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="space-y-6">
+    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" data-admin-form data-loading-text="Saving settings…" class="space-y-6">
         @csrf
         @method('PUT')
 
         @if ($errors->any())
-            <x-admin.alert type="error">
+            <x-admin.alert type="error" data-validation-summary>
                 <p class="font-semibold">Please check the highlighted fields.</p>
                 <ul class="mt-2 list-inside list-disc space-y-1">
                     @foreach ($errors->all() as $error)
@@ -31,7 +31,7 @@
                     <x-admin.branding-upload name="favicon" label="Favicon" :path="$settings->favicon_path" accept="image/png"
                         hint="PNG only, maximum 512 KB. A square image is recommended." />
                 </div>
-                <p class="text-xs leading-5 text-slate-500">New uploads replace the current images when you save. A
+                <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">New uploads replace the current images when you save. A
                     replacement upload takes priority over its removal checkbox.</p>
             </div>
         </x-admin.card>
@@ -80,7 +80,7 @@
         </x-admin.card>
 
         <div class="flex flex-row flex-wrap items-start justify-between gap-4 sm:flex-nowrap sm:items-center">
-            <p class="text-xs leading-5 text-slate-500">Changes apply after saving. Theme colors are fixed and are not
+            <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">Changes apply after saving. Theme colors are fixed and are not
                 part of these settings.</p>
             <x-admin.button class="w-full shrink-0 sm:w-auto">Save business settings</x-admin.button>
         </div>

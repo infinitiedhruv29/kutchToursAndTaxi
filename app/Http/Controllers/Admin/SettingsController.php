@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\AdminFeedback;
 use App\Http\Requests\Admin\UpdateSettingsRequest;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -19,7 +21,7 @@ class SettingsController extends Controller
         return view('admin.settings.edit', ['settings' => Setting::current()]);
     }
 
-    public function update(UpdateSettingsRequest $request): RedirectResponse
+    public function update(UpdateSettingsRequest $request): RedirectResponse|JsonResponse
     {
         $newPaths = [];
         $oldPaths = [];
@@ -65,6 +67,6 @@ class SettingsController extends Controller
 
         Storage::disk('public')->delete(array_unique($oldPaths));
 
-        return redirect()->route('admin.settings.edit')->with('status', 'Business settings have been saved.');
+        return AdminFeedback::success($request, 'Business settings have been saved.', route('admin.settings.edit'));
     }
 }

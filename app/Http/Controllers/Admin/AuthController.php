@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\AdminFeedback;
 use App\Http\Requests\Admin\LoginRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -16,7 +18,7 @@ class AuthController extends Controller
         return view('admin.login');
     }
 
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse|JsonResponse
     {
         $request->authenticate();
         $request->session()->regenerate();
@@ -31,18 +33,18 @@ class AuthController extends Controller
 
         if ($sameOrigin && is_string($path) && ($path === '/admin' || str_starts_with($path, '/admin/'))
             && ! in_array($path, ['/admin/login', '/admin/logout'], true)) {
-            return redirect()->to($intended);
+            return AdminFeedback::success($request, 'You have been signed in.', $intended);
         }
 
-        return redirect()->route('admin.dashboard');
+        return AdminFeedback::success($request, 'You have been signed in.', route('admin.dashboard'));
     }
 
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request): RedirectResponse|JsonResponse
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login')->with('status', 'You have been signed out.');
+        return AdminFeedback::success($request, 'You have been signed out.', route('admin.login'));
     }
 }

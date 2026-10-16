@@ -5,16 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>Sign in · Admin</title>
+    <title>Sign in · {{ $businessSettings->business_name ?? 'Tours & Taxi' }} · Admin</title>
+    @include('admin.partials.favicon')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
     <main class="grid min-h-screen lg:grid-cols-2">
         <section class="relative hidden flex-col justify-between overflow-hidden bg-slate-900 p-12 text-white lg:flex">
-            <div class="flex items-center gap-3"><span
-                    class="flex size-11 items-center justify-center rounded-xl bg-brand-600"><x-admin.icon
-                        name="route" /></span><span class="font-semibold">Tours & Taxi</span></div>
+            <x-admin.brand :settings="$businessSettings" :dark="true" />
             <div class="max-w-lg py-16">
                 <p class="mb-6 text-xs font-semibold uppercase tracking-[0.25em] text-brand-200">Your business workspace
                 </p>
@@ -26,9 +25,7 @@
         </section>
         <section class="flex items-center justify-center px-5 py-12 sm:px-12">
             <div class="w-full max-w-sm">
-                <span
-                    class="mb-8 flex size-12 items-center justify-center rounded-xl bg-brand-100 text-brand-700"><x-admin.icon
-                        name="lock" class="size-6" /></span>
+                <x-admin.brand :settings="$businessSettings" class="mb-8" />
                 <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-brand-700">Administration</p>
                 <h2 class="text-3xl font-semibold tracking-tight">Welcome back</h2>
                 <p class="mt-3 text-sm leading-6 text-slate-500">Sign in to your business workspace.</p>

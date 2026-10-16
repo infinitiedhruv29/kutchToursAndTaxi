@@ -12,6 +12,7 @@
         'route' => 'M5 5a2 2 0 1 0 0 .01 M19 19a2 2 0 1 0 0 .01 M7 5h9a4 4 0 0 1 0 8H8a4 4 0 0 0 0 8h9',
         'lock' => 'M5 11h14v10H5z M8 11V7a4 4 0 0 1 8 0v4',
         'check' => 'm5 12 4 4L19 6',
+        'settings' => 'M4 7h16 M4 17h16 M9 4v6 M15 14v6',
     ];
 @endphp
 <svg {{ $attributes->class(['size-5 shrink-0']) }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

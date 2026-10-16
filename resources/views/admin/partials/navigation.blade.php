@@ -3,6 +3,8 @@
 <nav aria-label="Admin navigation" class="mt-4 space-y-1.5">
     <x-admin.nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">Dashboard</x-admin.nav-link>
     <x-admin.nav-link :href="route('admin.routes.index')" :active="request()->routeIs('admin.routes.*')" icon="route">Taxi routes</x-admin.nav-link>
+    <x-admin.nav-link :href="route('admin.faqs.index')" :active="request()->routeIs('admin.faqs.*')">General FAQs</x-admin.nav-link>
+    <x-admin.nav-link :href="route('admin.destinations.index')" :active="request()->routeIs('admin.destinations.*')">Destinations</x-admin.nav-link>
     <div role="group" aria-label="Vehicles" class="space-y-1.5 border-y border-slate-800 py-3">
         <p class="px-3 text-xs font-medium uppercase tracking-widest text-slate-500">Vehicles</p>
         <x-admin.nav-link :href="route('admin.vehicles.index')" :active="request()->routeIs('admin.vehicles.*')" icon="route">Vehicles</x-admin.nav-link>

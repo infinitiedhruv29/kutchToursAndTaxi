@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DestinationController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TaxiRouteController;
+use App\Http\Controllers\Admin\VehicleCapacityController;
 use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\Admin\VehicleTypeController;
-use App\Http\Controllers\Admin\VehicleCapacityController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -36,5 +38,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('vehicle-types', VehicleTypeController::class)->except('show')->parameters(['vehicle-types' => 'vehicleType']);
         Route::get('vehicle-capacities/data', [VehicleCapacityController::class, 'data'])->name('vehicle-capacities.data');
         Route::resource('vehicle-capacities', VehicleCapacityController::class)->except('show')->parameters(['vehicle-capacities' => 'vehicleCapacity']);
+        Route::get('faqs/data', [FaqController::class, 'data'])->name('faqs.data');
+        Route::resource('faqs', FaqController::class)->except('show');
+        Route::get('destinations/data', [DestinationController::class, 'data'])->name('destinations.data');
+        Route::resource('destinations', DestinationController::class)->except('show');
     });
 });

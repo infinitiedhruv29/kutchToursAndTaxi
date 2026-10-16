@@ -31,7 +31,7 @@
             </div>
         </x-admin.card>
         <x-admin.card title="Image">
-            <div class="space-y-5 p-5 sm:p-6"><x-admin.image-upload :path="$vehicle->image_path" /><x-admin.field name="image_alt" label="Image alternative text" :value="$vehicle->image_alt" maxlength="255" /></div>
+            <div class="space-y-5 p-5 sm:p-6"><x-admin.image-upload :path="$vehicle->image_path" label="Vehicle image" preview-alt="Vehicle image preview" /><x-admin.field name="image_alt" label="Image alternative text" :value="$vehicle->image_alt" maxlength="255" /></div>
         </x-admin.card>
         <x-admin.card title="Visibility and order">
             <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6"><x-admin.checkbox name="is_published" label="Published" :checked="$vehicle->is_published" hint="Leave unchecked to save as a draft." /><x-admin.field name="sort_order" label="Display order" type="number" :value="$vehicle->sort_order ?? 0" min="0" max="4294967295" step="1" required hint="Lower numbers appear first." /></div>

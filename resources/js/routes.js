@@ -48,11 +48,5 @@ if (form) {
     for (const input of form.querySelectorAll('input[name$="_fare"]')) input.addEventListener('input', updateReverse);
     updateReverse();
 
-    if (form.querySelector('[data-rich-editor]')) {
-        import('./route-editor.js').then(({ initializeEditors }) => initializeEditors(form)).catch((error) => {
-            form.querySelector('[data-editor-fallback]').classList.remove('hidden');
-            console.error('The rich-text editor could not load.', error);
-        });
-    }
 }
 

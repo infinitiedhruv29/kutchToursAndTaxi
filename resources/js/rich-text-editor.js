@@ -1,8 +1,12 @@
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 
-export function initializeEditors(form) {
-    for (const root of form.querySelectorAll('[data-rich-editor]')) {
+const initializedEditors = new WeakSet();
+
+export function initializeEditors(scope = document) {
+    for (const root of scope.querySelectorAll('[data-rich-editor]')) {
+        if (initializedEditors.has(root)) continue;
+        initializedEditors.add(root);
         const source = root.querySelector('[data-editor-source]');
         const enhanced = root.querySelector('[data-editor-enhanced]');
         const canvas = root.querySelector('[data-editor-canvas]');

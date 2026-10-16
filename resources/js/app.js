@@ -12,6 +12,16 @@ if (document.querySelector('[data-admin-datatable]')) {
 if (document.querySelector('[data-route-form]')) {
     import('./routes.js').catch((error) => console.error('Route controls could not load.', error));
 }
+if (document.querySelector('[data-rich-editor]')) {
+    import('./rich-text-editor.js').then(({ initializeEditors }) => initializeEditors()).catch((error) => {
+        for (const root of document.querySelectorAll('[data-rich-editor]')) {
+            root.querySelector('[data-editor-source]').classList.remove('hidden');
+            root.querySelector('[data-editor-enhanced]').classList.add('hidden');
+            root.querySelector('[data-editor-fallback]').classList.remove('hidden');
+        }
+        console.error('Rich-text controls could not load; the escaped textarea remains available.', error);
+    });
+}
 if (document.querySelector('[data-delete-feedback], [data-route-delete-feedback]')) {
     import('./admin-delete.js').then(({ initializeDeletion }) => initializeDeletion()).catch(() => {
         const feedback = document.querySelector('[data-delete-feedback], [data-route-delete-feedback]');

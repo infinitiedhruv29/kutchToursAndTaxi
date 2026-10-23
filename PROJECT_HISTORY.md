@@ -173,7 +173,38 @@ The project includes a robust administrative management portal for taxi routes, 
   - Added storage symlink (`public/storage`) and compiled Vite frontend assets.
   - Authored comprehensive feature test suite: all 131 tests passing (1,405 assertions).
 - **Pending Tasks**:
+  - Feature 1 verified and merged to master.
+  - Proceed with Feature 2: Package Builder.
+
+---
+
+### Feature 2: Package Builder (Custom Tour Proposals)
+- **Date**: 2026-10-23
+- **Feature**: Custom Package Builder & DomPDF Proposal Export (Ported from Kutch Holidays)
+- **Branch**: `feature/admin-package-builder`
+- **Files Modified / Created**:
+  - `app/Models/CustomPackage.php`
+  - `app/Models/Package.php`
+  - `app/Http/Requests/Admin/CustomPackageRequest.php`
+  - `app/Http/Requests/Admin/CustomPackageTableRequest.php`
+  - `app/Http/Controllers/Admin/PackageBuilderController.php`
+  - `resources/views/admin/custom-packages/index.blade.php`
+  - `resources/views/admin/custom-packages/cell.blade.php`
+  - `resources/views/admin/custom-packages/form.blade.php`
+  - `resources/views/admin/custom-packages/pdf.blade.php`
+  - `resources/views/admin/partials/navigation.blade.php`
+  - `routes/web.php`
+  - `tests/Feature/AdminPackageBuilderTest.php`
+- **Logic Changes**:
+  - Created `CustomPackage` model with `inclusions`, `exclusions`, and `itineraries` JSON casts and decimal pricing casts.
+  - Created `Package` model for standard tour package compatibility.
+  - Added `CustomPackageRequest` validating client details, phone regex, pricing tiers, inclusions/exclusions, and dynamic day-by-day itineraries.
+  - Created `PackageBuilderController` implementing server-side DataTables listing, interactive itinerary builder, and PDF proposal generation via `Barryvdh\DomPDF\Facade\Pdf`.
+  - Added DomPDF template `pdf.blade.php` with company header, client metadata, pricing tiers (2P/4P/6P), day-by-day itinerary with spots visited, inclusions/exclusions, and terms.
+  - Authored feature test suite in `AdminPackageBuilderTest.php`: all 135 tests passing (1,440 assertions).
+- **Pending Tasks**:
   - Manual review and verification by user in browser.
   - Local commit, merge into `master`, and remote push after approval.
-  - Proceed with Feature 2: Package Builder.
+  - Proceed with Feature 3: Invoice Builder.
+
 

@@ -129,7 +129,9 @@ export function initializeAdminForms() {
         const restore = setFormLoading(form, submitter, form.dataset.loadingText ?? 'Saving…');
         let succeeded = false;
         try {
-            const result = await requestJson(form.action, { method: form.method.toUpperCase(), body: data });
+            const actionUrl = form.getAttribute('action') || form.action;
+            const formMethod = (form.getAttribute('method') || form.method || 'POST').toUpperCase();
+            const result = await requestJson(actionUrl, { method: formMethod, body: data });
             const destination = safeAdminDestination(result.redirect_url, window.location.origin);
             if (!destination) throw new Error('The server returned an invalid return destination. Check whether the action completed before submitting again.');
             succeeded = true;

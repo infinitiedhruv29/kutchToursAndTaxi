@@ -142,3 +142,38 @@ The project includes a robust administrative management portal for taxi routes, 
   - Successfully pushed commit `8e24e59` to `origin/master`.
 - **Pending Tasks**:
   - Feature development (Public portal, customer package booking, etc.).
+
+---
+
+### Feature 1: Admin Gallery Implementation
+- **Date**: 2026-10-23
+- **Feature**: Gallery Categories & Photos Management (Ported from Kutch Holidays)
+- **Branch**: `feature/admin-gallery`
+- **Files Modified / Created**:
+  - `composer.json`, `composer.lock` (installed `barryvdh/laravel-dompdf` for upcoming PDF builders)
+  - `app/Models/GalleryCategory.php`
+  - `app/Models/GalleryImage.php`
+  - `app/Http/Requests/Admin/GalleryCategoryRequest.php`
+  - `app/Http/Requests/Admin/GalleryImageRequest.php`
+  - `app/Http/Requests/Admin/GalleryImageTableRequest.php`
+  - `app/Http/Controllers/Admin/GalleryCategoryController.php`
+  - `app/Http/Controllers/Admin/GalleryImageController.php`
+  - `resources/views/admin/gallery/categories/index.blade.php`
+  - `resources/views/admin/gallery/images/index.blade.php`
+  - `resources/views/admin/gallery/images/cell.blade.php`
+  - `resources/views/admin/gallery/images/form.blade.php`
+  - `resources/views/admin/partials/navigation.blade.php`
+  - `routes/web.php`
+  - `tests/Feature/AdminGalleryTest.php`
+- **Logic Changes**:
+  - Created `GalleryCategory` and `GalleryImage` Eloquent models conforming to `#[Fillable]` and modern `casts()`.
+  - Added dedicated Form Requests enforcing file validation (jpg, jpeg, png, webp <= 5MB), unique category names, and integer sort order.
+  - Implemented `GalleryCategoryController` supporting create, inline edit, delete with foreign key safeguard against orphan photos, and AJAX reorder.
+  - Implemented `GalleryImageController` supporting server-side DataTables pagination/sorting/filtering, photo uploading to `storage/app/public/gallery`, old photo cleanup on edit/delete, and flash feedback via `AdminFeedback::success()`.
+  - Added storage symlink (`public/storage`) and compiled Vite frontend assets.
+  - Authored comprehensive feature test suite: all 131 tests passing (1,405 assertions).
+- **Pending Tasks**:
+  - Manual review and verification by user in browser.
+  - Local commit, merge into `master`, and remote push after approval.
+  - Proceed with Feature 2: Package Builder.
+

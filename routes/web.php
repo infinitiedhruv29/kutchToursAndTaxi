@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\GalleryCategoryController;
+use App\Http\Controllers\Admin\GalleryImageController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TaxiRouteController;
@@ -42,5 +44,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('faqs', FaqController::class)->except('show');
         Route::get('destinations/data', [DestinationController::class, 'data'])->name('destinations.data');
         Route::resource('destinations', DestinationController::class)->except('show');
+        Route::post('gallery-categories/reorder', [GalleryCategoryController::class, 'reorder'])->name('gallery-categories.reorder');
+        Route::resource('gallery-categories', GalleryCategoryController::class)->except(['show', 'create', 'edit'])->parameters(['gallery-categories' => 'galleryCategory']);
+        Route::get('gallery-images/data', [GalleryImageController::class, 'data'])->name('gallery-images.data');
+        Route::resource('gallery-images', GalleryImageController::class)->except('show')->parameters(['gallery-images' => 'galleryImage']);
     });
 });

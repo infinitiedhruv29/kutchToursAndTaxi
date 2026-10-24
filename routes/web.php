@@ -14,11 +14,26 @@ use App\Http\Controllers\Admin\TaxiRouteController;
 use App\Http\Controllers\Admin\VehicleCapacityController;
 use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\Admin\VehicleTypeController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PackageController;
+use App\Http\Controllers\TaxiController;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/taxi', [TaxiController::class, 'index'])->name('taxi');
+Route::get('/packages', [PackageController::class, 'index'])->name('packages');
+Route::get('/package-{slug}', [PackageController::class, 'show'])->name('package.show');
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
+Route::get('/about', function () {
+    $settings = Setting::current();
+    return view('about', compact('settings'));
+})->name('about');
+Route::get('/contact', function () {
+    $settings = Setting::current();
+    return view('contact', compact('settings'));
+})->name('contact');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {

@@ -28,7 +28,15 @@ class GalleryImage extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => $this->image_path ? Storage::disk('public')->url($this->image_path) : ''
+            get: function (): string {
+                if (! $this->image_path) {
+                    return '';
+                }
+                if (file_exists(public_path($this->image_path))) {
+                    return asset($this->image_path);
+                }
+                return Storage::disk('public')->url($this->image_path);
+            }
         );
     }
 }

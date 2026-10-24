@@ -14,6 +14,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Administrator accounts are created explicitly using admin:create.
+        $this->call([
+            SettingSeeder::class,
+            VehicleSeeder::class,
+            TaxiRouteSeeder::class,
+            PackageSeeder::class,
+            DestinationSeeder::class,
+            FaqSeeder::class,
+            TestimonialSeeder::class,
+            GallerySeeder::class,
+        ]);
     }
 }

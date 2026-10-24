@@ -3,7 +3,7 @@
     @case('image')
         <div class="flex items-center gap-3">
             @if ($image->image_path)
-                <img src="{{ Storage::disk('public')->url($image->image_path) }}" alt="{{ $image->image_alt ?? $image->caption ?? 'Gallery photo' }}" class="size-16 shrink-0 rounded-lg object-cover ring-1 ring-slate-200 dark:ring-slate-700" loading="lazy">
+                <img src="{{ $image->image_url }}" alt="{{ $image->image_alt ?? $image->caption ?? 'Gallery photo' }}" class="size-16 shrink-0 rounded-lg object-cover ring-1 ring-slate-200 dark:ring-slate-700" loading="lazy">
             @else
                 <span class="flex size-16 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400 dark:bg-slate-800">
                     <x-admin.icon name="route" />

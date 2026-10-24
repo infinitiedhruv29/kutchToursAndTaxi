@@ -38,6 +38,31 @@ class Package extends Model
         ];
     }
 
+    public function itineraries()
+    {
+        return $this->hasMany(PackageItinerary::class)->orderBy('day_number');
+    }
+
+    public function galleryImages()
+    {
+        return $this->hasMany(PackageGalleryImage::class)->orderBy('sort_order');
+    }
+
+    public function features()
+    {
+        return $this->hasMany(PackageFeature::class)->orderBy('sort_order');
+    }
+
+    public function inclusions()
+    {
+        return $this->hasMany(PackageFeature::class)->where('type', 'inclusion')->orderBy('sort_order');
+    }
+
+    public function exclusions()
+    {
+        return $this->hasMany(PackageFeature::class)->where('type', 'exclusion')->orderBy('sort_order');
+    }
+
     public static function suggestedSlug(string $title): string
     {
         return Str::slug($title);
@@ -55,3 +80,4 @@ class Package extends Model
         return $slug;
     }
 }
+

@@ -9,6 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Kutch Tours & Taxi — Rann of Kutch Tour Packages & Cab Booking')</title>
     <link rel="canonical" href="@yield('canonical', url()->current())">
     <meta name="description" content="@yield('meta_description', 'Book reliable taxi service and all-inclusive tour packages in Kutch, Gujarat. Explore White Rann, Dholavira, Mandvi Beach and Bhuj with local expert drivers.')">
@@ -29,11 +30,11 @@
 
     @yield('schema_json')
 
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="icon" href="{{ $settings->favicon_url }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
     @php
-        $primaryColor = $settings->primary_color ?? '#9E2A2B';
+        $primaryColor = $settings->primary_color ?? '#E7BE67';
         $hex = ltrim($primaryColor, '#');
         if (strlen($hex) === 3) {
             $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
@@ -43,7 +44,11 @@
         $b = hexdec(substr($hex, 4, 2));
         $primaryRgb = "{$r}, {$g}, {$b}";
 
-        // Compute midnight dark base from primary color (eliminates hardcoded reddish #16100E/#140E0D base)
+        // Compute high-contrast text color for primary background (dark on bright yellow/gold, white on dark)
+        $primaryLuminance = ($r * 0.299 + $g * 0.587 + $b * 0.114);
+        $primaryText = $primaryLuminance > 165 ? '#111111' : '#FFFFFF';
+
+        // Compute midnight dark base from primary color (eliminates hardcoded reddish base)
         $darkR = max(8, min(24, (int) round($r * 0.08)));
         $darkG = max(8, min(24, (int) round($g * 0.08)));
         $darkB = max(10, min(32, (int) round($b * 0.10)));
@@ -63,18 +68,61 @@
             --primary: {{ $primaryColor }};
             --primary-rgb: {{ $primaryRgb }};
             --primary-color: {{ $primaryColor }};
+            --primary-text: {{ $primaryText }};
             --navy: {{ $darkMidnight }};
             --navy-light: {{ $darkLight }};
         }
 
+        /* ── BUTTONS ON PRIMARY BACKGROUND ── */
+        .btn-primary, [style*="background:var(--orange)"] {
+            color: {{ $primaryText }} !important;
+        }
+
         /* ── HEADER NAVIGATION SHADE & BORDER ── */
         .nav {
+            height: 98px !important;
+            padding: 0 32px !important;
             border-color: rgba({{ $primaryRgb }}, 0.18) !important;
             box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba({{ $primaryRgb }}, 0.25) !important;
         }
         .nav.scrolled {
+            height: 72px !important;
             border-color: rgba({{ $primaryRgb }}, 0.25) !important;
             box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba({{ $primaryRgb }}, 0.3) !important;
+        }
+        .nav .brand-link img {
+            height: 88px !important;
+            width: auto !important;
+            max-width: 320px !important;
+            object-fit: contain !important;
+            transition: height 0.3s ease !important;
+        }
+        .nav.scrolled .brand-link img {
+            height: 62px !important;
+        }
+        @media(max-width:900px) {
+            .nav {
+                height: 86px !important;
+                padding: 0 24px !important;
+            }
+            .nav .brand-link img {
+                height: 74px !important;
+            }
+            .nav.scrolled .brand-link img {
+                height: 58px !important;
+            }
+        }
+        @media(max-width:600px) {
+            .nav {
+                height: 76px !important;
+                padding: 0 16px !important;
+            }
+            .nav .brand-link img {
+                height: 64px !important;
+            }
+            .nav.scrolled .brand-link img {
+                height: 52px !important;
+            }
         }
 
         /* ── HOME HERO & INNER PAGE HERO (DARK SHADE OF PRIMARY COLOR) ── */

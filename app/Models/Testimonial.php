@@ -23,4 +23,20 @@ class Testimonial extends Model
             'sort_order' => 'integer',
         ];
     }
+
+    public static function parseYoutubeId(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        $pattern = '/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?vi?=|&vi?=))([^#\&\?]*).*/';
+        if (preg_match($pattern, $url, $matches)) {
+            if (isset($matches[1]) && strlen($matches[1]) === 11) {
+                return $matches[1];
+            }
+        }
+
+        return null;
+    }
 }

@@ -189,6 +189,34 @@
         if (pickup) message += `• *Pickup Location:* ${pickup}\n`;
         if (notes) message += `• *Notes:* ${notes}\n`;
 
+        const payload = {
+            name: name,
+            phone: phone,
+            service: service,
+            travel_date: dates || null,
+            passengers: passengers ? parseInt(passengers) : null,
+            pickup_location: pickup || null,
+            message: notes || null,
+            source: 'contact_page'
+        };
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        try {
+            fetch('{{ route('inquiry.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify(payload)
+            }).catch(function(err) {
+                console.log('Inquiry sync error:', err);
+            });
+        } catch (e) {
+            console.log('Inquiry submit failed:', e);
+        }
+
         const waUrl = `https://wa.me/{{ $waNumber }}?text=${encodeURIComponent(message)}`;
         window.open(waUrl, '_blank');
     }

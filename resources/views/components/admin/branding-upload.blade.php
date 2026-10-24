@@ -1,12 +1,20 @@
-@props(['name', 'label', 'path' => null, 'hint', 'dark' => false, 'accept' => 'image/jpeg,image/png,image/webp'])
+@props(['name', 'label', 'path' => null, 'hint', 'dark' => false, 'accept' => 'image/svg+xml,image/jpeg,image/png,image/webp'])
+@php
+    $previewUrl = null;
+    if ($path) {
+        $previewUrl = file_exists(public_path($path))
+            ? asset($path)
+            : \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+    }
+@endphp
 <div class="min-w-0 space-y-4">
     <div @class([
         'flex h-32 items-center justify-center overflow-hidden rounded-xl border p-5',
         'border-slate-700 bg-slate-900 dark:bg-slate-950' => $dark,
         'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950' => ! $dark,
     ])>
-        @if ($path)
-            <img src="{{ Storage::disk('public')->url($path) }}" alt="Current {{ strtolower($label) }}" class="max-h-full max-w-full object-contain">
+        @if ($previewUrl)
+            <img src="{{ $previewUrl }}" alt="Current {{ strtolower($label) }}" class="max-h-full max-w-full object-contain">
         @else
             <p class="text-center text-xs {{ $dark ? 'text-slate-400' : 'text-slate-500 dark:text-slate-400' }}">No {{ strtolower($label) }} uploaded</p>
         @endif

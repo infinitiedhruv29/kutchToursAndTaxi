@@ -51,4 +51,37 @@ class HomeController extends Controller
 
         return view('index', compact('packages', 'routes', 'vehicles', 'destinations', 'testimonials', 'faqs', 'settings'));
     }
+
+    public function storeInquiry(\Illuminate\Http\Request $request): \Illuminate\Http\JsonResponse
+    {
+        $serviceTitle = $request->input('service_title') ?? $request->input('service');
+        $passengerCount = $request->input('passenger_count') ?? $request->input('passengers');
+        $originName = $request->input('origin_name') ?? $request->input('pickup_location');
+        $travelDate = $request->input('travel_date');
+        // If travel date is not a strict Y-m-d date, keep as null or try parsing
+        $parsedDate = null;
+        if ($travelDate) {
+            try {
+                $parsedDate = \Carbon\Carbon::parse($travelDate)->toDateString();
+            } catch (\Throwable $e) {
+                // If text like "15th Dec 2026", Carbon::parse often handles it, otherwise keep message intact
+            }
+        }
+
+        $inquiry = \App\Models\Inquiry::create([
+            'name' => $request->input('name'),
+            'phone' => $request->input('phone'),
+            'email' => $request->input('email'),
+            'service_type' => $request->input('service_type', 'general'),
+            'service_title' => $serviceTitle,
+            'travel_date' => $parsedDate,
+            'passenger_count' => $passengerCount ? (int) $passengerCount : null,
+            'origin_name' => $originName,
+            'destination_name' => $request->input('destination_name'),
+            'message' => $request->input('message'),
+            'status' => 'new',
+        ]);
+
+        return response()->json(['success' => true, 'inquiry_id' => $inquiry->id]);
+    }
 }

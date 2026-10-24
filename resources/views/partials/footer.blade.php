@@ -11,18 +11,7 @@
         <!-- BRAND COLUMN -->
         <div class="footer-brand lg:col-span-1">
             <div style="margin-bottom:16px;">
-                @if (!empty($settings->logo_path) && file_exists(public_path($settings->logo_path)))
-                    <img src="{{ asset($settings->logo_path) }}" alt="Kutch Tours & Taxi" class="h-[52px] w-auto">
-                @else
-                    <svg width="200" height="42" viewBox="0 0 200 42" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="36" height="36" x="0" y="3" rx="8" fill="{{ $settings->primary_color ?? '#9E2A2B' }}" />
-                        <text x="7" y="27" font-family="Georgia,serif" font-size="20" font-weight="900" fill="white">K</text>
-                        <circle cx="29" cy="9" r="4" fill="#DCA134" />
-                        <path d="M4 33 Q11 25 18 33 Q25 25 32 33" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" fill="none" />
-                        <text x="44" y="19" font-family="'Outfit', sans-serif" font-size="14" font-weight="700" fill="white" letter-spacing="1.2">KUTCH</text>
-                        <text x="44" y="33" font-family="'Inter', sans-serif" font-size="9.5" font-weight="600" fill="#DCA134" letter-spacing="2">TOURS & TAXI</text>
-                    </svg>
-                @endif
+                <img src="{{ $settings->dark_logo_url }}" alt="Kutch Tours & Taxi" class="h-24 sm:h-28 w-auto max-w-[320px] shrink-0 object-contain" style="height:100px;width:auto;max-width:320px;object-fit:contain;">
             </div>
             <p class="text-white/65 text-[0.88rem] leading-[1.7] mb-5">
                 Discover the magic of Kutch with Gujarat's most trusted local cab and tour service. Authentic desert experiences, seasoned drivers, transparent fares, and 24/7 WhatsApp assistance.

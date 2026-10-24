@@ -1,10 +1,13 @@
 <x-admin.brand :settings="$businessSettings" :dark="true" class="px-3" />
-<p class="mt-10 px-3 text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400">Workspace</p>
-<nav aria-label="Admin navigation" class="mt-4 space-y-1.5">
+<p class="mt-6 px-3 text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400">Workspace</p>
+<nav aria-label="Admin navigation" class="mt-3 space-y-1">
     <x-admin.nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">Dashboard</x-admin.nav-link>
+    <x-admin.nav-link :href="route('admin.packages.index')" :active="request()->routeIs('admin.packages.*')" icon="inbox">Tour packages</x-admin.nav-link>
     <x-admin.nav-link :href="route('admin.routes.index')" :active="request()->routeIs('admin.routes.*')" icon="route">Taxi routes</x-admin.nav-link>
-    <x-admin.nav-link :href="route('admin.custom-packages.index')" :active="request()->routeIs('admin.custom-packages.*')" icon="inbox">Package builder</x-admin.nav-link>
+    <x-admin.nav-link :href="route('admin.inquiries.index')" :active="request()->routeIs('admin.inquiries.*')" icon="inbox">Inquiries</x-admin.nav-link>
+    <x-admin.nav-link :href="route('admin.custom-packages.index')" :active="request()->routeIs('admin.custom-packages.*')" icon="inbox">Personalised package builder</x-admin.nav-link>
     <x-admin.nav-link :href="route('admin.invoices.index')" :active="request()->routeIs('admin.invoices.*')" icon="grid">Invoices & billing</x-admin.nav-link>
+    <x-admin.nav-link :href="route('admin.testimonials.index')" :active="request()->routeIs('admin.testimonials.*')" icon="user">Testimonials</x-admin.nav-link>
     <x-admin.nav-link :href="route('admin.destinations.index')" :active="request()->routeIs('admin.destinations.*')">Destinations</x-admin.nav-link>
     <x-admin.nav-link :href="route('admin.faqs.index')" :active="request()->routeIs('admin.faqs.*')">General FAQs</x-admin.nav-link>
     <div role="group" aria-label="Gallery" class="space-y-1.5 border-t border-slate-800 pt-3">

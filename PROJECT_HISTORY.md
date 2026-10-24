@@ -488,4 +488,171 @@ The project includes a robust administrative management portal for taxi routes, 
 - **Pending Tasks**:
   - User verification in browser.
 
+---
+
+### End-to-End Admin Panel CRUD & Frontend Reflection Verification
+- **Date**: 2026-10-24
+- **Feature**: Comprehensive End-to-End CRUD Testing across Admin Panel and Public Frontend
+- **Branch**: `master`
+- **Files Modified / Created**:
+  - `tests/Feature/AdminToFrontendEndToEndCrudTest.php` (created)
+  - `PROJECT_HISTORY.md`
+- **Logic & Coverage**:
+  - **Complete CRUD & Reflection Tested**:
+    - **Settings & Theme**: Admin update of phone, WhatsApp, email, physical address, primary color hex, social links, terms & privacy -> verified on Home, About, Contact, dynamic CSS variables (`--primary-rgb`, `--orange`, `--navy`), and Admin Dashboard.
+    - **Taxi Routes**: Admin Create -> DataTables AJAX -> Frontend Home & Taxi -> Admin Update -> Frontend Reflects -> Admin Unpublish -> Frontend Hides -> Admin Delete -> Database & Frontend Deletion.
+    - **Vehicles Fleet, Types & Capacities**: Admin Create of Type, Capacity, and Vehicle -> Frontend Taxi Filter Tabs & Dropdown Reflection -> Frontend Fleet Grid Reflection -> Admin Update -> Frontend Reflects -> Admin Unpublish -> Frontend Hides -> Admin Delete.
+    - **Destinations**: Admin Create -> DataTables -> Home Page "Must-Visit Destinations" -> Admin Update -> Frontend Reflects -> Unpublish -> Frontend Hides -> Delete.
+    - **General FAQs**: Admin Create -> DataTables -> Home Page Accordion & `@graph` `FAQPage` JSON-LD Schema -> Admin Update -> Frontend Reflects -> Unpublish -> Delete.
+    - **Gallery Categories & Photos**: Admin Create Category -> Frontend Filter Tab Reflection -> Photo Upload (File Validation & Storage) -> Gallery Grid Reflection -> Admin Update -> Frontend Reflects -> Unpublish -> Delete (with physical file cleanup).
+    - **Package Builder (Custom Packages)**: Admin Proposal Creation (2P/4P/6P tiers, itineraries) -> DataTables -> DomPDF Export -> Proposal Update -> Delete.
+    - **Invoices & Billing**: Tax Invoice Creation (sequence number generation, tax rates, vehicle distance calculation) -> DataTables -> DomPDF Tax Invoice Export -> Invoice Update -> Delete.
+    - **Profile & Authentication Lifecycle**: Profile Update (with email change password guard) -> Password Change (session invalidation) -> Logout -> Login with new credentials.
+  - **Gap Analysis Disclosed**:
+    - Identified that Standard Tour Packages (`Package`) and Testimonials (`Testimonial`) currently originate from database seeders, as dedicated admin CRUD controllers exist only for Custom Packages (`CustomPackage`) rather than public standard packages.
+    - Identified that public inquiries redirect straight to WhatsApp and the admin does not currently have an internal CRUD inbox for `inquiries`.
+  - **Testing**:
+    - Ran `AdminToFrontendEndToEndCrudTest.php`: **9/9 tests passed (181 assertions)**.
+    - Ran full test suite: **160/160 tests passed (1,734 assertions)** with zero failures.
+- **Pending Tasks**:
+  - Implemented Tour Packages, Testimonials, and Customer Inquiries dynamic management.
+
+---
+
+### Dynamic Admin Modules: Public Tour Packages, Testimonials & Inquiries Management
+- **Date**: 2026-10-24
+- **Feature**: Dynamic Admin Management for Public Tour Packages, Customer Testimonials, and Inquiries Inbox
+- **Branch**: `master`
+- **Files Modified / Created**:
+  - `app/Models/Inquiry.php` (created)
+  - `app/Models/Testimonial.php` (enhanced with parseYoutubeId helper)
+  - `app/Http/Requests/Admin/PackageRequest.php` (created)
+  - `app/Http/Requests/Admin/PackageTableRequest.php` (created)
+  - `app/Http/Requests/Admin/TestimonialRequest.php` (created)
+  - `app/Http/Requests/Admin/TestimonialTableRequest.php` (created)
+  - `app/Http/Requests/Admin/InquiryTableRequest.php` (created)
+  - `app/Http/Controllers/Admin/PackageController.php` (created)
+  - `app/Http/Controllers/Admin/TestimonialController.php` (created)
+  - `app/Http/Controllers/Admin/InquiryController.php` (created)
+  - `app/Http/Controllers/HomeController.php` (added storeInquiry endpoint with flexible alias support)
+  - `resources/views/admin/packages/index.blade.php` (created)
+  - `resources/views/admin/packages/cell.blade.php` (created)
+  - `resources/views/admin/packages/form.blade.php` (created)
+  - `resources/views/admin/testimonials/index.blade.php` (created)
+  - `resources/views/admin/testimonials/cell.blade.php` (created)
+  - `resources/views/admin/testimonials/form.blade.php` (created)
+  - `resources/views/admin/inquiries/index.blade.php` (created)
+  - `resources/views/admin/inquiries/cell.blade.php` (created)
+  - `resources/views/admin/inquiries/show.blade.php` (created)
+  - `resources/views/admin/partials/navigation.blade.php` (added Tour packages, Inquiries, and Testimonials links)
+  - `resources/views/layouts/app.blade.php` (added meta csrf-token)
+  - `resources/views/contact.blade.php` (asynchronously persists inquiry before WhatsApp redirection)
+  - `routes/web.php` (registered public inquiry endpoint and admin resource routes)
+  - `tests/Feature/AdminDynamicModulesTest.php` (created)
+  - `PROJECT_HISTORY.md`
+- **Logic & Implementation**:
+  - **Public Tour Packages CRUD (`admin.packages.*`)**:
+    - Full admin management of public tour packages (`packages`, `package_itineraries`, `package_features`).
+    - Multi-tier pricing fields (2P Couple, 4P Family, 6P Group), package type (`Kutch` / `Outstation`), auto-slug generation, featured badge, and image uploading to `storage/app/public/packages`.
+    - Interactive day-by-day itinerary repeater with title, spots visited, description, and meal notes.
+    - Plaintext multi-line inclusions and exclusions synced to relational `package_features` table (`type = 'inclusion'` / `'exclusion'`).
+    - Immediate reflection on public `/packages`, `/package-{slug}`, and Home page (`/`).
+  - **Customer Testimonials CRUD (`admin.testimonials.*`)**:
+    - Full admin management of guest reviews (`testimonials`).
+    - Supports client name, tour taken, review text, YouTube video link (auto-extracted video ID), display order, and published toggle.
+    - Immediate reflection on public Home page guest reviews section.
+  - **Customer Inquiries Inbox (`admin.inquiries.*`)**:
+    - Added public API endpoint (`POST /inquiry`) capturing contact page submissions into `inquiries` table before opening WhatsApp.
+    - Admin data-table listing with search across customer name, phone, email, and service, plus status filtering (`new`, `contacted`, `closed`).
+    - Detailed view (`show.blade.php`) displaying customer details, service type, pickup/origin, destination, travel dates, passenger count, customer message, one-click phone call, and direct WhatsApp reply.
+    - Admin follow-up status tracking and internal admin notes.
+  - **Testing & Verification**:
+    - Created `tests/Feature/AdminDynamicModulesTest.php`: **6/6 tests passed (105 assertions)**.
+    - Executed full test suite: **166/166 tests passed (1,839 assertions)** with zero failures and zero regressions.
+- **Pending Tasks**:
+  - Implemented sidebar scrolling fix and navigation naming update.
+
+---
+
+### Admin Sidebar Scrollability & Personalised Package Builder Naming
+- **Date**: 2026-10-24
+- **Feature**: Scrollable Admin Sidebar & Navigation Renaming
+- **Branch**: `master`
+- **Files Modified**:
+  - `resources/views/components/admin/layout.blade.php`: Added `overflow-y-auto` with clean thin scrollbar styling to desktop `<aside>` and mobile `<dialog>` drawer to allow full scrolling through all navigation items regardless of screen resolution.
+  - `resources/views/admin/partials/navigation.blade.php`: Renamed `Package builder` to `Personalised package builder` and optimized spacing.
+  - `PROJECT_HISTORY.md`
+- **Verification**:
+  - Verified with `npm.cmd run build` (Vite assets compiled in 8.78s).
+  - Executed full test suite: **166/166 tests passed (1,839 assertions)**.
+
+---
+
+### Middle Desert Emblem Logo Integration & Brand Gold Theming
+- **Date**: 2026-10-24
+- **Feature**: Figma Middle Logo Variant Integration, High-DPI Vector/Raster Assets, Admin Theming, & Brand Color Alignment
+- **Files Modified**:
+  - `public/images/logo/logo-gold.svg`, `public/images/logo/logo-black.svg`, `public/images/logo/logo-white.svg`
+  - `public/images/logo/logo-gold.png`, `public/images/logo/logo-black.png`, `public/images/logo/logo-white.png`, `public/images/logo/logo-gold-dark-card.png`
+  - `public/images/logo.svg` & `public/images/favicon.svg`
+  - `storage/app/public/branding/*`
+  - `app/Models/Setting.php`
+  - `database/seeders/SettingSeeder.php`
+  - `resources/views/partials/header.blade.php`
+  - `resources/views/partials/footer.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/admin/settings/edit.blade.php`
+  - `resources/views/components/admin/branding-upload.blade.php`
+- **Logic & Implementation**:
+  - **Vector Extraction**: Extracted and parsed the middle heritage emblem (Kutch camel, desert tent, and sand dunes within an arched dome) directly from the user's Figma vector data.
+  - **Dynamic Logo Rendering**: Configured light background surfaces to use the pure black variant (`#0A0A0A`) and dark background surfaces (including header and footer) to use the gold variant (`#E7BE67`).
+  - **Exact Color Alignment**: Extracted exact vector fill `#E7BE67` from the logo artwork and aligned the entire site theme, swatch palette, CSS variables, and admin settings defaults to this warm desert gold.
+  - **Verification**:
+    - `tests/Feature/AdminSettingsTest.php`: 20/20 passed.
+    - `tests/Feature/AdminToFrontendEndToEndCrudTest.php`: 9/9 passed.
+    - Full test suite: **166/166 passed (1,839 assertions)**.
+
+---
+
+### Brand Logo Visibility & Dimension Scaling
+- **Date**: 2026-10-24
+- **Feature**: Logo ViewBox Tight Cropping & Navigation Sizing Scaling
+- **Files Modified**:
+  - `public/images/logo/logo-gold.svg`, `public/images/logo/logo-black.svg`, `public/images/logo/logo-white.svg`, `public/images/logo.svg`
+  - `storage/app/public/branding/*`
+  - `public/css/style.css`
+  - `resources/views/partials/header.blade.php`
+  - `resources/views/partials/footer.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/components/admin/brand.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Tight ViewBox Cropping**: Replaced original `0 0 750 570` viewBoxes (which had ~75px of blank padding on all sides) with tight bounding boxes fitted to the actual vector coordinates (`74 72 602 426`), allowing 100% of the SVG element to display the artwork.
+  - **Header Navigation Expansion**: Increased `.nav` height from 68px to 78px (64px scrolled) and expanded logo height from 48px (effective 35px artwork) to 64px (effective 64px artwork, 90px wide), yielding a ~3.3x increase in visual display area.
+  - **Footer Logo Scaling**: Expanded footer emblem height from 60px to 88px (124px wide) for clear legibility of the arch, camel, tent, and typography.
+  - **Admin Brand Sidebar**: Scaled admin brand logo from `h-11` to `h-12 max-w-40`.
+  - **Cache & Assets**: Recompiled Vite bundle (`npm run build`) and cleared Laravel application caches.
+
+---
+
+### Header Logo Upscaling & Expanded Navigation Pill
+- **Date**: 2026-10-24
+- **Feature**: Logo Scaling to 88px & Navigation Pill Height Expansion to 98px
+- **Files Modified**:
+  - `public/images/logo/logo-gold.svg`, `public/images/logo/logo-black.svg`, `public/images/logo/logo-white.svg`, `public/images/logo.svg`
+  - `storage/app/public/branding/*`
+  - `public/css/style.css`
+  - `resources/views/partials/header.blade.php`
+  - `resources/views/partials/footer.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - Applied exact zero-margin bounding boxes to all SVG vectors (`viewBox="78 75 595 421"`).
+  - Scaled header navigation pill height to 98px desktop (72px scrolled, 86px tablet, 76px mobile) with 32px padding.
+  - Increased header logo height to 88px (~125px width) desktop, 74px tablet, and 64px mobile.
+  - Scaled footer logo to 100px height (~141px width).
+  - Rebuilt Vite bundle (`npm run build`) and cleared application caches (`php artisan optimize:clear`).
+
+
+
 

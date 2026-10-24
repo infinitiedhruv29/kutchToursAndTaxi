@@ -46,21 +46,21 @@
                     <div class="flex flex-wrap items-center gap-4">
                         <div class="relative flex items-center">
                             <input type="color" id="primary_color_picker" 
-                                value="{{ old('primary_color', $settings->primary_color ?? '#9E2A2B') }}" 
+                                value="{{ old('primary_color', $settings->primary_color ?? '#E7BE67') }}" 
                                 class="h-11 w-14 cursor-pointer rounded-sm border border-slate-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-900"
                                 oninput="document.getElementById('primary_color').value = this.value; document.getElementById('primary_color_preview').style.backgroundColor = this.value;">
                         </div>
                         <div class="flex-1 min-w-[180px] max-w-xs">
                             <input type="text" id="primary_color" name="primary_color" 
-                                value="{{ old('primary_color', $settings->primary_color ?? '#9E2A2B') }}" 
-                                maxlength="7" placeholder="#9E2A2B"
+                                value="{{ old('primary_color', $settings->primary_color ?? '#E7BE67') }}" 
+                                maxlength="7" placeholder="#E7BE67"
                                 class="block min-h-11 w-full rounded-sm border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-mono uppercase text-slate-900 placeholder:text-slate-400 focus:border-brand-600 focus:outline-2 focus:outline-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                                 oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){ document.getElementById('primary_color_picker').value = this.value; document.getElementById('primary_color_preview').style.backgroundColor = this.value; }">
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs text-slate-500 dark:text-slate-400">Preview:</span>
                             <span id="primary_color_preview" class="inline-block h-8 w-8 rounded-full border border-slate-300 shadow-sm transition-transform hover:scale-105" 
-                                style="background-color: {{ old('primary_color', $settings->primary_color ?? '#9E2A2B') }}"></span>
+                                style="background-color: {{ old('primary_color', $settings->primary_color ?? '#E7BE67') }}"></span>
                         </div>
                     </div>
                     @error('primary_color')
@@ -75,13 +75,12 @@
                     <div class="flex flex-wrap gap-2.5" id="color-presets">
                         @php
                             $presets = [
+                                ['label' => 'Kutch Desert Gold (Brand Logo)', 'color' => '#E7BE67'],
                                 ['label' => 'Terracotta Maroon (Default)', 'color' => '#9E2A2B'],
                                 ['label' => 'Desert Ochre', 'color' => '#DCA134'],
                                 ['label' => 'Ajrakh Indigo', 'color' => '#1A355E'],
                                 ['label' => 'Kutch Emerald', 'color' => '#0F766E'],
                                 ['label' => 'Sunset Crimson', 'color' => '#C2410C'],
-                                ['label' => 'Midnight Charcoal', 'color' => '#16100E'],
-                                ['label' => 'Royal Purple', 'color' => '#6D28D9'],
                                 ['label' => 'Ocean Blue', 'color' => '#0284C7'],
                             ];
                         @endphp

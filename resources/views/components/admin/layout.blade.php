@@ -17,10 +17,13 @@
     <a href="#main-content"
         class="sr-only rounded-lg bg-white dark:bg-slate-900 px-4 py-3 text-brand-800 dark:text-brand-200 focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50">Skip
         to content</a>
-    <aside class="fixed inset-y-0 left-0 hidden w-64 flex-col bg-slate-900 dark:bg-slate-950 px-5 py-7 lg:flex">
-        @include('admin.partials.navigation')</aside>
+    <aside class="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-slate-900 dark:bg-slate-950 lg:flex">
+        <div class="flex h-full flex-col overflow-y-auto px-5 py-7 [scrollbar-width:thin] [scrollbar-color:rgba(148,163,184,0.3)_transparent]">
+            @include('admin.partials.navigation')
+        </div>
+    </aside>
     <dialog id="admin-drawer" aria-labelledby="drawer-title"
-        class="fixed inset-y-0 left-0 m-0 h-dvh max-h-dvh w-72 max-w-full bg-slate-900 dark:bg-slate-950 p-5 text-white backdrop:bg-slate-950/60 lg:hidden">
+        class="fixed inset-y-0 left-0 m-0 h-dvh max-h-dvh w-72 max-w-full overflow-y-auto bg-slate-900 dark:bg-slate-950 p-5 text-white backdrop:bg-slate-950/60 lg:hidden [scrollbar-width:thin]">
         <div class="mb-6 flex items-center justify-between">
             <h2 id="drawer-title" class="text-sm font-semibold">Navigation</h2>
             <button type="button" data-drawer-close aria-label="Close navigation"

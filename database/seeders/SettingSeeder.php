@@ -13,9 +13,9 @@ class SettingSeeder extends Seeder
             ['id' => Setting::SINGLETON_ID],
             [
                 'business_name' => 'Kutch Tours & Taxi',
-                'primary_color' => '#9E2A2B',
-                'logo_path' => 'images/logo.svg',
-                'dark_logo_path' => null,
+                'primary_color' => '#E7BE67',
+                'logo_path' => 'images/logo/logo-black.svg',
+                'dark_logo_path' => 'images/logo/logo-gold.svg',
                 'favicon_path' => 'images/favicon.svg',
                 'contact_number' => '+91 99042 22293',
                 'contact_number_2' => '+91 94274 34567',

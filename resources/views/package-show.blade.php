@@ -1,8 +1,67 @@
 @extends('layouts.app')
 
-@section('title', $package->title . ' — Kutch Tours & Taxi')
+@section('title', !empty($package->seo_title) ? $package->seo_title : $package->title . ' — Kutch Tours & Taxi')
 @section('canonical', route('package.show', $package->slug))
-@section('meta_description', Str::limit(strip_tags($package->description), 160))
+@section('meta_description', !empty($package->seo_description) ? $package->seo_description : Str::limit(strip_tags($package->description), 160))
+@section('og_title', !empty($package->seo_title) ? $package->seo_title : $package->title . ' — Kutch Tours & Taxi')
+@section('og_description', !empty($package->seo_description) ? $package->seo_description : Str::limit(strip_tags($package->description), 160))
+@section('og_image', !empty($package->image_path) ? asset($package->image_path) : asset('images/index-page/white-rann-hero.webp'))
+
+@section('schema_json')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@graph": [
+    {
+      "@@type": "TouristTrip",
+      "@@id": "{{ route('package.show', $package->slug) }}#trip",
+      "name": {!! json_encode($package->title) !!},
+      "description": {!! json_encode(Str::limit(strip_tags($package->description), 250)) !!},
+      @if(!empty($package->image_path))
+      "image": "{{ asset($package->image_path) }}",
+      @endif
+      "touristType": "Sightseeing",
+      "offers": {
+        "@@type": "Offer",
+        "price": "{{ $package->price_2p ?? '24000' }}",
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ route('package.show', $package->slug) }}"
+      },
+      "provider": {
+        "@@type": "TravelAgency",
+        "name": "Kutch Tours & Taxi",
+        "telephone": "{{ $settings->contact_number ?? '+919904222293' }}"
+      }
+    },
+    {
+      "@@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ route('home') }}"
+        },
+        {
+          "@@type": "ListItem",
+          "position": 2,
+          "name": "Tour Packages",
+          "item": "{{ route('packages') }}"
+        },
+        {
+          "@@type": "ListItem",
+          "position": 3,
+          "name": {!! json_encode($package->title) !!},
+          "item": "{{ route('package.show', $package->slug) }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+@endsection
+
 @section('page_name', 'Tour Package Details')
 
 @section('content')
@@ -13,13 +72,13 @@
 
 <!-- ══ BREADCRUMB & HEADER ══ -->
 <div class="bg-[#16100E] text-white py-12 px-[5%] border-b border-white/10">
-    <div class="max-w-[1240px] mx-auto">
-        <div class="breadcrumb flex items-center gap-2 text-xs text-white/50 mb-3">
-            <a href="{{ route('home') }}" class="hover:text-[#DCA134] transition-colors">Home</a>
-            <span>/</span>
-            <a href="{{ route('packages') }}" class="hover:text-[#DCA134] transition-colors">Tour Packages</a>
-            <span>/</span>
-            <span class="text-white/80">{{ $package->title }}</span>
+    <div class="max-w-[1240px] mx-auto relative z-20">
+        <div class="breadcrumb flex items-center gap-2 text-xs text-white/50 mb-3 relative z-20">
+            <a id="breadcrumb-link-home" href="{{ route('home') }}" class="text-white/85 hover:text-[#DCA134] underline underline-offset-4 cursor-pointer font-medium transition-colors">Home</a>
+            <span class="text-white/40">/</span>
+            <a id="breadcrumb-link-packages" href="{{ route('packages') }}" class="text-white/85 hover:text-[#DCA134] underline underline-offset-4 cursor-pointer font-medium transition-colors">Tour Packages</a>
+            <span class="text-white/40">/</span>
+            <span class="text-white/90">{{ $package->title }}</span>
         </div>
 
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">

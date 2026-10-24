@@ -361,9 +361,131 @@ The project includes a robust administrative management portal for taxi routes, 
 - **Pending Tasks**:
   - User manual review in browser.
 
+---
 
+### Dynamic Primary Theme Color Selection in Admin Settings
+- **Date**: 2026-10-24
+- **Feature**: Dynamic Primary Brand Color Customization
+- **Branch**: `master`
+- **Files Modified / Created**:
+  - `database/migrations/2026_10_24_091416_add_primary_color_to_settings_table.php` (created)
+  - `app/Models/Setting.php`
+  - `app/Http/Requests/Admin/UpdateSettingsRequest.php`
+  - `database/seeders/SettingSeeder.php`
+  - `resources/views/admin/settings/edit.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/partials/header.blade.php`
+  - `resources/views/partials/footer.blade.php`
+  - `tests/Feature/AdminSettingsTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Database Migration**: Added `primary_color` (string 20, nullable, default `#9E2A2B`) to `settings` table with rollback support.
+  - **Model & Request**: Added `primary_color` to `Setting` `#[Fillable]` and `CONTENT_FIELDS`. Added hex color code validation (`regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/`) and custom error messaging in `UpdateSettingsRequest`.
+  - **Admin UI**: Created "Website theme & appearance" settings card featuring an interactive HTML5 color picker, hex input field, live preview swatch, and 8 quick-preset Kutchi & modern palette swatches (Terracotta Maroon, Desert Ochre, Ajrakh Indigo, Kutch Emerald, Sunset Crimson, Midnight Charcoal, Royal Purple, Ocean Blue).
+  - **Frontend Theme Engine**: Injected dynamic primary color overrides into `:root` CSS variables (`--orange`, `--primary`, `--primary-color`), Tailwind runtime config, and dynamic SVG brand logo rects in header and footer.
+  - **Testing**: Added unit & feature tests in `AdminSettingsTest` verifying color updates, hex validation, and frontend rendering. All **149/149 tests passed (1,530 assertions)**.
+- **Pending Tasks**:
+  - User review in browser.
 
+---
 
+### Dynamic Header, Hero & Footer Shades Adaptation
+- **Date**: 2026-10-24
+- **Feature**: Full-Site Header, Hero, Footer & Button Shade Harmonization with Primary Color
+- **Branch**: `master`
+- **Files Modified**:
+  - `public/css/style.css`
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/index.blade.php`
+  - `resources/views/gallery.blade.php`
+  - `resources/views/taxi.blade.php`
+  - `tests/Feature/AdminSettingsTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Dynamic RGB Computation**: Extracted red, green, and blue components from the selected primary hex color in `app.blade.php` (`--primary-rgb: r, g, b`).
+  - **Header & Hero Shade Adaptations**: Replaced static red gradients (`rgba(255, 92, 26, ...)`, `rgba(158, 42, 43, ...)`) in `.page-hero::before` and `.hero-blob-1` with dynamic primary color radial glow gradients (`rgba(var(--orange-rgb), 0.24)`). Styled `.nav` and `.nav.scrolled` borders and ambient glow to match the primary shade.
+  - **Home Hero Header Section**: Bound `.hero` and `.hero::before` to dynamic radial gradients (`rgba(var(--primary-rgb), 0.28)`), eliminating the static reddish glow on the main home page header.
+  - **Crisp Dark Footer Contrast**: Restored solid dark `#140E0D` footer base without foggy washed-out center wash, retaining an elegant primary-colored top accent line (`border-top: 1px solid rgba(var(--primary-rgb), 0.25)`).
+  - **Bottom CTA Banner Theme**: Fully themed the home page bottom CTA banner (`.cta-banner`) with a dynamic primary radial gradient aura, primary-accented badge pill, and themed borders.
+  - **All-Photos Gallery Button Fix**: Removed hardcoded `#9E2A2B` in `gallery.blade.php` `.gallery-filter-btn.active` and `:hover`, binding them to `var(--orange)` and dynamic primary box-shadow.
+  - **Explore Tour Packages CTA Fix**: Replaced inline `style="background:#9E2A2B"` on hero package button in `index.blade.php` with `style="background:var(--orange)"`.
+  - **Taxi Capacity Filter Tabs**: Updated `taxi.blade.php` capacity buttons to use dynamic `var(--orange)` active and hover states without hardcoded red.
+  - **Testing**: Added RGB shade and element assertions in `AdminSettingsTest.php`. All 20 tests passed.
+- **Pending Tasks**:
+  - Completed and harmonized.
 
+---
+
+### Footer & CTA Banners Dynamic Dark Midnight Shade Harmonization
+- **Date**: 2026-10-24
+- **Feature**: Harmonize Footer, Inner Page CTA Banners & Home Hero with Primary Color Dark Midnight Shade
+- **Branch**: `master`
+- **Files Modified**:
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/partials/footer.blade.php`
+  - `resources/views/about.blade.php`
+  - `resources/views/packages.blade.php`
+  - `resources/views/index.blade.php`
+  - `tests/Feature/AdminSettingsTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Dynamic Midnight Dark Shade Base**: Replaced all hardcoded red-charcoal bases (`#16100E`, `#140E0D`, `#120D0C`) with mathematically computed `$darkMidnight` and `$darkLight` derived directly from `$primaryColor` in `app.blade.php`, dynamically overriding `--navy` and `--navy-light`.
+  - **Footer Shade (Identical to Header)**: Removed hardcoded `bg-[#16100E]` from `partials/footer.blade.php`. Styled `.footer` with `background-color: var(--navy)` and top radial glow `radial-gradient(ellipse at 50% 0%, rgba(var(--primary-rgb), 0.22) 0%, transparent 70%)` plus top primary accent hairline.
+  - **Bottom CTA Banners (Identical to Header, No White Wash)**: Standardized all bottom CTA banners across `about.blade.php`, `packages.blade.php`, and `index.blade.php` with `.cta-banner`. Replaced the previous hazy radial gradient with a clean, dark colored ambient glow `radial-gradient(ellipse at 50% 50%, rgba(var(--primary-rgb), 0.22) 0%, transparent 70%)` on the midnight base with no whitish or red cast.
+  - **Home Hero Red Removal**: Removed leftover `bg-[#16100E]` and hardcoded `text-[#9E2A2B]` from `index.blade.php` hero section, binding accents to `var(--orange)` and `.hero` to `$darkMidnight`.
+  - **Testing**: Added assertions in `AdminSettingsTest` for `--navy`, `.footer::before`, and `.cta-banner::before`. Full suite: **149/149 tests passed (1,538 assertions)**.
+- **Pending Tasks**:
+  - User review in browser.
+
+---
+
+### Core SEO Infrastructure & Schema Optimization
+- **Date**: 2026-10-24
+- **Feature**: XML Sitemap, Hardened Robots.txt, and Enhanced JSON-LD Structured Data
+- **Files Modified**:
+  - `app/Http/Controllers/SitemapController.php` (created)
+  - `resources/views/sitemap.blade.php` (created)
+  - `routes/web.php`
+  - `public/robots.txt`
+  - `resources/views/index.blade.php`
+  - `resources/views/taxi.blade.php`
+  - `resources/views/packages.blade.php`
+  - `resources/views/package-show.blade.php`
+  - `tests/Feature/FrontendTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Dynamic XML Sitemap (`/sitemap.xml`)**: Created `SitemapController` and `sitemap.blade.php` delivering standards-compliant XML (`application/xml`). Lists all canonical static routes (`/`, `/packages`, `/taxi`, `/gallery`, `/about`, `/contact`) and dynamically queries all published `Package` models with `lastmod`, change frequency, and priority weighting.
+  - **Hardened `robots.txt`**: Added disallow directives for `/admin/` and declared the `Sitemap: /sitemap.xml` reference to enable search engine crawlers while protecting the admin portal from indexing.
+  - **Dynamic FAQ Schema (`FAQPage`)**: Enhanced `index.blade.php` `@section('schema_json')` with Google rich snippet FAQ schema, iterating published `$faqs` with automated sanitization (`json_encode` + `strip_tags`).
+  - **Local Business & Travel Agency Schema**: Enriched `index.blade.php` schema with `@graph`, geo-coordinates for Bhuj, areaServed regions, phone, and URLs.
+  - **Taxi Service Schema (`TaxiService`)**: Added schema markup and structured `BreadcrumbList` on `taxi.blade.php`.
+  - **Tour Package Schemas (`TouristTrip`, `ItemList`, `BreadcrumbList`)**: Added `ItemList` to `packages.blade.php` and `TouristTrip` + `BreadcrumbList` + dynamic OpenGraph tags (`og:title`, `og:description`, `og:image`) to `package-show.blade.php`.
+  - **Testing**: Added unit/feature tests in `FrontendTest.php` verifying XML header, content, and schema rendering. Full test suite: **151/151 tests passed (1,553 assertions)**.
+- **Pending Tasks**:
+  - Submit `https://yourdomain.com/sitemap.xml` to Google Search Console upon domain launch.
+  - Set up Google Business Profile in Bhuj to strengthen local map pack signals.
+
+---
+
+### Seamless Continuous Ticker Ribbon & Clickable Breadcrumbs
+- **Date**: 2026-10-24
+- **Feature**: Infinite Non-Stop Marquee Ticker & Interactive Clickable Page Breadcrumbs
+- **Files Modified**:
+  - `public/css/style.css`
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/index.blade.php`
+  - `resources/views/packages.blade.php`
+  - `resources/views/taxi.blade.php`
+  - `resources/views/package-show.blade.php`
+  - `resources/views/gallery.blade.php`
+  - `resources/views/about.blade.php`
+  - `resources/views/contact.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Infinite Continuous Rolling Ticker**: Replaced single track marquee with dual identical `.ticker-group` elements inside `.ticker-track` in `index.blade.php`. Updated CSS with `@keyframes tickerContinuous` (`0%` to `-50%` over 28s linear infinite) with `width: max-content` and without pause on hover, eliminating all empty gaps, blank rows, or stops.
+  - **Clickable Breadcrumb Navigation**: Fixed an issue where `.page-hero::before` pseudo-element had no `pointer-events: none` and was intercepting clicks. Added `pointer-events: none !important` to `.page-hero::before` in `style.css` and `layouts/app.blade.php`. Elevated `.breadcrumb` to `z-index: 20` across `packages.blade.php`, `taxi.blade.php`, `package-show.blade.php`, `gallery.blade.php`, `about.blade.php`, and `contact.blade.php` with distinct underline, cursor pointer, and gold hover effects, allowing users on any page to click "Home" (or "Tour Packages") directly.
+  - **Testing**: Ran full PHPUnit feature & unit test suite: **151/151 tests passed (1,553 assertions)**.
+- **Pending Tasks**:
+  - User verification in browser.
 
 

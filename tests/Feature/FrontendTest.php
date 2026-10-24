@@ -144,4 +144,55 @@ class FrontendTest extends TestCase
             ->assertSee('Send an Instant Booking Inquiry')
             ->assertSee('Send Booking Inquiry to WhatsApp');
     }
+
+    public function test_sitemap_xml_returns_valid_xml_with_packages(): void
+    {
+        Package::create([
+            'title' => 'Rann & Dholavira Discovery',
+            'slug' => 'rann-dholavira-discovery',
+            'duration' => '3N/4D',
+            'description' => 'Tour of Rann and Dholavira',
+            'price_2p' => 25000,
+            'is_published' => true,
+        ]);
+
+        $response = $this->get('/sitemap.xml');
+        $response->assertOk();
+        $this->assertStringContainsString('application/xml', $response->headers->get('Content-Type'));
+        $response->assertSee('/packages', false)
+            ->assertSee('/taxi', false)
+            ->assertSee('/package-rann-dholavira-discovery', false);
+    }
+
+    public function test_seo_schemas_rendered_on_pages(): void
+    {
+        $package = Package::create([
+            'title' => 'Dholavira Special',
+            'slug' => 'dholavira-special',
+            'duration' => '2N/3D',
+            'description' => 'Explore the UNESCO site',
+            'price_2p' => 20000,
+            'is_published' => true,
+        ]);
+
+        // Home Schema
+        $homeResponse = $this->get('/');
+        $homeResponse->assertOk()
+            ->assertSee('TravelAgency', false)
+            ->assertSee('PostalAddress', false);
+
+        // Taxi Schema
+        $taxiResponse = $this->get('/taxi');
+        $taxiResponse->assertOk()
+            ->assertSee('TaxiService', false)
+            ->assertSee('BreadcrumbList', false);
+
+        // Package Show Schema
+        $pkgResponse = $this->get('/package-dholavira-special');
+        $pkgResponse->assertOk()
+            ->assertSee('TouristTrip', false)
+            ->assertSee('Dholavira Special', false)
+            ->assertSee('BreadcrumbList', false);
+    }
 }
+

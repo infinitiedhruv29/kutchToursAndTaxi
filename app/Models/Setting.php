@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
-    'business_name', 'logo_path', 'dark_logo_path', 'favicon_path',
+    'business_name', 'logo_path', 'dark_logo_path', 'favicon_path', 'primary_color',
     'contact_number', 'contact_number_2', 'whatsapp_number', 'contact_email',
     'address', 'google_map_link', 'instagram_link', 'facebook_link', 'youtube_link',
     'gst_number', 'general_inclusions', 'general_exclusions',
@@ -16,7 +16,7 @@ class Setting extends Model
     public const int SINGLETON_ID = 1;
 
     public const array CONTENT_FIELDS = [
-        'business_name', 'contact_number', 'contact_number_2', 'whatsapp_number',
+        'business_name', 'primary_color', 'contact_number', 'contact_number_2', 'whatsapp_number',
         'contact_email', 'address', 'google_map_link', 'instagram_link',
         'facebook_link', 'youtube_link', 'gst_number', 'general_inclusions', 'general_exclusions',
     ];

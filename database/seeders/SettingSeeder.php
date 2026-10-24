@@ -13,6 +13,7 @@ class SettingSeeder extends Seeder
             ['id' => Setting::SINGLETON_ID],
             [
                 'business_name' => 'Kutch Tours & Taxi',
+                'primary_color' => '#9E2A2B',
                 'logo_path' => 'images/logo.svg',
                 'dark_logo_path' => null,
                 'favicon_path' => 'images/favicon.svg',

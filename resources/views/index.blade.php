@@ -7,20 +7,56 @@
 <script type="application/ld+json">
 {
   "@@context": "https://schema.org",
-  "@@type": "TravelAgency",
-  "name": "Kutch Tours & Taxi",
-  "image": "{{ asset('images/index-page/white-rann-hero.webp') }}",
-  "logo": "{{ asset('images/logo.svg') }}",
-  "telephone": "{{ $settings->contact_number ?? '+919904222293' }}",
-  "priceRange": "$$",
-  "address": {
-    "@@type": "PostalAddress",
-    "streetAddress": "Station Road",
-    "addressLocality": "Bhuj",
-    "addressRegion": "Gujarat",
-    "postalCode": "370001",
-    "addressCountry": "IN"
-  }
+  "@@graph": [
+    {
+      "@@type": "TravelAgency",
+      "@@id": "{{ route('home') }}#agency",
+      "name": "Kutch Tours & Taxi",
+      "url": "{{ route('home') }}",
+      "image": "{{ asset('images/index-page/white-rann-hero.webp') }}",
+      "logo": "{{ asset('images/logo.svg') }}",
+      "telephone": "{{ $settings->contact_number ?? '+919904222293' }}",
+      "priceRange": "$$",
+      "address": {
+        "@@type": "PostalAddress",
+        "streetAddress": "Station Road",
+        "addressLocality": "Bhuj",
+        "addressRegion": "Gujarat",
+        "postalCode": "370001",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@@type": "GeoCoordinates",
+        "latitude": 23.2420,
+        "longitude": 69.6669
+      },
+      "areaServed": [
+        "Bhuj",
+        "Rann of Kutch",
+        "Dhordo",
+        "Dholavira",
+        "Mandvi",
+        "Kutch"
+      ]
+    }@if(isset($faqs) && $faqs->isNotEmpty()),
+    {
+      "@@type": "FAQPage",
+      "@@id": "{{ route('home') }}#faq",
+      "mainEntity": [
+        @foreach($faqs as $faq)
+        {
+          "@@type": "Question",
+          "name": {!! json_encode($faq->question) !!},
+          "acceptedAnswer": {
+            "@@type": "Answer",
+            "text": {!! json_encode(strip_tags($faq->answer)) !!}
+          }
+        }@if(!$loop->last),@endif
+        @endforeach
+      ]
+    }
+    @endif
+  ]
 }
 </script>
 @endsection
@@ -31,13 +67,13 @@
 @endphp
 
 <!-- ══ HERO SECTION ══ -->
-<section class="hero section-dark grid grid-cols-1 lg:grid-cols-2 items-center px-[5%] gap-12 min-h-[85vh] pt-12 pb-16 lg:py-16 bg-[#16100E]">
+<section class="hero section-dark grid grid-cols-1 lg:grid-cols-2 items-center px-[5%] gap-12 min-h-[85vh] pt-12 pb-16 lg:py-16">
     <div class="hero-left relative z-10 pt-4">
         <div class="hero-badge inline-flex items-center gap-2 bg-[#DCA134]/15 border border-[#DCA134]/30 text-[#DCA134] py-1.5 px-4 rounded-full text-[0.74rem] font-bold tracking-wider mb-6 uppercase">
-            <span class="text-[#9E2A2B] text-[10px]">✦</span> Gujarat's Trusted Travel & Taxi Partner
+            <span class="text-[10px]" style="color: var(--orange);">✦</span> Gujarat's Trusted Travel & Taxi Partner
         </div>
         <h1 class="font-display text-[2.6rem] sm:text-[3.5rem] lg:text-[4.2rem] font-extrabold leading-[1.08] text-white">
-            Discover the <span class="accent text-[#9E2A2B] block sm:inline">Magic of Kutch</span>
+            Discover the <span class="accent block sm:inline" style="color: var(--orange);">Magic of Kutch</span>
         </h1>
         <p class="hero-sub text-white/70 text-base leading-[1.75] max-w-[490px] mt-5">
             From the infinite White Salt Desert to UNESCO Harappan ruins at Dholavira and scenic Mandvi beaches — we provide well-maintained AC cabs and memorable holiday tours with trusted local drivers.
@@ -45,7 +81,7 @@
 
         <!-- CTAs -->
         <div class="hero-actions flex gap-4 mt-8 flex-wrap">
-            <a id="link-hero-explore-packages" href="{{ route('packages') }}" class="btn-primary" style="background:#9E2A2B;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;font-size:0.92rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+            <a id="link-hero-explore-packages" href="{{ route('packages') }}" class="btn-primary" style="background:var(--orange);color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;font-size:0.92rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
                 Explore Tour Packages
             </a>
             <a id="link-hero-explore-taxis" href="{{ route('taxi') }}" class="btn-outline-white" style="border:1.5px solid rgba(255,255,255,0.3);color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;font-size:0.92rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
@@ -110,16 +146,27 @@
     </div>
 </section>
 
-<!-- TICKER RIBBON -->
-<div class="ticker-wrap bg-[#9E2A2B] py-2.5 overflow-hidden border-y border-[#7F1D1D]">
-    <div class="ticker flex whitespace-nowrap [animation:tickerScroll_30s_linear_infinite]">
-        <span class="text-white/90 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">White Rann of Kutch <span class="text-white/40">✦</span></span>
-        <span class="text-white/90 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">UNESCO Dholavira <span class="text-white/40">✦</span></span>
-        <span class="text-white/90 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Mandvi Beach & Palaces <span class="text-white/40">✦</span></span>
-        <span class="text-white/90 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Kalo Dungar (Black Hill) <span class="text-white/40">✦</span></span>
-        <span class="text-white/90 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Road to Heaven Drive <span class="text-white/40">✦</span></span>
-        <span class="text-white/90 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Bhujodi Handicrafts <span class="text-white/40">✦</span></span>
-        <span class="text-white/90 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Outstation Cabs to Ahmedabad & Rajkot <span class="text-white/40">✦</span></span>
+<!-- TICKER RIBBON (INFINITE SEAMLESS CONTINUOUS MARQUEE) -->
+<div class="ticker-wrap py-2.5 overflow-hidden border-y border-black/20 select-none" style="background:var(--orange);">
+    <div class="ticker-track">
+        <div class="ticker-group">
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">White Rann of Kutch <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">UNESCO Dholavira <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Mandvi Beach & Palaces <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Kalo Dungar (Black Hill) <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Road to Heaven Drive <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Bhujodi Handicrafts <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Outstation Cabs to Ahmedabad & Rajkot <span class="text-white/40">✦</span></span>
+        </div>
+        <div class="ticker-group" aria-hidden="true">
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">White Rann of Kutch <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">UNESCO Dholavira <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Mandvi Beach & Palaces <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Kalo Dungar (Black Hill) <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Road to Heaven Drive <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Bhujodi Handicrafts <span class="text-white/40">✦</span></span>
+            <span class="text-white/95 text-[0.78rem] font-semibold tracking-wider px-6 inline-flex items-center gap-2">Outstation Cabs to Ahmedabad & Rajkot <span class="text-white/40">✦</span></span>
+        </div>
     </div>
 </div>
 
@@ -179,7 +226,7 @@
                                target="_blank"
                                class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-2.5 px-4 rounded-[6px] font-bold text-xs flex items-center justify-center gap-2 transition-colors">
                                 <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-                                <span>Book on WhatsApp</span>
+                                <span>Book Now</span>
                             </a>
                         </div>
                     </div>
@@ -360,24 +407,28 @@
 </section>
 
 <!-- ══ BOTTOM CTA BANNER ══ -->
-<section class="cta-banner py-14 px-[5%] bg-[#16100E] text-white border-t border-white/10">
-    <div class="max-w-[1000px] mx-auto text-center">
-        <span class="text-[#DCA134] text-xs font-bold uppercase tracking-widest block mb-2">Planning a Trip to Kutch?</span>
+<section class="cta-banner py-16 px-[5%] text-white text-center">
+    <div class="max-w-[1000px] mx-auto text-center relative z-10">
+        <span class="inline-flex items-center gap-1.5 py-1 px-4 rounded-full text-xs font-bold uppercase tracking-widest mb-3 border shadow-sm"
+              style="background-color: rgba(var(--primary-rgb, 158, 42, 43), 0.18); border-color: rgba(var(--primary-rgb, 158, 42, 43), 0.4); color: #fff;">
+            ✦ Planning a Trip to Kutch?
+        </span>
         <h2 class="font-display text-[2rem] md:text-[3rem] font-extrabold mb-4">Let's Plan Your Perfect Desert Journey</h2>
-        <p class="text-white/70 text-sm max-w-[560px] mx-auto mb-8">
+        <p class="text-white/75 text-sm max-w-[560px] mx-auto mb-8">
             Get instant itinerary quotes, cab availability, and permit guidance directly on WhatsApp in minutes. No booking fees or hidden charges.
         </p>
         <div class="flex items-center justify-center gap-4 flex-wrap">
             <a id="btn-bottom-cta-whatsapp"
                href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to plan a Kutch trip. Please share details.') }}"
                target="_blank"
-               class="bg-[#25D366] hover:bg-[#20ba5a] text-white py-3 px-6 rounded-[8px] font-bold text-sm inline-flex items-center gap-2 transition-colors">
+               class="bg-[#25D366] hover:bg-[#20ba5a] text-white py-3 px-6 rounded-[8px] font-bold text-sm inline-flex items-center gap-2 transition-colors shadow-lg">
                 <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
                 <span>Chat on WhatsApp</span>
             </a>
             <a id="btn-bottom-cta-call"
                href="tel:{{ preg_replace('/[^0-9+]/', '', $settings->contact_number ?? '+919904222293') }}"
-               class="bg-white/10 hover:bg-white/20 text-white border border-white/20 py-3 px-6 rounded-[8px] font-bold text-sm inline-flex items-center gap-2 transition-colors">
+               class="text-white border py-3 px-6 rounded-[8px] font-bold text-sm inline-flex items-center gap-2 transition-all hover:bg-white/15"
+               style="background-color: rgba(255,255,255,0.08); border-color: rgba(var(--primary-rgb, 158, 42, 43), 0.4);">
                 <span>Call Us Now</span>
             </a>
         </div>

@@ -6,7 +6,7 @@
     $phoneTel = preg_replace('/[^0-9+]/', '', $phoneDisplay);
 @endphp
 
-<footer class="footer bg-[#16100E] text-white/80 pt-16 pb-8 border-t border-white/10">
+<footer class="footer text-white/80 pt-16 pb-8 border-t border-white/10">
     <div class="footer-grid max-w-[1240px] mx-auto px-[5%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         <!-- BRAND COLUMN -->
         <div class="footer-brand lg:col-span-1">
@@ -15,7 +15,7 @@
                     <img src="{{ asset($settings->logo_path) }}" alt="Kutch Tours & Taxi" class="h-[52px] w-auto">
                 @else
                     <svg width="200" height="42" viewBox="0 0 200 42" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="36" height="36" x="0" y="3" rx="8" fill="#9E2A2B" />
+                        <rect width="36" height="36" x="0" y="3" rx="8" fill="{{ $settings->primary_color ?? '#9E2A2B' }}" />
                         <text x="7" y="27" font-family="Georgia,serif" font-size="20" font-weight="900" fill="white">K</text>
                         <circle cx="29" cy="9" r="4" fill="#DCA134" />
                         <path d="M4 33 Q11 25 18 33 Q25 25 32 33" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" fill="none" />

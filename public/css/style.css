@@ -7,6 +7,7 @@
 
 :root {
   --orange: #9E2A2B;
+  --orange-rgb: 158, 42, 43;
   /* Organic Ajrakh Madder Red */
   --orange-dark: #7F1D1D;
   /* Deeper Madder Red */
@@ -199,14 +200,14 @@ button {
   font-size: 0.82rem !important;
   font-weight: 700 !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(158, 42, 43, 0.15) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(var(--orange-rgb, 158, 42, 43), 0.25) !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .nav-cta:hover {
   transform: translateY(-1.5px) !important;
-  background: #b53537 !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 6px 18px rgba(158, 42, 43, 0.3) !important;
+  filter: brightness(1.1) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 6px 18px rgba(var(--orange-rgb, 158, 42, 43), 0.35) !important;
 }
 
 /* Hamburger */
@@ -440,7 +441,7 @@ button {
 }
 
 .footer-contact-item:hover svg.theme-icon {
-  filter: drop-shadow(0 0 5px rgba(255, 92, 26, 0.6));
+  filter: drop-shadow(0 0 5px rgba(var(--orange-rgb, 158, 42, 43), 0.6));
 }
 
 .footer-contact-item.whatsapp-item:hover svg.wa-icon {
@@ -528,8 +529,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 92, 26, 0.1);
-  color: #d55254;
+  background: rgba(var(--orange-rgb, 158, 42, 43), 0.12);
+  color: var(--orange);
   padding: 5px 14px;
   border-radius: 100px;
   font-size: 0.74rem;
@@ -585,7 +586,7 @@ button {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(158, 42, 43, 0.35);
+  box-shadow: 0 8px 28px rgba(var(--orange-rgb, 158, 42, 43), 0.35);
 }
 
 .btn-outline {
@@ -625,7 +626,7 @@ button {
 
 .btn-outline-white:hover {
   border-color: var(--orange);
-  background: rgba(255, 92, 26, 0.1);
+  background: rgba(var(--orange-rgb, 158, 42, 43), 0.12);
 }
 
 .btn-wa {
@@ -685,7 +686,7 @@ button {
 }
 
 .badge-orange {
-  background: rgba(255, 92, 26, 0.12);
+  background: rgba(var(--orange-rgb, 158, 42, 43), 0.12);
   color: var(--orange);
 }
 
@@ -775,7 +776,7 @@ button {
 .hero-blob-1 {
   width: 700px;
   height: 700px;
-  background: radial-gradient(circle, rgba(158, 42, 43, 0.14) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--orange-rgb, 158, 42, 43), 0.18) 0%, transparent 70%);
   top: -200px;
   right: -150px;
 }
@@ -910,12 +911,30 @@ button {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 60% 40%, rgba(255, 92, 26, 0.15) 0%, transparent 60%);
+  background: radial-gradient(ellipse at 60% 40%, rgba(var(--orange-rgb, 158, 42, 43), 0.22) 0%, transparent 65%);
+  pointer-events: none !important;
 }
 
 .page-hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+}
+
+.breadcrumb {
+  position: relative;
+  z-index: 20;
+}
+
+.breadcrumb a {
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: rgba(255, 255, 255, 0.82);
+  transition: color 0.18s ease;
+}
+
+.breadcrumb a:hover {
+  color: var(--gold, #DCA134) !important;
 }
 
 .page-hero h1 {
@@ -1239,14 +1258,43 @@ button {
   transform: translateY(-2px);
 }
 
-/* Animation Keyframes */
+/* Continuous Seamless Marquee Ticker */
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: tickerContinuous 28s linear infinite !important;
+}
+
+.ticker-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@keyframes tickerContinuous {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @keyframes tickerScroll {
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
-
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 

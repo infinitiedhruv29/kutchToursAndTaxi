@@ -36,6 +36,69 @@
             </div>
         </x-admin.card>
 
+        <x-admin.card title="Website theme & appearance"
+            description="Choose the primary brand color used for buttons, badges, banners, and highlights across the public website.">
+            <div class="space-y-6 p-5 sm:p-6">
+                <div>
+                    <label for="primary_color" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                        Primary website color
+                    </label>
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="relative flex items-center">
+                            <input type="color" id="primary_color_picker" 
+                                value="{{ old('primary_color', $settings->primary_color ?? '#9E2A2B') }}" 
+                                class="h-11 w-14 cursor-pointer rounded-sm border border-slate-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-900"
+                                oninput="document.getElementById('primary_color').value = this.value; document.getElementById('primary_color_preview').style.backgroundColor = this.value;">
+                        </div>
+                        <div class="flex-1 min-w-[180px] max-w-xs">
+                            <input type="text" id="primary_color" name="primary_color" 
+                                value="{{ old('primary_color', $settings->primary_color ?? '#9E2A2B') }}" 
+                                maxlength="7" placeholder="#9E2A2B"
+                                class="block min-h-11 w-full rounded-sm border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-mono uppercase text-slate-900 placeholder:text-slate-400 focus:border-brand-600 focus:outline-2 focus:outline-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){ document.getElementById('primary_color_picker').value = this.value; document.getElementById('primary_color_preview').style.backgroundColor = this.value; }">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Preview:</span>
+                            <span id="primary_color_preview" class="inline-block h-8 w-8 rounded-full border border-slate-300 shadow-sm transition-transform hover:scale-105" 
+                                style="background-color: {{ old('primary_color', $settings->primary_color ?? '#9E2A2B') }}"></span>
+                        </div>
+                    </div>
+                    @error('primary_color')
+                        <p class="mt-2 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Quick Preset Swatches
+                    </label>
+                    <div class="flex flex-wrap gap-2.5" id="color-presets">
+                        @php
+                            $presets = [
+                                ['label' => 'Terracotta Maroon (Default)', 'color' => '#9E2A2B'],
+                                ['label' => 'Desert Ochre', 'color' => '#DCA134'],
+                                ['label' => 'Ajrakh Indigo', 'color' => '#1A355E'],
+                                ['label' => 'Kutch Emerald', 'color' => '#0F766E'],
+                                ['label' => 'Sunset Crimson', 'color' => '#C2410C'],
+                                ['label' => 'Midnight Charcoal', 'color' => '#16100E'],
+                                ['label' => 'Royal Purple', 'color' => '#6D28D9'],
+                                ['label' => 'Ocean Blue', 'color' => '#0284C7'],
+                            ];
+                        @endphp
+                        @foreach ($presets as $preset)
+                            <button type="button" 
+                                onclick="selectColorSwatch('{{ $preset['color'] }}')"
+                                title="{{ $preset['label'] }}: {{ $preset['color'] }}"
+                                class="group flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-all hover:border-slate-400 hover:shadow dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                                <span class="h-4 w-4 rounded-full shadow-inner" style="background-color: {{ $preset['color'] }}"></span>
+                                <span>{{ $preset['label'] }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </x-admin.card>
+
         <x-admin.card title="Contact information"
             description="These contact methods will be available to the public website when configured.">
             <div class="grid gap-5 p-5 sm:p-6 md:grid-cols-2">
@@ -80,9 +143,19 @@
         </x-admin.card>
 
         <div class="flex flex-row flex-wrap items-start justify-between gap-4 sm:flex-nowrap sm:items-center">
-            <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">Changes apply after saving. Theme colors are fixed and are not
-                part of these settings.</p>
+            <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">Changes apply immediately across the website and documents after saving.</p>
             <x-admin.button class="w-full shrink-0 sm:w-auto">Save business settings</x-admin.button>
         </div>
     </form>
+
+    <script>
+        function selectColorSwatch(hex) {
+            const input = document.getElementById('primary_color');
+            const picker = document.getElementById('primary_color_picker');
+            const preview = document.getElementById('primary_color_preview');
+            if (input) input.value = hex;
+            if (picker) picker.value = hex;
+            if (preview) preview.style.backgroundColor = hex;
+        }
+    </script>
 </x-admin.layout>

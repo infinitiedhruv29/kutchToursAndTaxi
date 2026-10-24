@@ -5,6 +5,49 @@
 @section('meta_description', 'Reliable and affordable taxi services in Kutch & Bhuj. Best rates for outstation tours, Bhuj airport transfers & local sightseeing. Private AC cabs. Book now on WhatsApp!')
 @section('meta_keywords', 'taxi service in kutch, taxi in bhuj, kutch cab booking, bhuj airport taxi, car rental kutch, outstation cabs bhuj, bhuj to ahmedabad taxi')
 
+@section('schema_json')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@graph": [
+    {
+      "@@type": "TaxiService",
+      "@@id": "{{ route('taxi') }}#service",
+      "name": "Kutch & Bhuj Taxi Services",
+      "url": "{{ route('taxi') }}",
+      "serviceType": "Car Rental & Outstation Cab Booking",
+      "provider": {
+        "@@type": "TravelAgency",
+        "name": "Kutch Tours & Taxi",
+        "telephone": "{{ $settings->contact_number ?? '+919904222293' }}"
+      },
+      "areaServed": {
+        "@@type": "AdministrativeArea",
+        "name": "Kutch, Gujarat, India"
+      }
+    },
+    {
+      "@@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ route('home') }}"
+        },
+        {
+          "@@type": "ListItem",
+          "position": 2,
+          "name": "Taxi Services",
+          "item": "{{ route('taxi') }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+@endsection
+
 @section('page_name', 'Taxi Services')
 
 @section('content')
@@ -14,11 +57,11 @@
 
 <!-- ══ PAGE HERO ══ -->
 <div class="page-hero bg-[#16100E] py-14 px-[5%] text-center text-white border-b border-white/10">
-    <div class="max-w-[800px] mx-auto">
-        <div class="breadcrumb flex items-center justify-center gap-2 text-xs text-white/50 mb-3">
-            <a href="{{ route('home') }}" class="hover:text-[#DCA134] transition-colors">Home</a>
-            <span>/</span>
-            <span class="text-white/80">Taxi Services</span>
+    <div class="max-w-[800px] mx-auto relative z-20">
+        <div class="breadcrumb flex items-center justify-center gap-2 text-xs text-white/50 mb-3 relative z-20">
+            <a id="breadcrumb-link-home" href="{{ route('home') }}" class="text-white/85 hover:text-[#DCA134] underline underline-offset-4 cursor-pointer font-medium transition-colors">Home</a>
+            <span class="text-white/40">/</span>
+            <span class="text-white/90">Taxi Services</span>
         </div>
         <span class="bg-[#DCA134]/15 border border-[#DCA134]/30 text-[#DCA134] inline-block py-1 px-3.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
             Reliable & Comfortable
@@ -80,9 +123,9 @@
             <!-- Capacity Buttons -->
             <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-bold text-[#16100E] uppercase mr-1">Capacity:</span>
-                <button class="filter-cap-btn py-1 px-3.5 rounded-[6px] text-xs font-semibold border border-[#9E2A2B] bg-[#9E2A2B] text-white cursor-pointer transition-colors active" onclick="filterByCapacity('all', this)">All</button>
+                <button class="filter-cap-btn py-1 px-3.5 rounded-[6px] text-xs font-semibold cursor-pointer transition-colors active" onclick="filterByCapacity('all', this)">All</button>
                 @foreach($capacities as $cap)
-                    <button class="filter-cap-btn py-1 px-3.5 rounded-[6px] text-xs font-semibold border border-[#e5e7eb] bg-white text-[#6B7A8D] hover:border-[#9E2A2B] hover:text-[#9E2A2B] cursor-pointer transition-colors" onclick="filterByCapacity('{{ $cap->passenger_capacity }}', this)">{{ $cap->label }}</button>
+                    <button class="filter-cap-btn py-1 px-3.5 rounded-[6px] text-xs font-semibold cursor-pointer transition-colors" onclick="filterByCapacity('{{ $cap->passenger_capacity }}', this)">{{ $cap->label }}</button>
                 @endforeach
             </div>
 
@@ -235,11 +278,9 @@
     function filterByCapacity(cap, btnEl) {
         activeCapacity = cap;
         document.querySelectorAll('.filter-cap-btn').forEach(b => {
-            b.classList.remove('bg-[#9E2A2B]', 'text-white', 'border-[#9E2A2B]');
-            b.classList.add('bg-white', 'text-[#6B7A8D]', 'border-[#e5e7eb]');
+            b.classList.remove('active');
         });
-        btnEl.classList.remove('bg-white', 'text-[#6B7A8D]', 'border-[#e5e7eb]');
-        btnEl.classList.add('bg-[#9E2A2B]', 'text-white', 'border-[#9E2A2B]');
+        btnEl.classList.add('active');
         applyFilters();
     }
 

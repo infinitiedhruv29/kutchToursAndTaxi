@@ -12,11 +12,11 @@
 
 <!-- ══ PAGE HERO ══ -->
 <div class="page-hero bg-[#16100E] py-14 px-[5%] text-center text-white border-b border-white/10">
-    <div class="max-w-[800px] mx-auto">
-        <div class="breadcrumb flex items-center justify-center gap-2 text-xs text-white/50 mb-3">
-            <a href="{{ route('home') }}" class="hover:text-[#DCA134] transition-colors">Home</a>
-            <span>/</span>
-            <span class="text-white/80">Photo Gallery</span>
+    <div class="max-w-[800px] mx-auto relative z-20">
+        <div class="breadcrumb flex items-center justify-center gap-2 text-xs text-white/50 mb-3 relative z-20">
+            <a id="breadcrumb-link-home" href="{{ route('home') }}" class="text-white/85 hover:text-[#DCA134] underline underline-offset-4 cursor-pointer font-medium transition-colors">Home</a>
+            <span class="text-white/40">/</span>
+            <span class="text-white/90">Photo Gallery</span>
         </div>
         <span class="bg-[#DCA134]/15 border border-[#DCA134]/30 text-[#DCA134] inline-block py-1 px-3.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
             Visual Journey
@@ -48,16 +48,16 @@
         outline: none;
     }
     .gallery-filter-btn:hover {
-        border-color: #9E2A2B;
-        color: #9E2A2B;
+        border-color: var(--orange);
+        color: var(--orange);
     }
     .gallery-filter-btn.active,
     .gallery-filter-btn.active:hover,
     .gallery-filter-btn.active:focus {
-        background-color: #9E2A2B !important;
-        border-color: #9E2A2B !important;
+        background-color: var(--orange) !important;
+        border-color: var(--orange) !important;
         color: #ffffff !important;
-        box-shadow: 0 2px 8px rgba(158, 42, 43, 0.25);
+        box-shadow: 0 2px 10px rgba(var(--orange-rgb, 158, 42, 43), 0.35);
     }
 </style>
 

@@ -28,10 +28,16 @@ This skill provides the comprehensive architectural blueprint of the **Kutch Tou
    - Popular tourist spots and historical destinations in Kutch.
    - Frequently Asked Questions (FAQs) with sanitized rich text answers.
 5. **Business Settings & Invoicing**:
-   - Business branding (logo, dark logo, favicon), phone, WhatsApp, email, physical address, and GST registration.
+   - Business branding (logo, dark logo, favicon, dynamic primary color `#9E2A2B`), phone, WhatsApp, email, physical address, and GST registration.
+   - Dynamic dark midnight derivation (`$darkMidnight`, `$darkLight`) and theme token overrides.
    - Itemized invoicing system for taxi rentals and tour bookings with PDF exports.
 6. **Lead & Inquiry Pipeline**:
    - Booking inquiries for taxis and packages with lifecycle states (`new`, `in_progress`, `confirmed`, `cancelled`).
+7. **SEO & Structured Data (JSON-LD)**:
+   - Dynamic `/sitemap.xml` listing static pages and all active tour package slugs.
+   - Hardened `robots.txt` disallowing `/admin/` and referencing the sitemap.
+   - Comprehensive Schema.org JSON-LD graph (`TravelAgency`, `FAQPage`, `TouristTrip`, `TaxiService`, `BreadcrumbList`).
+   - Dynamic OpenGraph tags and continuous non-stop marquee ticker ribbon.
 
 ---
 

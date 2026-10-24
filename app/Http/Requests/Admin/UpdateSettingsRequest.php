@@ -43,6 +43,7 @@ class UpdateSettingsRequest extends FormRequest
     {
         return [
             'business_name' => ['nullable', 'string', 'max:255'],
+            'primary_color' => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'contact_number' => ['nullable', 'string', 'max:30'],
             'contact_number_2' => ['nullable', 'string', 'max:30'],
             'whatsapp_number' => ['nullable', 'string', 'regex:/^[1-9][0-9]{7,14}$/'],
@@ -69,6 +70,7 @@ class UpdateSettingsRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'primary_color.regex' => 'The primary color must be a valid hex color code (e.g. #9E2A2B).',
             'whatsapp_number.regex' => 'Enter a WhatsApp number with its country code, using 8–15 digits and no leading zero.',
             'general_inclusions.max' => 'Enter no more than 100 inclusions.',
             'general_exclusions.max' => 'Enter no more than 100 exclusions.',

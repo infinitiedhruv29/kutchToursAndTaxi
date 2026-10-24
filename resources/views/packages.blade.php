@@ -5,6 +5,47 @@
 @section('meta_description', 'Book best-selling Kutch holiday tour packages starting ₹24,000. All-inclusive 2N3D, 3N4D, and 4N5D holiday packages to White Rann, Dholavira & Mandvi.')
 @section('meta_keywords', 'Kutch Tour Packages, Kutch tour package, Kutch holiday packages, 2 Nights 3 Days Kutch Tour, 3 Nights 4 Days Kutch, 4 Nights 5 Days Kutch')
 
+@section('schema_json')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@graph": [
+    {
+      "@@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ route('home') }}"
+        },
+        {
+          "@@type": "ListItem",
+          "position": 2,
+          "name": "Tour Packages",
+          "item": "{{ route('packages') }}"
+        }
+      ]
+    },
+    {
+      "@@type": "ItemList",
+      "name": "Kutch Tour Packages",
+      "itemListElement": [
+        @foreach($packages as $index => $pkg)
+        {
+          "@@type": "ListItem",
+          "position": {{ $index + 1 }},
+          "name": {!! json_encode($pkg->title) !!},
+          "url": "{{ route('package.show', $pkg->slug) }}"
+        }@if(!$loop->last),@endif
+        @endforeach
+      ]
+    }
+  ]
+}
+</script>
+@endsection
+
 @section('page_name', 'Tour Packages')
 
 @section('content')
@@ -14,11 +55,11 @@
 
 <!-- ══ PAGE HERO ══ -->
 <div class="page-hero bg-[#16100E] py-14 px-[5%] text-center text-white border-b border-white/10">
-    <div class="max-w-[800px] mx-auto">
-        <div class="breadcrumb flex items-center justify-center gap-2 text-xs text-white/50 mb-3">
-            <a href="{{ route('home') }}" class="hover:text-[#DCA134] transition-colors">Home</a>
-            <span>/</span>
-            <span class="text-white/80">Tour Packages</span>
+    <div class="max-w-[800px] mx-auto relative z-20">
+        <div class="breadcrumb flex items-center justify-center gap-2 text-xs text-white/50 mb-3 relative z-20">
+            <a id="breadcrumb-link-home" href="{{ route('home') }}" class="text-white/85 hover:text-[#DCA134] underline underline-offset-4 cursor-pointer font-medium transition-colors">Home</a>
+            <span class="text-white/40">/</span>
+            <span class="text-white/90">Tour Packages</span>
         </div>
         <span class="bg-[#DCA134]/15 border border-[#DCA134]/30 text-[#DCA134] inline-block py-1 px-3.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
             Handcrafted Itineraries
@@ -136,7 +177,7 @@
 </section>
 
 <!-- ══ CUSTOM TOUR PROPOSAL BANNER ══ -->
-<section class="py-14 px-[5%] bg-[#16100E] text-white">
+<section class="cta-banner py-14 px-[5%] text-white">
     <div class="max-w-[900px] mx-auto text-center">
         <h3 class="font-display text-2xl md:text-3xl font-bold mb-3">Want a Custom Tour Itinerary?</h3>
         <p class="text-white/70 text-sm max-w-[560px] mx-auto mb-6">

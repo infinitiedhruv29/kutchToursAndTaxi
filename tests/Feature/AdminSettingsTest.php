@@ -346,4 +346,53 @@ class AdminSettingsTest extends TestCase
             ->assertSee('src="/storage/branding/dark.png"', false)
             ->assertDontSee('http://localhost:8000/storage', false);
     }
+
+    public function test_primary_color_can_be_updated_and_validated(): void
+    {
+        $user = User::factory()->create();
+
+        // Valid hex color update
+        $this->actingAs($user)->put('/admin/settings', [
+            'primary_color' => '#0F766E',
+        ])->assertRedirect('/admin/settings')->assertSessionHasNoErrors();
+
+        $this->assertSame('#0F766E', Setting::findOrFail(1)->primary_color);
+
+        // Edit view displays current primary color and swatches
+        $this->get('/admin/settings')
+            ->assertOk()
+            ->assertSee('value="#0F766E"', false)
+            ->assertSee('Terracotta Maroon (Default)');
+
+        // Invalid hex code is rejected
+        $this->actingAs($user)->put('/admin/settings', [
+            'primary_color' => 'not-a-color',
+        ])->assertSessionHasErrors('primary_color');
+
+        $this->actingAs($user)->put('/admin/settings', [
+            'primary_color' => '#GGGGGG',
+        ])->assertSessionHasErrors('primary_color');
+    }
+
+    public function test_frontend_renders_configured_primary_color(): void
+    {
+        Setting::current()->fill([
+            'primary_color' => '#1A355E',
+        ])->save();
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('--orange: #1A355E', false)
+            ->assertSee('--primary-rgb: 26, 53, 94', false)
+            ->assertSee('--navy:', false)
+            ->assertSee('orange: \'#1A355E\'', false)
+            ->assertSee('style="color: var(--orange);"', false)
+            ->assertSee('.page-hero::before', false)
+            ->assertSee('.footer::before', false)
+            ->assertSee('.cta-banner::before', false);
+
+        $this->get('/gallery')
+            ->assertOk()
+            ->assertSee('.gallery-filter-btn.active', false);
+    }
 }

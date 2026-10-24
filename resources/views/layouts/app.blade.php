@@ -32,6 +32,190 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
+    @php
+        $primaryColor = $settings->primary_color ?? '#9E2A2B';
+        $hex = ltrim($primaryColor, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+        $primaryRgb = "{$r}, {$g}, {$b}";
+
+        // Compute midnight dark base from primary color (eliminates hardcoded reddish #16100E/#140E0D base)
+        $darkR = max(8, min(24, (int) round($r * 0.08)));
+        $darkG = max(8, min(24, (int) round($g * 0.08)));
+        $darkB = max(10, min(32, (int) round($b * 0.10)));
+        $darkMidnight = sprintf('#%02x%02x%02x', $darkR, $darkG, $darkB);
+
+        // Slightly lighter midnight shade for cards/borders
+        $lightR = max(16, min(38, (int) round($r * 0.14)));
+        $lightG = max(16, min(38, (int) round($g * 0.14)));
+        $lightB = max(20, min(48, (int) round($b * 0.16)));
+        $darkLight = sprintf('#%02x%02x%02x', $lightR, $lightG, $lightB);
+    @endphp
+    <style>
+        :root {
+            --orange: {{ $primaryColor }};
+            --orange-rgb: {{ $primaryRgb }};
+            --orange-dark: {{ $primaryColor }};
+            --primary: {{ $primaryColor }};
+            --primary-rgb: {{ $primaryRgb }};
+            --primary-color: {{ $primaryColor }};
+            --navy: {{ $darkMidnight }};
+            --navy-light: {{ $darkLight }};
+        }
+
+        /* ── HEADER NAVIGATION SHADE & BORDER ── */
+        .nav {
+            border-color: rgba({{ $primaryRgb }}, 0.18) !important;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba({{ $primaryRgb }}, 0.25) !important;
+        }
+        .nav.scrolled {
+            border-color: rgba({{ $primaryRgb }}, 0.25) !important;
+            box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba({{ $primaryRgb }}, 0.3) !important;
+        }
+
+        /* ── HOME HERO & INNER PAGE HERO (DARK SHADE OF PRIMARY COLOR) ── */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background-color: {{ $darkMidnight }} !important;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 70% 30%, rgba({{ $primaryRgb }}, 0.24) 0%, transparent 68%) !important;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .page-hero {
+            position: relative;
+            overflow: hidden;
+            background-color: {{ $darkMidnight }} !important;
+        }
+        .page-hero::before {
+            background: radial-gradient(ellipse at 60% 40%, rgba({{ $primaryRgb }}, 0.22) 0%, transparent 65%) !important;
+            pointer-events: none !important;
+        }
+        .hero-blob-1 {
+            background: radial-gradient(circle, rgba({{ $primaryRgb }}, 0.20) 0%, transparent 70%) !important;
+            pointer-events: none !important;
+        }
+
+        /* ── FOOTER (DARK SHADE OF PRIMARY COLOR, MATCHING HEADER SHADE) ── */
+        .footer {
+            position: relative;
+            overflow: hidden;
+            background-color: {{ $darkMidnight }} !important;
+            border-top: 1px solid rgba({{ $primaryRgb }}, 0.25) !important;
+        }
+        .footer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba({{ $primaryRgb }}, 0.22) 0%, transparent 70%) !important;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .footer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, {{ $primaryColor }}, transparent);
+            opacity: 0.9;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .footer > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── BOTTOM CTA BANNER (DARK SHADE OF PRIMARY COLOR, MATCHING HEADER SHADE) ── */
+        .cta-banner {
+            position: relative;
+            overflow: hidden;
+            background-color: {{ $darkMidnight }} !important;
+            border-top: 1px solid rgba({{ $primaryRgb }}, 0.25) !important;
+            border-bottom: 1px solid rgba({{ $primaryRgb }}, 0.20) !important;
+        }
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba({{ $primaryRgb }}, 0.22) 0%, transparent 70%) !important;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .cta-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 15%;
+            right: 15%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, {{ $primaryColor }}, transparent);
+            opacity: 0.9;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .cta-banner > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── BUTTONS, TABS & WIDGETS ── */
+        #link-hero-explore-packages, .btn-primary {
+            background-color: {{ $primaryColor }} !important;
+            background: {{ $primaryColor }} !important;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 8px 28px rgba({{ $primaryRgb }}, 0.4) !important;
+        }
+        .gallery-filter-btn.active,
+        .gallery-filter-btn.active:hover,
+        .gallery-filter-btn.active:focus {
+            background-color: {{ $primaryColor }} !important;
+            border-color: {{ $primaryColor }} !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 10px rgba({{ $primaryRgb }}, 0.35) !important;
+        }
+        .gallery-filter-btn:hover {
+            border-color: {{ $primaryColor }} !important;
+            color: {{ $primaryColor }} !important;
+        }
+        .filter-cap-btn.active {
+            background-color: {{ $primaryColor }} !important;
+            border-color: {{ $primaryColor }} !important;
+            color: #ffffff !important;
+        }
+        .filter-cap-btn:hover {
+            border-color: {{ $primaryColor }} !important;
+            color: {{ $primaryColor }} !important;
+        }
+        .ticker-wrap {
+            background-color: {{ $primaryColor }} !important;
+            border-color: rgba(0, 0, 0, 0.25) !important;
+        }
+
+        /* ── TAILWIND CLASS OVERRIDES FOR BRAND COLOR ── */
+        .text-\[\#9E2A2B\], .text-\[\#9e2a2b\] { color: {{ $primaryColor }} !important; }
+        .bg-\[\#9E2A2B\], .bg-\[\#9e2a2b\] { background-color: {{ $primaryColor }} !important; }
+        .border-\[\#9E2A2B\], .border-\[\#9e2a2b\] { border-color: {{ $primaryColor }} !important; }
+        .hover\:border-\[\#9E2A2B\]:hover, .hover\:border-\[\#9e2a2b\]:hover { border-color: {{ $primaryColor }} !important; }
+        .hover\:bg-\[\#9E2A2B\]:hover, .hover\:bg-\[\#9e2a2b\]:hover { background-color: {{ $primaryColor }} !important; }
+        .hover\:text-\[\#9E2A2B\]:hover, .hover\:text-\[\#9e2a2b\]:hover { color: {{ $primaryColor }} !important; }
+        .focus\:border-\[\#9E2A2B\]:focus, .focus\:border-\[\#9e2a2b\]:focus { border-color: {{ $primaryColor }} !important; }
+        .border-\[\#9E2A2B\]\/40 { border-color: rgba({{ $primaryRgb }}, 0.4) !important; }
+        .hover\:border-\[\#9E2A2B\]\/40:hover { border-color: rgba({{ $primaryRgb }}, 0.4) !important; }
+    </style>
+
     <script src="{{ asset('js/tailwind.js') }}"></script>
     <script>
         tailwind.config = {
@@ -40,8 +224,9 @@
                     colors: {
                         navy: '#16100E',
                         'navy-light': '#231B19',
-                        orange: '#9E2A2B',
-                        'orange-dark': '#7F1D1D',
+                        orange: '{{ $primaryColor }}',
+                        'orange-dark': '{{ $primaryColor }}',
+                        primary: '{{ $primaryColor }}',
                         indigo: '#1A355E',
                         teal: '#1A355E',
                         light: '#F6F3EC',

@@ -17,11 +17,13 @@ use App\Http\Controllers\Admin\VehicleTypeController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TaxiController;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/taxi', [TaxiController::class, 'index'])->name('taxi');
 Route::get('/packages', [PackageController::class, 'index'])->name('packages');
 Route::get('/package-{slug}', [PackageController::class, 'show'])->name('package.show');

@@ -203,8 +203,41 @@ The project includes a robust administrative management portal for taxi routes, 
   - Added DomPDF template `pdf.blade.php` with company header, client metadata, pricing tiers (2P/4P/6P), day-by-day itinerary with spots visited, inclusions/exclusions, and terms.
   - Authored feature test suite in `AdminPackageBuilderTest.php`: all 135 tests passing (1,440 assertions).
 - **Pending Tasks**:
-  - Manual review and verification by user in browser.
-  - Local commit, merge into `master`, and remote push after approval.
+  - Feature 2 verified and merged to master.
   - Proceed with Feature 3: Invoice Builder.
+
+---
+
+### Feature 3: Invoice Builder (GST Tax Invoices & Taxi Billing)
+- **Date**: 2026-10-23
+- **Feature**: Tax Invoice Builder, Taxi Distance Calculator & DomPDF Invoice Export (Ported from Kutch Holidays)
+- **Branch**: `feature/admin-invoices`
+- **Files Modified / Created**:
+  - `app/Models/Invoice.php`
+  - `app/Models/InvoiceItem.php`
+  - `app/Http/Requests/Admin/InvoiceRequest.php`
+  - `app/Http/Requests/Admin/InvoiceTableRequest.php`
+  - `app/Http/Controllers/Admin/InvoiceController.php`
+  - `resources/views/admin/invoices/index.blade.php`
+  - `resources/views/admin/invoices/cell.blade.php`
+  - `resources/views/admin/invoices/form.blade.php`
+  - `resources/views/admin/invoices/pdf.blade.php`
+  - `resources/views/admin/partials/navigation.blade.php`
+  - `routes/web.php`
+  - `tests/Feature/AdminInvoiceTest.php`
+- **Logic Changes**:
+  - Implemented `Invoice` and `InvoiceItem` Eloquent models conforming to `#[Fillable]` and modern `casts()` (`business_details` JSON snapshot, decimal money types).
+  - Implemented `Invoice::generateInvoiceNumber()` generating daily sequence numbers (`INV-YYYYMMDD-XXXX`).
+  - Added `InvoiceRequest` computing taxable subtotal, GST rates (0%, 5%, 12%, 18%), and line items parsing for packages, taxi rentals (vehicle * distance * rate per km), and dynamic custom items.
+  - Added `InvoiceTableRequest` for server-side DataTables sorting and filtering.
+  - Implemented `InvoiceController` handling CRUD, database transactions for parent invoice & items sync, AJAX export redirection, and PDF rendering via DomPDF.
+  - Created `pdf.blade.php` tax invoice template featuring company letterhead with base64 logo, customer GSTIN/billing metadata, itemized billing table, tax breakdown, notes, and payment instructions.
+  - Created interactive `form.blade.php` with real-time tax and subtotal computation, taxi vehicle preselection, and dynamic repeater for line items.
+  - Added `Invoices & billing` navigation link to admin workspace.
+  - Authored comprehensive feature test suite: all 140 tests passing (1,485 assertions).
+- **Pending Tasks**:
+  - Manual review and verification by user in browser.
+  - Local commit on `feature/admin-invoices`, merge into `master`, and push to `origin/master`.
+
 
 

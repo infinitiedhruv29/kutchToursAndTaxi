@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\GalleryCategoryController;
 use App\Http\Controllers\Admin\GalleryImageController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\PackageBuilderController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -52,5 +53,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('custom-packages/data', [PackageBuilderController::class, 'data'])->name('custom-packages.data');
         Route::get('custom-packages/{customPackage}/pdf', [PackageBuilderController::class, 'downloadPdf'])->name('custom-packages.pdf');
         Route::resource('custom-packages', PackageBuilderController::class)->except('show')->parameters(['custom-packages' => 'customPackage']);
+        Route::get('invoices/data', [InvoiceController::class, 'data'])->name('invoices.data');
+        Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
+        Route::resource('invoices', InvoiceController::class)->except('show');
     });
 });

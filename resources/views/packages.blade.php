@@ -76,9 +76,29 @@
 <!-- ══ PACKAGES LISTING ══ -->
 <section class="section py-16 px-[5%] bg-[#FDFDFC]">
     <div class="max-w-[1240px] mx-auto">
+        <style>
+            .pkg-card {
+                border: 1px solid #e5e7eb;
+                border-radius: 14px;
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .pkg-card:hover {
+                border-color: var(--orange) !important;
+                box-shadow: 0 16px 36px rgba(var(--orange-rgb, 220, 161, 52), 0.14), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+                transform: translateY(-6px);
+            }
+            .pkg-card .pkg-img-wrapper img,
+            .pkg-card .relative img {
+                transition: transform 0.4s ease;
+            }
+            .pkg-card:hover .pkg-img-wrapper img,
+            .pkg-card:hover .relative img {
+                transform: scale(1.05);
+            }
+        </style>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($packages as $pkg)
-                <div class="pkg-card bg-white rounded-[10px] border border-[#e5e7eb] shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col justify-between">
+                <div class="pkg-card bg-white rounded-[14px] border border-[#e5e7eb] shadow-sm overflow-hidden flex flex-col justify-between">
                     <div>
                         <div class="relative h-[220px] overflow-hidden bg-[#F6F3EC]">
                             <img src="{{ asset($pkg->image_path ?? 'images/index-page/white-rann-hero.webp') }}"

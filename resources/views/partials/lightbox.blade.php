@@ -59,8 +59,6 @@
       selector = '.gallery-item-clickable';
     } else if (currentLightboxEl.classList.contains('pkg-gallery-item')) {
       selector = '.pkg-gallery-item';
-    } else if (currentLightboxEl.classList.contains('car-slide')) {
-      selector = '.car-slide';
     } else {
       selector = '[onclick*="openLightbox"]';
     }
@@ -119,32 +117,5 @@
         }
       }, { passive: true });
     }
-
-    let startX = 0;
-    let startY = 0;
-
-    document.querySelectorAll('.car-slide').forEach(slide => {
-      slide.addEventListener('mousedown', e => {
-        startX = e.clientX;
-        startY = e.clientY;
-      });
-
-      slide.addEventListener('touchstart', e => {
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-      }, { passive: true });
-
-      slide.addEventListener('click', e => {
-        const clientX = e.clientX ?? 0;
-        const clientY = e.clientY ?? 0;
-        const dx = clientX - startX;
-        const dy = clientY - startY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        
-        if (clientX === 0 || dist < 20 || isNaN(dist)) {
-          openLightbox(slide);
-        }
-      });
-    });
   });
 </script>

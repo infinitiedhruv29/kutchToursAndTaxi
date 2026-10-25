@@ -34,56 +34,64 @@
 
 <!-- ══ CONTACT INFO CARDS & INQUIRY FORM ══ -->
 <section class="section py-16 px-[5%] bg-[#FDFDFC]">
-    <div class="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <div class="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
         
         <!-- LEFT 1 COLUMN: CONTACT DETAILS -->
-        <div class="space-y-6">
-            <!-- WHATSAPP FAST CARD -->
-            <div class="bg-[#25D366]/10 border border-[#25D366]/30 p-6 rounded-[10px]">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center">
-                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+        <div class="flex flex-col justify-between gap-5 h-full">
+            <!-- WHATSAPP FAST CARD (THEMED WITH PRIMARY COLOR, GREEN WHATSAPP ELEMENTS) -->
+            <div class="flex-1 flex flex-col justify-between p-6 rounded-[14px] transition-all"
+                 style="background: rgba(var(--orange-rgb, 220, 161, 52), 0.08); border: 1px solid rgba(var(--orange-rgb, 220, 161, 52), 0.35);">
+                <div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wide block" style="color: var(--orange);">Fastest Response</span>
+                            <h4 class="font-display font-bold text-base text-[#16100E]">WhatsApp Booking</h4>
+                        </div>
                     </div>
-                    <div>
-                        <span class="text-xs font-bold text-[#1b7e3e] uppercase tracking-wide block">Fastest Response</span>
-                        <h4 class="font-display font-bold text-base text-[#16100E]">WhatsApp Booking</h4>
-                    </div>
+                    <p class="text-xs text-[#16100E]/80 mb-4 leading-relaxed">
+                        Send us your travel dates, preferred vehicle, and pickup time. We usually respond within 5–10 minutes.
+                    </p>
                 </div>
-                <p class="text-xs text-[#16100E]/80 mb-4">
-                    Send us your travel dates, preferred vehicle, and pickup time. We usually respond within 5–10 minutes.
-                </p>
                 <a id="btn-contact-wa-direct"
                    href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to inquire about Kutch tour packages and cabs.') }}"
                    target="_blank"
-                   class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-2.5 px-4 rounded-[6px] font-bold text-xs flex items-center justify-center gap-2 transition-colors">
+                   class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-2.5 px-4 rounded-[8px] font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-sm">
                     <span>Chat on WhatsApp (+91 {{ $waNumber }})</span>
                 </a>
             </div>
 
             <!-- PHONE CALL CARD -->
-            <div class="bg-white border border-[#e5e7eb] p-6 rounded-[10px] shadow-sm">
-                <span class="text-xs font-bold text-[#9E2A2B] uppercase tracking-wide block mb-1">Direct Call</span>
-                <h4 class="font-display font-bold text-base text-[#16100E] mb-2">Speak to Our Travel Desk</h4>
-                <div class="space-y-2 text-xs">
+            <div class="flex-1 flex flex-col justify-between bg-white border border-[#e5e7eb] p-6 rounded-[14px] shadow-sm">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--orange);">Direct Call</span>
+                    <h4 class="font-display font-bold text-base text-[#16100E] mb-2">Speak to Our Travel Desk</h4>
+                </div>
+                <div class="space-y-1.5 text-xs">
                     <p class="text-[#6B7A8D]">Primary Phone:</p>
-                    <a id="link-contact-call-1" href="tel:{{ $phoneTel }}" class="font-bold text-sm text-[#16100E] block hover:text-[#9E2A2B]">{{ $phoneDisplay }}</a>
+                    <a id="link-contact-call-1" href="tel:{{ $phoneTel }}" class="font-bold text-sm text-[#16100E] block hover:text-[var(--orange)] transition-colors">{{ $phoneDisplay }}</a>
                     @if(!empty($settings->contact_number_2))
                         <p class="text-[#6B7A8D] mt-2">Secondary Phone:</p>
-                        <a id="link-contact-call-2" href="tel:{{ preg_replace('/[^0-9+]/', '', $settings->contact_number_2) }}" class="font-bold text-sm text-[#16100E] block hover:text-[#9E2A2B]">{{ $settings->contact_number_2 }}</a>
+                        <a id="link-contact-call-2" href="tel:{{ preg_replace('/[^0-9+]/', '', $settings->contact_number_2) }}" class="font-bold text-sm text-[#16100E] block hover:text-[var(--orange)] transition-colors">{{ $settings->contact_number_2 }}</a>
                     @endif
                 </div>
+                <span class="text-[0.7rem] text-[#6B7A8D] block mt-2">Available 7 Days: 7:00 AM – 10:30 PM</span>
             </div>
 
             <!-- OFFICE ADDRESS CARD -->
-            <div class="bg-white border border-[#e5e7eb] p-6 rounded-[10px] shadow-sm">
-                <span class="text-xs font-bold text-[#9E2A2B] uppercase tracking-wide block mb-1">Local Office</span>
-                <h4 class="font-display font-bold text-base text-[#16100E] mb-2">Bhuj Headquarters</h4>
-                <p class="text-xs text-[#6B7A8D] leading-relaxed mb-3">
-                    {{ $settings->address ?? 'Station Road, Near Bus Station, Bhuj, Kutch, Gujarat — 370001' }}
-                </p>
+            <div class="flex-1 flex flex-col justify-between bg-white border border-[#e5e7eb] p-6 rounded-[14px] shadow-sm">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--orange);">Local Office</span>
+                    <h4 class="font-display font-bold text-base text-[#16100E] mb-1.5">Bhuj Headquarters</h4>
+                    <p class="text-xs text-[#6B7A8D] leading-relaxed">
+                        {{ $settings->address ?? 'Station Road, Near Bus Station, Bhuj, Kutch, Gujarat — 370001' }}
+                    </p>
+                </div>
                 @if(!empty($settings->contact_email))
-                    <div class="pt-2 border-t border-[#f3f4f6]">
-                        <span class="text-[0.68rem] text-[#6B7A8D] block uppercase">Email Address</span>
+                    <div class="pt-2.5 mt-2.5 border-t border-[#f3f4f6]">
+                        <span class="text-[0.68rem] text-[#6B7A8D] block uppercase font-medium">Email Address</span>
                         <a href="mailto:{{ $settings->contact_email }}" class="text-xs font-semibold text-[#16100E] hover:underline">{{ $settings->contact_email }}</a>
                     </div>
                 @endif
@@ -91,32 +99,34 @@
         </div>
 
         <!-- RIGHT 2 COLUMNS: INTERACTIVE WHATSAPP INQUIRY GENERATOR -->
-        <div class="lg:col-span-2">
-            <div class="bg-white p-8 rounded-[10px] border border-[#e5e7eb] shadow-sm">
-                <span class="text-xs font-bold text-[#9E2A2B] uppercase tracking-wide block mb-1">Quick Proposal</span>
-                <h3 class="font-display font-bold text-xl md:text-2xl text-[#16100E] mb-2">Send an Instant Booking Inquiry</h3>
-                <p class="text-[#6B7A8D] text-xs leading-relaxed mb-6">
-                    Fill out the quick details below, and click "Send to WhatsApp". It will instantly format your request and open WhatsApp directly. No sign up required!
-                </p>
+        <div class="lg:col-span-2 h-full flex flex-col">
+            <div class="bg-white p-7 sm:p-8 rounded-[14px] border border-[#e5e7eb] shadow-sm h-full flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--orange);">Quick Proposal</span>
+                    <h3 class="font-display font-bold text-xl md:text-2xl text-[#16100E] mb-1.5">Send an Instant Booking Inquiry</h3>
+                    <p class="text-[#6B7A8D] text-xs leading-relaxed mb-6">
+                        Fill out the quick details below, and click "Send to WhatsApp". It will instantly format your request and open WhatsApp directly. No sign up required!
+                    </p>
+                </div>
 
-                <form id="contact-form" onsubmit="handleInquirySubmit(event)" class="space-y-4">
+                <form id="contact-form" onsubmit="handleInquirySubmit(event)" class="space-y-4 flex-1 flex flex-col justify-between">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#16100E] mb-1">Your Full Name *</label>
                             <input type="text" id="inq-name" required placeholder="e.g. Ramesh Patel"
-                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[#9E2A2B]">
+                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[var(--orange)]">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#16100E] mb-1">Mobile / WhatsApp Number *</label>
                             <input type="tel" id="inq-phone" required placeholder="e.g. +91 98765 43210"
-                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[#9E2A2B]">
+                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[var(--orange)]">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#16100E] mb-1">Service Needed *</label>
-                            <select id="inq-service" class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[#9E2A2B]">
+                            <select id="inq-service" class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[var(--orange)]">
                                 <option value="Tour Package (2N/3D Kutch Classic)">Tour Package — 2N3D Kutch Classic</option>
                                 <option value="Tour Package (3N/4D White Rann & Dholavira)" selected>Tour Package — 3N4D White Rann & Dholavira</option>
                                 <option value="Tour Package (4N/5D Kutch Grand Explorer)">Tour Package — 4N5D Kutch Grand Explorer</option>
@@ -130,7 +140,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-[#16100E] mb-1">Approximate Travel Date</label>
                             <input type="text" id="inq-dates" placeholder="e.g. 15th to 18th Dec 2026"
-                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[#9E2A2B]">
+                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[var(--orange)]">
                         </div>
                     </div>
 
@@ -138,24 +148,25 @@
                         <div>
                             <label class="block text-xs font-semibold text-[#16100E] mb-1">Number of Passengers</label>
                             <input type="number" id="inq-passengers" min="1" max="50" placeholder="e.g. 4 adults, 1 child"
-                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[#9E2A2B]">
+                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[var(--orange)]">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#16100E] mb-1">Pickup Location</label>
                             <input type="text" id="inq-pickup" placeholder="e.g. Bhuj Railway Station / Airport"
-                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[#9E2A2B]">
+                                   class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[var(--orange)]">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-[#16100E] mb-1">Special Notes / Requirements</label>
                         <textarea id="inq-notes" rows="3" placeholder="Tell us about train/flight timings, hotel budget preferences, or specific places you wish to visit..."
-                                  class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[#9E2A2B]"></textarea>
+                                  class="w-full border border-[#e5e7eb] rounded-[6px] p-2.5 text-xs text-[#16100E] outline-none focus:border-[var(--orange)]"></textarea>
                     </div>
 
                     <button type="submit"
                             id="btn-submit-inquiry-wa"
-                            class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-3 px-6 rounded-[6px] font-bold text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer">
+                            class="w-full text-white py-3.5 px-6 rounded-[8px] font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md hover:shadow-lg mt-2"
+                            style="background: var(--orange);">
                         <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
                         <span>Send Booking Inquiry to WhatsApp</span>
                     </button>

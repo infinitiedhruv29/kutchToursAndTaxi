@@ -356,6 +356,14 @@ button {
   padding-top: 76px;
 }
 
+body[data-page="Home"] {
+  background: var(--navy);
+}
+
+body[data-page="Home"] .page-wrapper {
+  padding-top: 0 !important;
+}
+
 /* ══════════════════════════════
    FOOTER
 ══════════════════════════════ */
@@ -807,6 +815,34 @@ button {
   align-items: center;
 }
 
+.hero-taxi-centered {
+  min-height: 90vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 140px;
+  padding-bottom: 70px;
+  background-size: cover;
+  background-position: center 55%;
+  background-repeat: no-repeat;
+}
+
+@media(max-width:900px) {
+  .hero-taxi-centered {
+    padding-top: 120px;
+    padding-bottom: 50px;
+  }
+}
+
+@media(max-width:600px) {
+  .hero-taxi-centered {
+    padding-top: 105px;
+    padding-bottom: 40px;
+  }
+}
+
 .hero-blob {
   position: absolute;
   border-radius: 50%;
@@ -827,6 +863,28 @@ button {
   background: radial-gradient(circle, rgba(220, 161, 52, 0.08) 0%, transparent 70%);
   bottom: -150px;
   left: 100px;
+}
+
+/* ══════════════════════════════
+   ROUTE & VEHICLE CARDS
+══════════════════════════════ */
+.route-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.route-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.09);
+  border-color: rgba(var(--primary-rgb, 158, 42, 43), 0.3);
+}
+
+.vehicle-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.09);
 }
 
 /* ══════════════════════════════
@@ -1089,6 +1147,7 @@ button {
   position: relative;
   flex-shrink: 0;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .car-slide img {
@@ -1351,27 +1410,174 @@ button {
 }
 
 /* ══════════════════════════════
-   FAQ ACCORDION
+   HERO CLEARANCE & SPACING
+   ══════════════════════════════ */
+.hero-taxi-centered {
+  padding-top: 175px !important;
+  padding-bottom: 80px !important;
+}
+
+@media (max-width: 768px) {
+  .hero-taxi-centered {
+    padding-top: 135px !important;
+    padding-bottom: 60px !important;
+  }
+}
+
+/* ══════════════════════════════
+   DESTINATIONS CAROUSEL (BORDERLESS, EXPANDED & SMOOTH)
+   ══════════════════════════════ */
+.destinations-carousel {
+  height: 560px;
+  max-height: 600px;
+  aspect-ratio: auto;
+  border-radius: 20px;
+  border: none !important;
+  box-shadow: 0 20px 48px rgba(22, 16, 14, 0.12);
+  background: var(--navy);
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .destinations-carousel {
+    height: 420px;
+  }
+}
+
+/* ══════════════════════════════
+   CARD HIGHLIGHTS & HOVER PHYSICS (PRIMARY BRAND COLOR #DCA134)
+   ══════════════════════════════ */
+.vehicle-card,
+.route-card,
+.pkg-card,
+.testimonial-card {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow, border-color;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-6px);
+  border-color: #DCA134 !important;
+  box-shadow: 0 20px 40px -10px rgba(220, 161, 52, 0.22), 0 0 0 1.5px #DCA134;
+}
+
+.route-card:hover {
+  transform: translateY(-5px);
+  border-color: #DCA134 !important;
+  box-shadow: 0 18px 38px -10px rgba(220, 161, 52, 0.20), 0 0 0 1.5px #DCA134;
+}
+
+.pkg-card:hover {
+  transform: translateY(-6px);
+  border-color: #DCA134 !important;
+  box-shadow: 0 24px 48px -12px rgba(220, 161, 52, 0.24), 0 0 0 1.5px #DCA134;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(220, 161, 52, 0.4) !important;
+  box-shadow: 0 18px 36px -10px rgba(220, 161, 52, 0.12);
+}
+
+/* ══════════════════════════════
+   FAQ ACCORDION DROPDOWN
    ══════════════════════════════ */
 .faq-item {
-  transition: border-color var(--transition), box-shadow var(--transition);
+  background: #ffffff;
+  border: 1px solid rgba(22, 16, 14, 0.10);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 12px;
+}
+
+.faq-item:hover {
+  border-color: rgba(158, 42, 43, 0.4);
 }
 
 .faq-item.open {
   border-color: var(--orange);
-  box-shadow: 0 4px 20px rgba(11, 31, 58, 0.06);
+  box-shadow: 0 8px 24px rgba(22, 16, 14, 0.06);
 }
 
-.faq-item .faq-a {
+.faq-q {
+  padding: 18px 24px;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--navy);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  gap: 16px;
+  transition: color 0.2s ease;
+}
+
+.faq-item:hover .faq-q {
+  color: var(--orange-dark);
+}
+
+.faq-q .faq-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(var(--orange-rgb, 231, 190, 103), 0.14);
+  color: var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.faq-icon-minus {
+  display: none !important;
+}
+
+.faq-icon-plus {
+  display: block !important;
+}
+
+.faq-item.open .faq-q .faq-icon {
+  background: var(--orange);
+  color: var(--primary-text, #111111);
+}
+
+.faq-item.open .faq-icon-plus {
+  display: none !important;
+}
+
+.faq-item.open .faq-icon-minus {
+  display: block !important;
+}
+
+.faq-a {
   display: none;
+  padding: 0 24px 20px 24px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: #4b5563;
+  border-top: 1px solid rgba(22, 16, 14, 0.05);
+  padding-top: 14px;
 }
 
 .faq-item.open .faq-a {
   display: block;
+  animation: faqFadeIn 0.3s ease;
 }
 
-.faq-item.open .faq-q::after {
-  content: '－';
+@keyframes faqFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -1382,7 +1588,5 @@ button {
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
   -ms-overflow-style: none;
-  /* IE and Edge */
   scrollbar-width: none;
-  /* Firefox */
 }

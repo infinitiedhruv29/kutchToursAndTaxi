@@ -59,6 +59,16 @@
         color: #ffffff !important;
         box-shadow: 0 2px 10px rgba(var(--orange-rgb, 158, 42, 43), 0.35);
     }
+    .gallery-item-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .gallery-item-card:hover {
+        border-color: var(--orange) !important;
+        box-shadow: 0 16px 36px rgba(var(--orange-rgb, 220, 161, 52), 0.15), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+        transform: translateY(-6px);
+    }
 </style>
 
         <!-- Category Filter Tabs -->
@@ -73,17 +83,17 @@
             @endforeach
         </div>
 
-        <!-- Images Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5" id="gallery-container">
+        <!-- Images Grid: 3 Columns with Expanded Image Dimensions -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7" id="gallery-container">
             @forelse($images as $img)
-                <div class="gallery-item-card relative h-[240px] rounded-[10px] overflow-hidden border border-[#e5e7eb] shadow-sm group cursor-pointer gallery-item-clickable"
+                <div class="gallery-item-card relative h-[300px] sm:h-[320px] md:h-[350px] rounded-[14px] overflow-hidden border border-[#e5e7eb] shadow-sm group cursor-pointer gallery-item-clickable"
                      data-cat="{{ $img->gallery_category_id }}"
                      onclick="openLightbox(this)">
                     <img src="{{ $img->image_url }}"
                          alt="{{ $img->image_alt ?? $img->caption }}"
                          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                        <span class="text-white text-xs font-semibold dest-name">{{ $img->caption ?? 'Kutch Sight' }}</span>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                        <span class="text-white text-sm sm:text-base font-semibold dest-name tracking-wide">{{ $img->caption ?? 'Kutch Sight' }}</span>
                     </div>
                 </div>
             @empty

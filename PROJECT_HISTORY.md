@@ -653,6 +653,278 @@ The project includes a robust administrative management portal for taxi routes, 
   - Scaled footer logo to 100px height (~141px width).
   - Rebuilt Vite bundle (`npm run build`) and cleared application caches (`php artisan optimize:clear`).
 
+---
 
+### Home Page Taxi-First Redesign & Dynamic Tour Packages
+- **Date**: 2026-10-25
+- **Feature**: Road to Heaven Centered Hero, Primary Taxi & Cab Sections, Dribbble Journey Cards & Dynamic Package Toggling
+- **Files Modified**:
+  - `resources/views/partials/header.blade.php`
+  - `resources/views/index.blade.php`
+  - `public/css/style.css`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Navbar Reordering & Dynamic Packages**: Re-ordered header links so `Taxi Services` immediately follows `Home`. Added dynamic check `\App\Models\Package::where('is_published', true)->exists()` to conditionally render the `Tour Packages` link in both desktop and mobile slideout navigation. If 0 packages are published, `Tour Packages` is completely hidden.
+  - **Centered Road to Heaven Hero**: Replaced the 2-column split with a full-bleed aerial `road_to_heaven_2.webp` background with a cinematic dark gradient scrim. Centered all typography, headlines, and CTAs. Removed the 3 floating image cards. Focused copy on **Kutch Taxi & Cab Services**, Bhuj Airport/Station pickups, and transparent per-km billing.
+  - **Dribbble-Inspired Route Cards**: Upgraded popular taxi routes with an origin-to-destination connector banner, distance, estimated travel time, transparent round-trip/one-way pricing, and instant WhatsApp booking.
+  - **AC Taxi Fleet Showcase**: Positioned clean vehicle cards right below popular routes with commercial capacity badges, rate per km (`₹13/km`), and WhatsApp cab booking.
+  - **Why Choose Us Service Standards**: Added 4-pillar trust section (24/7 Bhuj station pickup, experienced Kutchi chauffeurs, transparent per-km rates with zero surge, and sanitized AC cabs).
+  - **Conditional Secondary Tour Packages**: Placed tour packages section below taxi services, wrapped in `@if($packages->isNotEmpty()) ... @endif` so that if no packages are added, the section does not render on the home page.
+  - **Enhanced SEO & Rich Snippets**: Added `TaxiService` structured data to JSON-LD `@graph` covering Bhuj station, airport, White Rann, and outstation routes.
+- **Verification**:
+  - Compiled Vite assets: `npm.cmd run build` (63 modules transformed, 0 errors).
+  - Cleared caches: `php artisan view:clear` and `php artisan optimize:clear`.
+  - Ran `FrontendTest.php`: 8/8 passed (42 assertions).
+  - Ran `AdminToFrontendEndToEndCrudTest.php`: 9/9 passed (181 assertions).
+  - Ran full test suite: **166/166 passed (1,839 assertions)** with zero failures and zero regressions.
+
+---
+
+### UI Polish: Top Bar Elimination, Green Glow Removal & Editorial Image-Backed Cards
+- **Date**: 2026-10-25
+- **Feature**: Full-Bleed Top Hero Flush Behind Navbar, Green Shadow Removal & Photo Overlay Trust Cards
+- **Files Modified**:
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/index.blade.php`
+  - `public/css/style.css`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Removed Top White Gap**: Reset `body[data-page="Home"] .page-wrapper` padding-top to `0 !important` and set `body[data-page="Home"]` background to dark midnight shade. Styled `.hero-taxi-centered` with `padding-top: 140px` (desktop), `120px` (tablet), and `105px` (mobile), letting the Road to Heaven aerial background seamlessly span from `top: 0` directly behind the fixed floating navbar without any white bar or strip.
+  - **Removed Green Neon Highlights**: Removed `box-shadow: 0 10px 24px rgba(37,211,102,0.35)` from both the hero and bottom CTA WhatsApp booking buttons, eliminating the neon glow halo behind the buttons.
+  - **Single-Line Section Heading**: Expanded the "Why Choose Us" container to `max-w-[960px]` and styled the heading as `Why Choose Us for Your Kutch Taxi Rentals`, fitting on a single clean line on desktop.
+  - **Editorial Photo Overlay Cards**: Replaced generic pastel-icon white boxes with 4 photography-first editorial cards with rich gradient scrims, subtle image zoom on hover (`scale-110`), and gold numbering tags (`01 • Punctual Pickup`, `02 • Local Expertise`, `03 • Zero Hidden Fees`, `04 • Comfort & Safety`). Completely removed emoji icons and AI-typical card templates.
+- **Verification**:
+  - Rebuilt Vite bundle: `npm.cmd run build` (built in 6.75s, 0 errors).
+  - Cleared caches: `php artisan optimize:clear`.
+  - Ran `FrontendTest.php`: 8/8 passed (42 assertions).
+  - Ran `AdminToFrontendEndToEndCrudTest.php`: 9/9 passed (181 assertions).
+
+---
+
+### Home Page Redesign: Destinations Carousel, Entrance Animations, Card Highlights & FAQ Dropdowns
+- **Date**: 2026-10-25
+- **Feature**: Auto-Advancing Destinations Carousel, Hero Clearance & Staggered Animations, Kutch Holidays Card Physics, Full-Card Clickable Tour Packages, Elevated Reviews & Interactive FAQ Dropdowns
+- **Files Modified**:
+  - `resources/views/index.blade.php`
+  - `public/css/style.css`
+  - `public/js/carousel.js`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Hero Clearance & Breathing Room**: Increased `.hero-taxi-centered` top padding to `175px !important` on desktop and `135px !important` on mobile, providing ~60px of breathing space between the floating 98px navbar and the eyebrow badge. Added top margin to the badge so it does not crowd the navbar.
+  - **Page Load Entrance Animations**: Integrated staggered `fadeUp` keyframe animations matching `kutch-holidays` across the hero badge (`0s`), H1 headline (`0.1s`), subheading (`0.2s`), CTAs (`0.3s`), contacts (`0.35s`), and trust statistics (`0.4s`), giving a fluid initial page entrance.
+  - **Auto-Advancing Destinations Carousel**: Converted the 6-destination grid into an auto-playing carousel (`.carousel.destinations-carousel`) with smooth slide transitions, 4-second auto-play intervals (`public/js/carousel.js`), pause-on-hover, prev/next arrows, and dot indicators. Each slide features a high-definition photograph, gradient scrim, the place name, and a crisp one-liner significance description.
+  - **Kutch Holidays Card Highlight Physics**: Applied dynamic hover interactions to vehicle fleet cards (`.vehicle-card`), route cards (`.route-card`), and package cards (`.pkg-card`) with smooth 6px elevation, `--orange` (#9E2A2B) border transitions, multi-layer soft drop shadows (`0 20px 40px -10px rgba(22, 16, 14, 0.12)`), and smooth image zooming (`scale-108`).
+  - **Full-Card Clickable Tour Packages**: Redesigned `.pkg-card` with editorial badges and made the entire card surface clickable to navigate directly to the package details page (`onclick="window.location='{{ route('package.show', $pkg->slug) }}'"`), while keeping the explicit `Details →` button active and stopping event propagation on the WhatsApp booking button.
+  - **Elevated Guest Reviews**: Redesigned testimonial cards with gold 5.0 rating stars, quotation accents, two-letter avatar initials circles, and verified guest checkmark badges.
+  - **Interactive FAQ Accordion**: Converted static FAQ cards into an interactive accordion dropdown (`.faq-item`, `.faq-q`, `.faq-icon`, `.faq-a`). Questions feature comfortable font sizes (`1.02rem`), animated `＋`/`－` icon rotation, smooth reveal transitions, and crisp, easily understandable answers.
+  - **Bottom CTA Copy**: Updated heading from `"Book Your Clean AC Cab in Minutes"` to `"Book Your AC Cab Now"`.
+- **Verification**:
+  - Compiled Vite assets: `npm.cmd run build` (built in 4.82s, 0 errors).
+  - Cleared Laravel caches: `php artisan optimize:clear`.
+  - Ran full test suite: **166/166 passed (1,839 assertions)** with zero failures and zero regressions.
+
+---
+
+### Home Page & Footer Polish: Primary Color Highlights, Infinite Circular Carousel & Conditional Footer Links
+- **Date**: 2026-10-25
+- **Feature**: Brand Primary Color Card Highlights, Continuous Wheel Carousel, One-Liner Significance Clamping & Footer Quick Links Conditioning
+- **Files Modified**:
+  - `resources/views/index.blade.php`
+  - `public/css/style.css`
+  - `public/js/carousel.js`
+  - `resources/views/partials/footer.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Brand Primary Color Card Highlights**: Replaced all red (`#9E2A2B`) card hover borders, shadow rings, titles, and badge accents in **Popular Kutch Taxi Routes**, **Our Clean AC Taxi Fleet**, and **Top-Rated Kutch Tour Packages** with the website's primary desert gold brand color (`#DCA134` / marigold). Card hover glow now projects `box-shadow: 0 20px 40px -10px rgba(220, 161, 52, 0.22), 0 0 0 1.5px #DCA134` and `border-color: #DCA134 !important`.
+  - **Continuous Infinite Wheel Carousel**: Completely rewrote `public/js/carousel.js` using cloned boundary slides (`firstClone` / `lastClone`) and seamless `transitionend` coordinate resets. The carousel now rotates continuously like a circular wheel without rewinding or sliding backward through all slides upon completion. Auto-advance interval set to a relaxed 5.5s with a smooth, natural decelerating transition curve (`cubic-bezier(0.25, 1, 0.5, 1)`).
+  - **Carousel Geometry & Typography**:
+    - Removed black borders entirely (`border: none !important;`).
+    - Increased carousel height to `560px` (desktop) and `420px` (mobile).
+    - Removed the destination counter badge ("Destination 1 of 6" / "01 of 06").
+    - Clamped destination significance text to strictly one crisp line using `line-clamp-1 max-w-[820px]`.
+  - **Footer Tour Packages Removal & Conditional Inclusion**:
+    - Removed the standalone "Tour Packages" footer column from `resources/views/partials/footer.blade.php`.
+    - Consolidated footer into 3 balanced columns (`grid-cols-1 md:grid-cols-2 lg:grid-cols-3`).
+    - Inside the "Quick Links" column, conditionally rendered the "Tour Packages" link (`@if(\App\Models\Package::where('is_published', true)->exists())`) matching the navbar and homepage logic.
+- **Verification**:
+  - Rebuilt assets: `npm.cmd run build` (built in 4.72s, 0 errors).
+  - Cleared caches: `php artisan optimize:clear`.
+  - Skipped full test suite per explicit user instruction ("dont run all test all time, this time dont run").
+
+---
+
+### Home Page Refinements: 3-Col Stats Spacing, Primary Cab Enquire Buttons, Clean Carousel Slide Navigation & FAQ Minus Icons
+- **Date**: 2026-10-25
+- **Feature**: Centered 3-Column Trust Numbers, Primary Themed Cab "Enquire" WhatsApp Buttons, AC Badge Removal, Carousel Image Click Slide Navigation, Primary Tour Package "Book Now" Button, and FAQ Plus/Minus Toggle Icons
+- **Files Modified**:
+  - `resources/views/index.blade.php`
+  - `resources/views/partials/lightbox.blade.php`
+  - `public/css/style.css`
+  - `public/js/carousel.js`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Centered 3-Column Trust Numbers**: Adjusted `.hero-stats` layout to `grid grid-cols-3 gap-2 sm:gap-8 max-w-[620px] mx-auto` (responsive font sizing `text-[1.5rem] sm:text-[2rem]`). Perfectly centers and balances the 3 statistic columns across mobile, tablet, and desktop without hanging single items on second rows.
+  - **Cab Cards "Enquire" Button & AC Badge Removal**:
+    - Removed the static top-right "AC" badge from vehicle card image containers.
+    - Replaced the green cab button with the primary theme color (`style="background: var(--orange); color: var(--primary-text);"`).
+    - Added an embedded WhatsApp SVG icon and updated button text to `"Enquire"`.
+  - **Clean Destination Carousel Slide Navigation**:
+    - Removed the description paragraph, "Book Cab", and "View in Gallery" buttons from carousel captions, keeping strictly the place name and photography.
+    - Added visually hidden screen-reader accessibility (`<span class="sr-only">`) to preserve SEO and accessibility signals.
+    - Decoupled `.car-slide` from `lightbox.blade.php` so images never open in an expanded modal.
+    - Updated `public/js/carousel.js` and `.car-slide { cursor: pointer; }` so clicking anywhere on the carousel image/slide smoothly advances to the next slide (`next()`), in addition to the prev/next arrow buttons and swipe gestures.
+  - **Top-Rated Tour Packages Primary Button**:
+    - Replaced the green `bg-[#25D366]` button on tour package cards with the dynamic primary color (`background: var(--orange); color: var(--primary-text);`).
+  - **FAQ Plus/Minus Accordion Toggle**:
+    - Replaced the rotated text glyph with dedicated SVG plus and minus icons.
+    - When open, `.faq-item.open` shows a crisp minus (`—`) icon in `var(--primary-text)` on the primary background, resolving contrast issues on gold/yellow themes and clearly indicating click-to-close behavior.
+- **Verification**:
+  - Compiled Vite assets: `npm.cmd run build` (built in 8.37s, 0 errors).
+  - Cleared caches: `php artisan optimize:clear`.
+  - Ran `FrontendTest.php`: 8/8 passed (42 assertions).
+  - Ran `AdminToFrontendEndToEndCrudTest.php`: 9/9 passed (181 assertions).
+  - Ran full test suite: **166/166 passed (1,839 assertions)** with zero failures.
+
+---
+
+### UI & Content Polish: Destination Name Fixes, FAQ Icon Removal & Footer Admin Link Cleanup
+- **Date**: 2026-10-25
+- **Feature**: Destination Renames ("Road to Heaven" & "Mandvi Beach"), FAQ Right Icon Removal, and Footer Admin Portal Link Removal
+- **Files Modified**:
+  - `database/seeders/DestinationSeeder.php`
+  - `resources/views/index.blade.php`
+  - `resources/views/partials/footer.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Destination Renames**:
+    - Renamed destination record with `road_to_heaven_2.webp` from `"Kalo Dungar (Black Hill)"` to `"Road to Heaven"`.
+    - Simplified `"Mandvi Beach & Vijay Vilas Palace"` to `"Mandvi Beach"`.
+    - Updated both the active database records in `tours_db` and `database/seeders/DestinationSeeder.php`.
+  - **Removed Icon from FAQs**:
+    - Removed the right-hand icon element completely from `.faq-q` in `resources/views/index.blade.php`, leaving a clean, distraction-free accordion headline with primary bullet dot.
+  - **Removed Admin Portal from Footer**:
+    - Removed the `"Admin Portal"` link from the "Quick Links" column in `resources/views/partials/footer.blade.php`.
+- **Verification**:
+  - Cleared caches: `php artisan optimize:clear`.
+  - Ran `FrontendTest.php`: 8/8 passed (42 assertions).
+
+---
+
+### Taxi Page Filter Buttons, Card Hover & "Why Choose Us" Redesign
+- **Date**: 2026-10-25
+- **Feature**: Gallery-Style Capacity Filter Buttons, Dynamic Primary Color Card Hover Lift & Shadows, and Kutch Holidays Styled "Why Choose Us" Service Cards
+- **Files Modified**:
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/taxi.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Capacity Filter Buttons (Matching Gallery Style)**:
+    - Styled all unselected `.filter-cap-btn` buttons with crisp white background, 1px `#e5e7eb` border, rounded corners, and gray text matching the gallery page filter buttons.
+    - On hover (unselected): highlights border and text in dynamic primary color (`var(--orange)`), keeping the background clean white without filling the entire button.
+    - On selection: fills with solid primary color (`var(--orange)`), white text, and subtle colored glow (`box-shadow: 0 2px 10px rgba(var(--orange-rgb), 0.35)`).
+    - Added String casting to JavaScript `filterByCapacity` and `filterByType` with empty results fallback container.
+  - **Fleet Cards Hover Effect**:
+    - Applied smooth cubic-bezier lift (`transform: translateY(-6px)`), primary color border glow (`border-color: var(--orange)`), ambient primary drop shadow (`rgba(var(--orange-rgb), 0.14)`), and subtle vehicle image zoom (`scale(1.05)`).
+    - Styled vehicle card capacity, category, and AC tags with primary accent borders and pill geometry.
+  - **"Why Choose Us" Cards Overhaul (Ported from Kutch Holidays with Authentic Content)**:
+    - Replaced basic emoji placeholders with crisp, modern stroke SVG icons (Car/Shield for Clean Fleet, Compass for Local Route Masters, Rupee/Transparent badge for Honest Pricing, Zap for Instant WhatsApp Booking) encased in dynamic primary-tinted icon badges (`bg-[rgba(var(--orange-rgb),0.12)]`).
+    - Added subtle watermark numbers (`01`, `02`, `03`, `04`) in top-right corner of each card.
+    - Retained authentic user content for Clean & Sanitized Fleet, Local Route Masters, Honest & Transparent, and Instant WhatsApp Booking, supplemented with feature pills featuring primary colored dots.
+    - Added full-width green WhatsApp booking action buttons (`Book on WhatsApp`) to every card.
+- **Verification**:
+  - Compiled Vite assets: `npm.cmd run build` (built in 5.50s, 0 errors).
+  - Cleared caches: `php artisan optimize:clear`.
+  - Ran `FrontendTest.php`: 8/8 passed (42 assertions).
+  - Ran `AdminSettingsTest.php`: 20/20 passed (197 assertions).
+
+---
+
+### Tour Packages Cards Smooth Hover Physics & Primary Color Theming
+- **Date**: 2026-10-25
+- **Feature**: Smooth Cubic-Bezier Hover Lift, Dynamic Primary Border & Glow Shadow on Tour Package Cards
+- **Files Modified**:
+  - `resources/views/packages.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Smooth Hover Lift & Shadows**: Styled `.pkg-card` across the tour packages listing page and globally in `app.blade.php` with `transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1)`.
+  - **Dynamic Primary Accent**: On hover, the package card border glows with the admin backend primary color (`border-color: var(--orange)`), lifts smoothly by `-6px`, and casts an ambient colored drop shadow (`box-shadow: 0 16px 36px rgba(var(--orange-rgb), 0.14), 0 4px 12px rgba(0, 0, 0, 0.04)`), matching the taxi fleet cards.
+  - **Subtle Image Zoom**: Enclosed the thumbnail image in `.relative overflow-hidden` with a smooth 0.4s ease transition (`scale(1.05)` on card hover).
+- **Verification**:
+  - Cleared caches: `php artisan optimize:clear`.
+  - Ran `FrontendTest.php`: 8/8 passed (42 assertions).
+
+---
+
+### Photo Gallery: 3-Column Layout & Expanded Image Dimensions
+- **Date**: 2026-10-25
+- **Feature**: 3-Column Grid Layout with Expanded Image Dimensions & Hover Lift
+- **Files Modified**:
+  - `resources/views/gallery.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **3-Column Grid**: Replaced 4-column layout (`grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4`) with an expanded 3-column layout (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7`).
+  - **Larger Image Card Dimensions**: Increased card height from `h-[240px]` to responsive `h-[300px] sm:h-[320px] md:h-[350px]` with refined `14px` border radius, showcasing the photographs at larger scale.
+  - **Enhanced Hover Physics & Legibility**: Added smooth cubic-bezier lift (`translateY(-6px)`), primary color border glow, ambient shadow (`rgba(var(--orange-rgb), 0.15)`), and larger caption text (`text-sm sm:text-base font-semibold`).
+- **Verification**:
+  - Cleared caches: `php artisan optimize:clear`.
+  - Ran `FrontendTest.php`: 8/8 passed (42 assertions).
+
+---
+
+### About Us Page Human-Centered UX Overhaul
+- **Date**: 2026-10-25
+- **Feature**: Human-Centered Copy, Crisp Paragraphs, Bespoke Stroke SVG Service Cards, Real Photography Collage, 3-Step Simple Journey, and Local Office Contact Bar
+- **Files Modified**:
+  - `resources/views/about.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Human-Like, Crisp Copy (No Long Walls of Text)**:
+    - Replaced generic, AI-typical paragraphs with short, bite-sized sentences focused on authentic local facts: Bhuj local drivers, airport/station pickups, direct WhatsApp dispatch, and transparent per-km billing.
+    - Added quick-glance badge cards for Bhuj base, private fleet, native chauffeurs, and fixed quotes.
+  - **Replaced Vibe-Coded Emoji Cards with High-UX Service Standards**:
+    - Replaced emoji cards (`🛡️`, `🧭`, `💬`) with 4 structured, modern cards featuring watermark numbers (`01`, `02`, `03`, `04`) and bespoke stroke SVG icons in primary-tinted badges (`rgba(var(--orange-rgb), 0.12)`).
+    - Added feature pill tags with primary bullet dots and dedicated WhatsApp booking action buttons on every card (`Book on WhatsApp`).
+    - Added smooth cubic-bezier hover lift (`translateY(-6px)`), dynamic primary border glow, and drop shadows matching the taxi fleet cards.
+  - **Real Local & Internet Photography Composition**:
+    - Created an overlapping photo collage: authentic Kutchi folk musicians and camel celebrations on the White Rann (`rann-utsav-celebrations.webp` / `kutch_about_culture.webp`), secondary floating card with the Road to Heaven (`kutch_about_road.webp`), and an `8+ Years Local Expertise` pill badge.
+    - Curated internet desert travel assets (`kutch_desert_sunset.jpg`, `desert_camel_safari.jpg`, `road_trip_traveler.jpg`) as resilient local fallbacks.
+  - **Transparent Experience Numbers (Dark Midnight Base)**:
+    - Added 4-item counter row on `var(--navy)` background (`8+ Years Local Experience`, `1,200+ Trips Completed`, `100% Verified Local Drivers`, `4.9 ★ Guest Review Score`).
+  - **Simple 3-Step Booking Journey**:
+    - Added a frictionless 3-step timeline (`01: Share Your Dates`, `02: Get Clear Written Quote`, `03: Meet Your Driver & Enjoy`) answering travelers' key questions upfront.
+  - **Signature Destinations Showcase**:
+    - Showcased 4 primary routes driven daily: Great White Rann (Dhordo), Road to Heaven & Dholavira, Bhuj Heritage & Crafts, and Mandvi Beach, with distance badges from Bhuj and one-click WhatsApp inquiries.
+  - **Local Bhuj Office & Direct Calling Strip**:
+    - Prominently integrated local physical address, direct phone calling link (`tel:...`), and WhatsApp link (`wa.me/...`) directly into the page.
+- **Verification**:
+  - Ran `php artisan test --filter=FrontendTest`: 8/8 passed (42 assertions).
+  - Ran `php artisan test --filter=AdminToFrontendEndToEndCrudTest`: 9/9 passed (181 assertions).
+  - Rebuilt Vite assets: `npm.cmd run build` (built in 4.67s, 0 errors).
+  - Cleared caches: `php artisan optimize:clear`.
+
+---
+
+### About Us Button Guard & Contact Page Layout & Theme Harmonization
+- **Date**: 2026-10-25
+- **Feature**: Conditional Explore Tour Packages Button, Removal of Destinations/Office Strip from About Us, Contact Page WhatsApp Card Theming & Perfect Height Alignment
+- **Files Modified**:
+  - `resources/views/about.blade.php`
+  - `resources/views/contact.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **About Us Conditional Button**:
+    - Wrapped `Explore Tour Packages` button with `@if(\App\Models\Package::where('is_published', true)->exists()) ... @endif` so that if no packages are published, the button is hidden, matching the navigation header logic.
+  - **Removed Destinations & Office Strip on About Us**:
+    - Removed `Places We Guide & Drive Every Single Day` (4 destination cards) and the bottom 3 contact cards as requested, streamlining the page directly from the 3-Step Journey to the bottom CTA banner.
+  - **Contact Us Page Theming & Equal Length Column Layout**:
+    - **WhatsApp Card Primary Theming**: Themed the left WhatsApp card container and labels with the admin backend primary color (`rgba(var(--orange-rgb), 0.08)` and `border-[var(--orange)]/35`) while preserving the green WhatsApp circular logo and the green `Chat on WhatsApp` action button.
+    - **Submit Button Primary Color**: Converted the form's `Send Booking Inquiry to WhatsApp` submit button from green to the primary theme color (`var(--orange)` with subtle shadow).
+    - **Perfect Height Alignment**: Structured both columns using `items-stretch` and flex containers (`h-full flex flex-col justify-between`) so the left column cards and right column proposal form start and end at the exact same vertical lengths.
+- **Verification**:
+  - Ran `php artisan test --filter=FrontendTest`: 8/8 passed (42 assertions).
+  - Ran `php artisan test --filter=AdminToFrontendEndToEndCrudTest`: 9/9 passed (181 assertions).
+  - Recompiled Vite bundle: `npm.cmd run build` (built in 4.72s, 0 errors).
+  - Cleared caches: `php artisan optimize:clear`.
 
 

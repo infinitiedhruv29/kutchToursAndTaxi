@@ -1,5 +1,6 @@
 @php
     $settings = $settings ?? \App\Models\Setting::current();
+    $hasPackages = \App\Models\Package::where('is_published', true)->exists();
     $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919904222293');
     $waUrl = "https://wa.me/{$waNumber}?text=" . urlencode("Hi! I am interested in Kutch Tours & Taxi services. Please share details.");
 @endphp
@@ -12,8 +13,10 @@
 
     <div class="nav-links">
         <a id="nav-link-home" href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
-        <a id="nav-link-packages" href="{{ route('packages') }}" class="{{ request()->routeIs('packages') || request()->routeIs('package.show') ? 'active' : '' }}">Tour Packages</a>
         <a id="nav-link-taxi" href="{{ route('taxi') }}" class="{{ request()->routeIs('taxi') ? 'active' : '' }}">Taxi Services</a>
+        @if($hasPackages)
+        <a id="nav-link-packages" href="{{ route('packages') }}" class="{{ request()->routeIs('packages') || request()->routeIs('package.show') ? 'active' : '' }}">Tour Packages</a>
+        @endif
         <a id="nav-link-gallery" href="{{ route('gallery') }}" class="{{ request()->routeIs('gallery') ? 'active' : '' }}">Gallery</a>
         <a id="nav-link-about" href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">About Us</a>
         <a id="nav-link-contact" href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
@@ -31,8 +34,10 @@
 <!-- MOBILE SLIDEOUT MENU -->
 <div class="nav-mobile" id="navMobile">
     <a id="mob-link-home" href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
-    <a id="mob-link-packages" href="{{ route('packages') }}" class="{{ request()->routeIs('packages') || request()->routeIs('package.show') ? 'active' : '' }}">Tour Packages</a>
     <a id="mob-link-taxi" href="{{ route('taxi') }}" class="{{ request()->routeIs('taxi') ? 'active' : '' }}">Taxi Services</a>
+    @if($hasPackages)
+    <a id="mob-link-packages" href="{{ route('packages') }}" class="{{ request()->routeIs('packages') || request()->routeIs('package.show') ? 'active' : '' }}">Tour Packages</a>
+    @endif
     <a id="mob-link-gallery" href="{{ route('gallery') }}" class="{{ request()->routeIs('gallery') ? 'active' : '' }}">Gallery</a>
     <a id="mob-link-about" href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">About Us</a>
     <a id="mob-link-contact" href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>

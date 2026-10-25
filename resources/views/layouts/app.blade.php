@@ -126,6 +126,12 @@
         }
 
         /* ── HOME HERO & INNER PAGE HERO (DARK SHADE OF PRIMARY COLOR) ── */
+        body[data-page="Home"] {
+            background-color: {{ $darkMidnight }} !important;
+        }
+        body[data-page="Home"] .page-wrapper {
+            padding-top: 0 !important;
+        }
         .hero {
             position: relative;
             overflow: hidden;
@@ -238,14 +244,50 @@
             border-color: {{ $primaryColor }} !important;
             color: {{ $primaryColor }} !important;
         }
-        .filter-cap-btn.active {
-            background-color: {{ $primaryColor }} !important;
-            border-color: {{ $primaryColor }} !important;
-            color: #ffffff !important;
+        .filter-cap-btn {
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
         }
         .filter-cap-btn:hover {
             border-color: {{ $primaryColor }} !important;
             color: {{ $primaryColor }} !important;
+            background: #ffffff !important;
+        }
+        .filter-cap-btn.active,
+        .filter-cap-btn.active:hover,
+        .filter-cap-btn.active:focus {
+            background-color: {{ $primaryColor }} !important;
+            border-color: {{ $primaryColor }} !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 10px rgba({{ $primaryRgb }}, 0.35) !important;
+        }
+        .vehicle-item, .pkg-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .vehicle-item:hover, .pkg-card:hover {
+            border-color: {{ $primaryColor }} !important;
+            box-shadow: 0 16px 36px rgba({{ $primaryRgb }}, 0.14), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+            transform: translateY(-6px) !important;
+        }
+        .vehicle-item .vehicle-img-wrapper img,
+        .pkg-card .relative img,
+        .pkg-card img.pkg-thumb-img {
+            transition: transform 0.4s ease !important;
+        }
+        .vehicle-item:hover .vehicle-img-wrapper img,
+        .pkg-card:hover .relative img,
+        .pkg-card:hover img.pkg-thumb-img {
+            transform: scale(1.05) !important;
         }
         .ticker-wrap {
             background-color: {{ $primaryColor }} !important;

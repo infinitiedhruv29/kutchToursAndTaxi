@@ -118,6 +118,8 @@ class PackageBuilderController extends Controller
                 return response()->json([
                     'message' => 'Custom package proposal saved! Downloading PDF…',
                     'redirect_url' => route('admin.custom-packages.pdf', $customPackage),
+                    'download_url' => route('admin.custom-packages.pdf', $customPackage),
+                    'return_url' => $this->returnDestination($request),
                 ]);
             }
 
@@ -138,6 +140,8 @@ class PackageBuilderController extends Controller
                 return response()->json([
                     'message' => 'Custom package proposal updated! Downloading PDF…',
                     'redirect_url' => route('admin.custom-packages.pdf', $customPackage),
+                    'download_url' => route('admin.custom-packages.pdf', $customPackage),
+                    'return_url' => $this->returnDestination($request),
                 ]);
             }
 

@@ -150,4 +150,41 @@ class AdminPackageBuilderTest extends TestCase
 
         $response->assertSessionHasErrors(['client_name', 'title', 'client_phone']);
     }
+
+    public function test_export_action_returns_download_and_return_urls_on_create_and_update(): void
+    {
+        $user = User::factory()->create();
+
+        // Create with export action
+        $createResponse = $this->actingAs($user)->postJson('/admin/custom-packages', [
+            'client_name' => 'Vijay Shah',
+            'client_phone' => '+91 98765 11111',
+            'title' => 'Dholavira & Rann Special',
+            'duration' => '2N / 3D',
+            'submit_action' => 'export',
+        ]);
+
+        $createResponse->assertOk();
+        $createResponse->assertJsonStructure(['message', 'redirect_url', 'download_url', 'return_url']);
+        $this->assertTrue(str_contains($createResponse->json('download_url'), '/pdf'));
+        $this->assertEquals(route('admin.custom-packages.index'), $createResponse->json('return_url'));
+        $this->assertDatabaseHas('custom_packages', ['client_name' => 'Vijay Shah']);
+
+        $package = CustomPackage::where('client_name', 'Vijay Shah')->firstOrFail();
+
+        // Update with export action
+        $updateResponse = $this->actingAs($user)->putJson('/admin/custom-packages/' . $package->id, [
+            'client_name' => 'Vijay Shah (Updated)',
+            'client_phone' => '+91 98765 11111',
+            'title' => 'Dholavira & Rann Special - Extended',
+            'duration' => '3N / 4D',
+            'submit_action' => 'export',
+        ]);
+
+        $updateResponse->assertOk();
+        $updateResponse->assertJsonStructure(['message', 'redirect_url', 'download_url', 'return_url']);
+        $this->assertTrue(str_contains($updateResponse->json('download_url'), '/pdf'));
+        $this->assertEquals(route('admin.custom-packages.index'), $updateResponse->json('return_url'));
+        $this->assertDatabaseHas('custom_packages', ['client_name' => 'Vijay Shah (Updated)']);
+    }
 }

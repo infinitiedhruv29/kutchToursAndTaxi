@@ -189,8 +189,24 @@ class AdminInvoiceTest extends TestCase
         ]);
 
         $response->assertOk();
-        $response->assertJsonStructure(['message', 'redirect_url']);
+        $response->assertJsonStructure(['message', 'redirect_url', 'download_url', 'return_url']);
         $this->assertTrue(str_contains($response->json('redirect_url'), '/pdf'));
+        $this->assertTrue(str_contains($response->json('download_url'), '/pdf'));
+        $this->assertEquals(route('admin.invoices.index'), $response->json('return_url'));
+
+        $invoice = Invoice::where('customer_name', 'Sanjay Mehta')->firstOrFail();
+
+        $updateResponse = $this->actingAs($user)->putJson('/admin/invoices/' . $invoice->id, [
+            'invoice_date' => '2026-10-24',
+            'customer_name' => 'Sanjay Mehta (Updated)',
+            'submit_action' => 'export',
+        ]);
+
+        $updateResponse->assertOk();
+        $updateResponse->assertJsonStructure(['message', 'redirect_url', 'download_url', 'return_url']);
+        $this->assertTrue(str_contains($updateResponse->json('download_url'), '/pdf'));
+        $this->assertEquals(route('admin.invoices.index'), $updateResponse->json('return_url'));
+        $this->assertDatabaseHas('invoices', ['customer_name' => 'Sanjay Mehta (Updated)']);
     }
 
     public function test_validation_fails_for_invalid_invoice_input(): void

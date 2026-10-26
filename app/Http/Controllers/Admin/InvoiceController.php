@@ -146,6 +146,8 @@ class InvoiceController extends Controller
                 return response()->json([
                     'message' => 'Invoice created! Downloading PDF…',
                     'redirect_url' => route('admin.invoices.pdf', $invoice),
+                    'download_url' => route('admin.invoices.pdf', $invoice),
+                    'return_url' => $this->returnDestination($request),
                 ]);
             }
 
@@ -173,6 +175,8 @@ class InvoiceController extends Controller
                 return response()->json([
                     'message' => 'Invoice updated! Downloading PDF…',
                     'redirect_url' => route('admin.invoices.pdf', $invoice),
+                    'download_url' => route('admin.invoices.pdf', $invoice),
+                    'return_url' => $this->returnDestination($request),
                 ]);
             }
 

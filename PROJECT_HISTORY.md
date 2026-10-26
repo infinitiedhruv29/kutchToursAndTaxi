@@ -943,3 +943,37 @@ The project includes a robust administrative management portal for taxi routes, 
 - **Verification**:
   - Recompiled Vite bundle: `npm.cmd run build` (built in 11.04s, 0 errors).
   - Cleared caches: `php artisan optimize:clear`.
+
+---
+
+### Save & Download PDF Infinite Loading Fix (Personalised Package Builder & Invoices)
+- **Date**: 2026-10-26
+- **Feature**: Save & Download PDF Asynchronous Download & Destination Redirection Resolution
+- **Files Modified**:
+  - `app/Http/Controllers/Admin/PackageBuilderController.php`
+  - `app/Http/Controllers/Admin/InvoiceController.php`
+  - `resources/js/admin-forms.js`
+  - `tests/Feature/AdminPackageBuilderTest.php`
+  - `tests/Feature/AdminInvoiceTest.php`
+  - `PROJECT_HISTORY.md`
+- **Root Cause**:
+  - In `PackageBuilderController` and `InvoiceController`, the `'export'` action (`Save & Download PDF`) returned `{ redirect_url: route('...pdf', $model) }`.
+  - When the client-side form handler in `admin-forms.js` executed `window.location.assign(destination)`, the browser processed the attachment download header (`Content-Disposition: attachment; filename=...`) without navigating or unloading the page.
+  - Because the page was not unloaded and `succeeded` was set to `true`, the submit button was never restored and remained disabled in an infinite spinner loading state (`Saving…`), forcing users to manually click "Back" or "Cancel" to escape the page.
+- **Logic Changes**:
+  - **Controller Export Responses**: Updated both `store()` and `update()` methods in `PackageBuilderController` and `InvoiceController` to return both `download_url` (PDF generation endpoint) and `return_url` (the listing return destination), while preserving `redirect_url` for backward compatibility.
+  - **Client-Side Download & Redirect Engine (`admin-forms.js`)**:
+    - Detects PDF export actions via `download_url` or `/pdf` endpoints.
+    - Asynchronously fetches the PDF as a Blob and triggers an instant client-side download via an object URL (`a.href = blobUrl; a.click()`).
+    - After initiating the download, cleanly redirects the user to `destination` (`return_url` / index listing) where their saved record is immediately visible.
+    - If no distinct return destination is configured, safely invokes `restore()` to restore the submit button from its busy state and displays the success feedback toast.
+- **Verification**:
+  - Ran `php artisan test --filter=AdminInvoiceTest`: 6/6 passed (60 assertions).
+  - Ran `php artisan test --filter=AdminPackageBuilderTest`: 5/5 passed (51 assertions).
+  - Ran `php artisan test --filter=AdminFeedbackTest`: 9/9 passed (126 assertions).
+  - Ran `npm.cmd run test:js`: 25/25 passed (0 failures).
+  - Recompiled Vite bundle: `npm.cmd run build` (built in 3.92s, 0 errors).
+  - Cleared application caches: `php artisan optimize:clear`.
+  - Restored `const result = await requestJson(...)` in `resources/js/admin-forms.js` that was accidentally omitted, recompiled Vite bundle (`built in 3.99s`), and verified with full test suites.
+
+

@@ -132,11 +132,58 @@ export function initializeAdminForms() {
             const actionUrl = form.getAttribute('action') || form.action;
             const formMethod = (form.getAttribute('method') || form.method || 'POST').toUpperCase();
             const result = await requestJson(actionUrl, { method: formMethod, body: data });
-            const destination = safeAdminDestination(result.redirect_url, window.location.origin);
-            if (!destination) throw new Error('The server returned an invalid return destination. Check whether the action completed before submitting again.');
-            succeeded = true;
-            await notify('success', result.message, { target: form });
-            window.location.assign(destination);
+            const downloadTarget = result.download_url ?? (typeof result.redirect_url === 'string' && result.redirect_url.includes('/pdf') ? result.redirect_url : null);
+            const downloadDestination = downloadTarget ? safeAdminDestination(downloadTarget, window.location.origin) : null;
+            const returnTarget = result.return_url ?? (result.download_url ? result.redirect_url : null);
+            const navDestination = returnTarget ? safeAdminDestination(returnTarget, window.location.origin) : null;
+            const destination = navDestination || (!downloadDestination ? safeAdminDestination(result.redirect_url, window.location.origin) : null);
+
+            if (downloadDestination) {
+                try {
+                    const response = await fetch(downloadDestination, {
+                        headers: { Accept: 'application/pdf', 'X-Requested-With': 'XMLHttpRequest' },
+                    });
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        const disposition = response.headers.get('content-disposition');
+                        const match = /filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i.exec(disposition ?? '');
+                        if (match?.[1]) {
+                            link.download = decodeURIComponent(match[1].trim());
+                        }
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = downloadDestination;
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                    }
+                } catch {
+                    const link = document.createElement('a');
+                    link.href = downloadDestination;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                }
+            }
+
+            if (destination && destination !== downloadDestination) {
+                succeeded = true;
+                await notify('success', result.message, { target: form });
+                window.location.assign(destination);
+            } else if (downloadDestination) {
+                succeeded = true;
+                restore();
+                await notify('success', result.message, { target: form });
+            } else {
+                throw new Error('The server returned an invalid return destination. Check whether the action completed before submitting again.');
+            }
         } catch (error) {
             if (error.status === 422 && error.errors && typeof error.errors === 'object') {
                 const first = displayValidation(form, error.errors);

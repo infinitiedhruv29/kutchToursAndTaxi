@@ -927,4 +927,19 @@ The project includes a robust administrative management portal for taxi routes, 
   - Recompiled Vite bundle: `npm.cmd run build` (built in 4.72s, 0 errors).
   - Cleared caches: `php artisan optimize:clear`.
 
+---
 
+### Admin Panel Sidebar Universal Scrollability & Flex Bounding Fix
+- **Date**: 2026-10-26
+- **Feature**: Universal Admin Sidebar Height Bounding & Cross-Device Scrollability Fix
+- **Files Modified**:
+  - `resources/views/components/admin/layout.blade.php`
+  - `resources/views/admin/partials/navigation.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Fixed Aside Height Bounding**: Converted the desktop `<aside>` element from `lg:flex flex-col` to `lg:block`. Because `<aside>` is `fixed inset-y-0`, setting it to a block element provides an explicit viewport height boundary to its child.
+  - **Flexbox Min-Height Resolution (`min-h-0`)**: Added `min-h-0` to the inner scroll wrapper `<div class="flex h-full min-h-0 flex-col overflow-y-auto ...">`. In flexbox, flex children default to `min-height: auto`, which in WebKit/Blink and on laptop/scaled displays causes the container to expand to fit content (~850px) rather than scrolling. `min-h-0` strictly caps container height to the viewport.
+  - **Workspace Footer Preservation**: Added `shrink-0` to the bottom workspace information block in `navigation.blade.php` so it never gets compressed when scrolling on smaller viewports.
+- **Verification**:
+  - Recompiled Vite bundle: `npm.cmd run build` (built in 11.04s, 0 errors).
+  - Cleared caches: `php artisan optimize:clear`.

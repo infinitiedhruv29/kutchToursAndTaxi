@@ -24,7 +24,7 @@
     <x-admin.nav-link :href="route('admin.profile.edit')" :active="request()->routeIs('admin.profile.*')" icon="user">My profile</x-admin.nav-link>
     <x-admin.nav-link :href="route('admin.settings.edit')" :active="request()->routeIs('admin.settings.*')" icon="settings">Business settings</x-admin.nav-link>
 </nav>
-<div class="mt-auto border-t border-slate-800 px-3 pt-5">
+<div class="mt-auto shrink-0 border-t border-slate-800 px-3 pt-5">
     <p class="text-xs text-slate-500 dark:text-slate-400">Business workspace</p>
     <p class="mt-1 text-xs leading-5 text-slate-400">Your tours, routes, and customer inquiries in one place.</p>
 </div>

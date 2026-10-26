@@ -17,8 +17,8 @@
     <a href="#main-content"
         class="sr-only rounded-lg bg-white dark:bg-slate-900 px-4 py-3 text-brand-800 dark:text-brand-200 focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50">Skip
         to content</a>
-    <aside class="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-slate-900 dark:bg-slate-950 lg:flex">
-        <div class="flex h-full flex-col overflow-y-auto px-5 py-7 [scrollbar-width:thin] [scrollbar-color:rgba(148,163,184,0.3)_transparent]">
+    <aside class="fixed inset-y-0 left-0 z-30 hidden w-64 bg-slate-900 dark:bg-slate-950 lg:block">
+        <div class="flex h-full min-h-0 flex-col overflow-y-auto px-5 py-7 [scrollbar-width:thin] [scrollbar-color:rgba(148,163,184,0.3)_transparent]">
             @include('admin.partials.navigation')
         </div>
     </aside>

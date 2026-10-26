@@ -53,8 +53,7 @@
                         label="URL Slug"
                         :value="old('slug', $package->slug)"
                         placeholder="e.g. white-rann-dholavira"
-                        hint="Public URL will be /package-{slug}."
-                        required
+                        hint="Public URL will be /package-{slug}. Auto-generated if left blank."
                         maxlength="255"
                     />
                     <div class="flex items-center pt-6">
@@ -404,5 +403,48 @@
             `;
             container.appendChild(card);
         }
+
+        // Live Auto-generate Slug from Title
+        document.addEventListener('DOMContentLoaded', function () {
+            const titleInput = document.querySelector('input[name="title"]');
+            const slugInput = document.querySelector('input[name="slug"]');
+            const autoSlugCheckbox = document.querySelector('input[name="auto_slug"]');
+
+            function slugify(text) {
+                return text.toString().toLowerCase().trim()
+                    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/[\s_]+/g, '-')
+                    .replace(/^-+|-+$/g, '')
+                    .slice(0, 240);
+            }
+
+            if (titleInput && slugInput && autoSlugCheckbox) {
+                function updateSlugFromTitle() {
+                    if (autoSlugCheckbox.checked && titleInput.value.trim() !== '') {
+                        slugInput.value = slugify(titleInput.value);
+                    }
+                }
+
+                titleInput.addEventListener('input', updateSlugFromTitle);
+
+                autoSlugCheckbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        updateSlugFromTitle();
+                    }
+                });
+
+                slugInput.addEventListener('input', function () {
+                    if (titleInput.value.trim() && slugInput.value !== slugify(titleInput.value)) {
+                        autoSlugCheckbox.checked = false;
+                    }
+                });
+
+                // Populate immediately if title has content and slug is empty
+                if (autoSlugCheckbox.checked && !slugInput.value && titleInput.value.trim()) {
+                    updateSlugFromTitle();
+                }
+            }
+        });
     </script>
 </x-admin.layout>

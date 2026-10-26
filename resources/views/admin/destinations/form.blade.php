@@ -1,10 +1,10 @@
-<x-admin.layout :title="$destination->exists ? 'Edit destination' : 'Create destination'" subtitle="Manage the name, image, and short description shown on destination cards.">
+<x-admin.layout :title="$destination->exists ? 'Edit destination' : 'Create destination'" subtitle="Manage the name, image, and display order of destination cards.">
     <form method="POST" action="{{ $destination->exists ? route('admin.destinations.update', $destination) : route('admin.destinations.store') }}" enctype="multipart/form-data" data-admin-form data-loading-text="Saving destination…" class="space-y-6">
         @csrf @if ($destination->exists) @method('PUT') @endif
         <input type="hidden" name="return_to" value="{{ $returnTo }}">
         @if ($errors->any())<x-admin.alert type="error" data-validation-summary>Please check the highlighted fields.</x-admin.alert>@endif
         <x-admin.card title="Destination details">
-            <div class="space-y-5 p-5 sm:p-6"><x-admin.field name="name" label="Destination name" :value="$destination->name" maxlength="255" required /><x-admin.textarea name="short_description" label="Short description" :value="$destination->short_description" maxlength="2000" hint="Optional plain text, up to 2,000 characters. No separate detail page is created." /></div>
+            <div class="space-y-5 p-5 sm:p-6"><x-admin.field name="name" label="Destination name" :value="$destination->name" maxlength="255" required /></div>
         </x-admin.card>
         <x-admin.card title="Image">
             <div class="space-y-5 p-5 sm:p-6"><x-admin.image-upload :path="$destination->image_path" label="Destination image" preview-alt="Destination image preview" /><x-admin.field name="image_alt" label="Image alternative text" :value="$destination->image_alt" maxlength="255" /></div>

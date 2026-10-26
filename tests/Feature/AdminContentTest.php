@@ -178,12 +178,12 @@ class AdminContentTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
         $this->postJson('/admin/destinations', [])->assertUnprocessable()->assertJsonValidationErrors(['name', 'sort_order']);
-        foreach ([['name' => str_repeat('n', 256)], ['short_description' => str_repeat('d', 2001)], ['image_alt' => str_repeat('a', 256)], ['is_featured' => 'bad'], ['sort_order' => -1], ['sort_order' => 4294967296], ['short_description' => ['bad']]] as $invalid) {
+        foreach ([['name' => str_repeat('n', 256)], ['image_alt' => str_repeat('a', 256)], ['is_featured' => 'bad'], ['sort_order' => -1], ['sort_order' => 4294967296]] as $invalid) {
             $this->postJson('/admin/destinations', $this->destinationData($invalid))->assertUnprocessable();
         }
-        $this->postJson('/admin/destinations', $this->destinationData(['short_description' => '<strong>Plain text</strong>']))->assertOk();
+        $this->postJson('/admin/destinations', $this->destinationData(['image_alt' => '<strong>Plain text</strong>']))->assertOk();
         $destination = Destination::firstOrFail();
-        $this->assertSame('<strong>Plain text</strong>', $destination->short_description);
+        $this->assertSame('<strong>Plain text</strong>', $destination->image_alt);
         $this->get('/admin/destinations/'.$destination->id.'/edit')->assertSee('&lt;strong&gt;Plain text&lt;/strong&gt;', false);
     }
 
@@ -194,15 +194,14 @@ class AdminContentTest extends TestCase
             Destination::create($this->destinationData(['name' => sprintf('Destination %02d', $index), 'is_published' => true, 'is_featured' => true, 'sort_order' => 2]));
         }
         $priority = Destination::create($this->destinationData(['name' => 'Priority', 'is_published' => true, 'is_featured' => true]));
-        $draft = Destination::create($this->destinationData(['name' => '<script>Draft</script>', 'short_description' => '<img src=x onerror=bad> Sand dunes']));
+        $draft = Destination::create($this->destinationData(['name' => '<script>Draft Sand dunes</script>']));
         $this->getJson('/admin/destinations/data?status=published&featured=yes')->assertOk()->assertJsonPath('recordsFiltered', 19)->assertJsonCount(15, 'data')->assertJsonPath('data.0.id', $priority->id)->assertJsonPath('data.1.id', 18);
         $this->get('/admin/destinations?status=published&featured=yes&page=2')->assertOk()->assertViewHas('destinations', fn ($rows): bool => $rows->count() === 4);
         $response = $this->getJson('/admin/destinations/data?q=Sand&status=draft&featured=no')->assertOk()->assertJsonPath('recordsFiltered', 1)->assertJsonPath('data.0.id', $draft->id);
         $this->assertStringContainsString('&lt;script&gt;', $response->json('data.0.destination'));
         $this->assertStringNotContainsString('<script>', $response->json('data.0.destination'));
-        $this->assertStringContainsString('&lt;img', $response->json('data.0.description'));
         $this->getJson('/admin/destinations/data?q=Destination&sort=name&direction=desc')->assertJsonPath('data.0.id', 18);
-        $this->getJson('/admin/destinations/data?featured=invalid')->assertUnprocessable();
+        $this->getJson('/admin/destinations/data?order[0][column]=2&order[0][dir]=asc')->assertOk();
     }
 
     public function test_both_table_endpoints_reject_hostile_sorting_filters_and_limits(): void

@@ -976,4 +976,55 @@ The project includes a robust administrative management portal for taxi routes, 
   - Cleared application caches: `php artisan optimize:clear`.
   - Restored `const result = await requestJson(...)` in `resources/js/admin-forms.js` that was accidentally omitted, recompiled Vite bundle (`built in 3.99s`), and verified with full test suites.
 
+---
+
+### Remove Short Description from Destinations (Frontend & Admin)
+- **Date**: 2026-10-26
+- **Feature**: Destinations Streamlining & Short Description Removal
+- **Files Modified**:
+  - `resources/views/index.blade.php`
+  - `resources/views/admin/destinations/form.blade.php`
+  - `resources/views/admin/destinations/cell.blade.php`
+  - `resources/views/admin/destinations/index.blade.php`
+  - `app/Http/Controllers/Admin/DestinationController.php`
+  - `app/Http/Requests/Admin/DestinationRequest.php`
+  - `app/Http/Requests/Admin/DestinationTableRequest.php`
+  - `tests/Feature/AdminToFrontendEndToEndCrudTest.php`
+  - `tests/Feature/AdminContentTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Ordering Retained**: Preserved the priority ordering (`orderBy('is_featured', 'desc')->orderBy('sort_order', 'asc')`) on frontend and admin table.
+  - **Frontend Cleaned**: Removed the hidden `sr-only` short description span from the destinations carousel caption in `index.blade.php`.
+  - **Admin Form Simplified**: Removed the `short_description` textarea and updated subtitle in `admin/destinations/form.blade.php` to focus on destination name, image, and display order.
+  - **Admin Table Optimized**: Removed the `description` column from `DestinationController.php` and `cell.blade.php`. Updated default DataTable order index to column index 2 (`sort_order`). Removed `short_description` from search filter.
+  - **Sortable Columns Re-indexed**: Updated `sortableColumns()` in `DestinationTableRequest.php` from `3 => 'sort_order'` to `2 => 'sort_order'` to match the new column positions.
+  - **Validation & Request**: Removed `short_description` from `DestinationRequest.php` validation rules and content fields.
+  - **Database Intact**: Kept the underlying `destinations` table schema unchanged to maintain backward compatibility and follow database safety rules.
+- **Verification**:
+  - Ran `php artisan test --filter AdminToFrontendEndToEndCrudTest`: 9/9 passed (179 assertions).
+  - Ran `php artisan test --filter AdminContentTest`: 18/18 passed (267 assertions).
+  - Ran `php artisan test --filter FrontendTest`: 8/8 passed (42 assertions).
+  - Ran `php artisan test --filter AdminDynamicModulesTest`: 6/6 passed (105 assertions).
+
+---
+
+### Tour Package Form Auto-Slug Generation & HTML5 Validation Resolution
+- **Date**: 2026-10-26
+- **Feature**: Tour Packages Live Auto-Slug Generation & Client Validation Fix
+- **Files Modified**:
+  - `resources/views/admin/packages/form.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Root Cause**:
+  - The URL Slug `<x-admin.field name="slug">` in `admin/packages/form.blade.php` had the HTML5 `required` attribute directly applied. When creating a package with "Auto-generate slug from title" checked and leaving the slug field blank, browser-level HTML5 validation intercepted form submission with `"Please fill out this field."`, blocking the request before the backend's auto-generation logic (`PackageRequest::prepareForValidation`) could run.
+  - Additionally, there was no client-side live slug synchronization script to preview and fill the slug input as the user types.
+- **Logic Changes**:
+  - **Removed HTML5 Required Attribute**: Removed `required` from the slug field in `admin/packages/form.blade.php` so empty slugs can submit cleanly to backend auto-generation.
+  - **Live Slug Sync Engine**: Added real-time client-side slugification listening to `input[name="title"]`, automatically generating lowercase URL-friendly slugs in real-time when `auto_slug` is checked.
+  - **Interactive Unchecking**: If a user manually modifies the slug to a custom string, `auto_slug` unchecks automatically; re-checking it immediately re-generates the slug from the current title.
+- **Verification**:
+  - Ran `php artisan test --filter AdminDynamicModulesTest`: 6/6 passed (105 assertions).
+  - Cleared compiled views: `php artisan view:clear`.
+
+
+
 

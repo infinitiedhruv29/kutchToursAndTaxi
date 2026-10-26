@@ -24,7 +24,6 @@ class DestinationController extends Controller
     {
         return [
             ['data' => 'destination', 'label' => 'Destination', 'sort' => 'name', 'orderable' => true],
-            ['data' => 'description', 'label' => 'Short description', 'orderable' => false],
             ['data' => 'visibility', 'label' => 'Visibility', 'orderable' => false],
             ['data' => 'sort_order', 'label' => 'Order', 'sort' => 'sort_order', 'orderable' => true],
             ['data' => 'actions', 'label' => 'Actions', 'orderable' => false],
@@ -35,7 +34,7 @@ class DestinationController extends Controller
     {
         return Destination::query()->when($request->searchTerm() !== '', function (Builder $query) use ($request): void {
             $search = '%'.$request->searchTerm().'%';
-            $query->where(fn (Builder $query) => $query->where('name', 'like', $search)->orWhere('short_description', 'like', $search));
+            $query->where('name', 'like', $search);
         })->when($request->input('status'), fn (Builder $query, string $status) => $query->where('is_published', $status === 'published'))
             ->when($request->input('featured'), fn (Builder $query, string $featured) => $query->where('is_featured', $featured === 'yes'))
             ->orderBy($request->sortColumn(), $request->sortDirection())->orderByDesc('id');

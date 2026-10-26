@@ -13,7 +13,7 @@ class DestinationTableRequest extends DataTableRequest
 
     protected function sortableColumns(): array
     {
-        return [0 => 'name', 3 => 'sort_order'];
+        return [0 => 'name', 2 => 'sort_order'];
     }
 
     public function rules(): array

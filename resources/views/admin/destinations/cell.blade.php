@@ -7,9 +7,6 @@
             <a href="{{ $editUrl }}" data-return-link class="break-words rounded-sm font-semibold text-slate-900 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-brand-600 dark:text-slate-100 dark:hover:text-brand-200">{{ $destination->name }}</a>
         </div>
         @break
-    @case('description')
-        <p class="min-w-48 max-w-lg break-words">{{ $destination->short_description === null ? 'Not provided' : \Illuminate\Support\Str::limit($destination->short_description, 180) }}</p>
-        @break
     @case('visibility')
         <span @class(['inline-flex rounded-full px-2.5 py-1 text-xs font-medium', 'bg-brand-50 text-brand-800 dark:bg-brand-500/10 dark:text-brand-200' => $destination->is_published, 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300' => !$destination->is_published])>{{ $destination->is_published ? 'Published' : 'Draft' }}</span>
         @if ($destination->is_featured)<span class="mt-1 block text-xs text-amber-700 dark:text-amber-300">Featured</span>@endif

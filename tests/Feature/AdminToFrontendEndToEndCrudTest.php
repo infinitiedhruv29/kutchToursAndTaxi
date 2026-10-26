@@ -343,13 +343,11 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
         // FRONTEND REFLECTION
         $homeResponse = $this->get('/');
         $homeResponse->assertOk()
-            ->assertSee('Dholavira Harappan Site')
-            ->assertSee('UNESCO World Heritage prehistoric Indus Valley');
+            ->assertSee('Dholavira Harappan Site');
 
         // UPDATE
         $updateResponse = $this->actingAs($this->admin)->put('/admin/destinations/' . $destination->id, [
             'name' => 'Dholavira UNESCO World Heritage Site',
-            'short_description' => 'World famous 5000-year-old Harappan archaeological marvel.',
             'sort_order' => 1,
             'is_published' => true,
             'is_featured' => true,
@@ -359,8 +357,7 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
         // FRONTEND REFLECTS UPDATE
         $updatedHome = $this->get('/');
         $updatedHome->assertOk()
-            ->assertSee('Dholavira UNESCO World Heritage Site')
-            ->assertSee('World famous 5000-year-old Harappan');
+            ->assertSee('Dholavira UNESCO World Heritage Site');
 
         // UNPUBLISH
         $this->actingAs($this->admin)->put('/admin/destinations/' . $destination->id, [

@@ -410,7 +410,6 @@
                             <h3 class="font-display text-2xl sm:text-3xl lg:text-[2.2rem] font-extrabold text-white leading-tight">
                                 {{ $dest->name }}
                             </h3>
-                            <span class="sr-only">{{ $dest->short_description }}</span>
                         </div>
                     </div>
                 @endforeach

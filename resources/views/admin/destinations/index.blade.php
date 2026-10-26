@@ -1,6 +1,6 @@
 <x-admin.layout title="Destinations" subtitle="Manage lightweight destination cards without separate detail pages.">
     <div class="mb-6 flex justify-end"><a href="{{ route('admin.destinations.create', ['return_to' => request()->fullUrl()]) }}" data-return-link class="inline-flex min-h-11 items-center rounded-xl bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-brand-600">Add destination</a></div>
-    <x-admin.datatable id="destinations" :data-url="route('admin.destinations.data')" :columns="$columns" :rows="$destinations" :default-order="[[3, 'asc']]" empty-title="No destinations found" empty-description="Add your first destination or adjust the search and filters.">
+    <x-admin.datatable id="destinations" :data-url="route('admin.destinations.data')" :columns="$columns" :rows="$destinations" :default-order="[[2, 'asc']]" empty-title="No destinations found" empty-description="Add your first destination or adjust the search and filters.">
         <x-slot:label>Destinations</x-slot:label>
         <x-slot:filters>
             <x-admin.select name="status" label="Publication status" data-table-filter>

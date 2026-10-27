@@ -7,7 +7,7 @@
 
 @section('content')
 @php
-    $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919904222293');
+    $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919773239587');
     $phoneDisplay = $settings->contact_number ?? '+91 99042 22293';
     $phoneTel = preg_replace('/[^0-9+]/', '', $phoneDisplay);
 @endphp
@@ -59,7 +59,7 @@
                    href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to inquire about Kutch tour packages and cabs.') }}"
                    target="_blank"
                    class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-2.5 px-4 rounded-[8px] font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-sm">
-                    <span>Chat on WhatsApp (+91 {{ $waNumber }})</span>
+                    <span>Chat on WhatsApp (+91 97732 39587)</span>
                 </a>
             </div>
 

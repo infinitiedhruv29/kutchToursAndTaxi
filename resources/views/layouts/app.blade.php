@@ -1,6 +1,6 @@
 @php
     $settings = $settings ?? \App\Models\Setting::current();
-    $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919904222293');
+    $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919773239587');
     $waUrl = "https://wa.me/{$waNumber}?text=" . urlencode("Hi! I am interested in Kutch Tours & Taxi services. Please share details.");
 @endphp
 <!DOCTYPE html>

@@ -66,7 +66,7 @@
 
 @section('content')
 @php
-    $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919904222293');
+    $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919773239587');
     $bookWaUrl = "https://wa.me/{$waNumber}?text=" . urlencode("Hi! I would like to book the {$package->title}. Please confirm availability for my dates.");
 @endphp
 

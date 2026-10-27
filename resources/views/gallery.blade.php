@@ -7,7 +7,7 @@
 
 @section('content')
 @php
-    $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919904222293');
+    $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919773239587');
 @endphp
 
 <!-- ══ PAGE HERO ══ -->

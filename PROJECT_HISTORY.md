@@ -1025,6 +1025,27 @@ The project includes a robust administrative management portal for taxi routes, 
   - Ran `php artisan test --filter AdminDynamicModulesTest`: 6/6 passed (105 assertions).
   - Cleared compiled views: `php artisan view:clear`.
 
+---
 
-
-
+### CTA Banners Removal & Site-Wide WhatsApp Number Update
+- **Date**: 2026-10-27
+- **Feature**: Removed Bottom CTA Banners & Updated WhatsApp Number to +91 97732 39587
+- **Files Modified**:
+  - `resources/views/index.blade.php`: Removed the bottom "Book Your AC Cab Now" CTA banner section and updated WhatsApp number fallback.
+  - `resources/views/about.blade.php`: Removed the bottom "Ready to Plan Your Kutch Journey?" CTA banner section and updated WhatsApp number fallback.
+  - `resources/views/partials/footer.blade.php`: Updated WhatsApp link and formatted display to `+91 97732 39587 (WhatsApp)`.
+  - `resources/views/contact.blade.php`: Updated WhatsApp card button text to `Chat on WhatsApp (+91 97732 39587)` and updated WhatsApp number fallback.
+  - `resources/views/partials/header.blade.php`: Updated WhatsApp number fallback to `919773239587`.
+  - `resources/views/layouts/app.blade.php`: Updated WhatsApp number fallback to `919773239587`.
+  - `resources/views/taxi.blade.php`: Updated WhatsApp number fallback to `919773239587`.
+  - `resources/views/packages.blade.php`: Updated WhatsApp number fallback to `919773239587`.
+  - `resources/views/package-show.blade.php`: Updated WhatsApp number fallback to `919773239587`.
+  - `resources/views/gallery.blade.php`: Updated WhatsApp number fallback to `919773239587`.
+  - `public/js/components.js`: Updated `WA_NUMBER` constant to `'919773239587'`.
+  - `database/seeders/SettingSeeder.php`: Updated default `whatsapp_number` to `'919773239587'`.
+  - Database (`settings` table): Updated active record `whatsapp_number` to `'919773239587'`.
+  - `tests/Feature/FrontendTest.php`: Updated test WhatsApp number expectations.
+  - `tests/Feature/AdminToFrontendEndToEndCrudTest.php`: Updated test WhatsApp number expectations.
+- **Verification**:
+  - Executed full test suite: **167/167 tests passed (1,862 assertions)** with zero failures.
+  - Cleared caches: `php artisan optimize:clear`.

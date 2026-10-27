@@ -43,7 +43,7 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
             [
                 'business_name' => 'Kutch Tours & Taxi',
                 'contact_number' => '+91 99042 22293',
-                'whatsapp_number' => '919904222293',
+                'whatsapp_number' => '919773239587',
                 'contact_email' => 'contact@kutchtoursandtaxi.com',
                 'address' => 'Bhuj, Kutch, Gujarat',
                 'primary_color' => '#9E2A2B',
@@ -147,7 +147,7 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
         $homeResponse->assertOk()
             ->assertSee('Bhuj to Kalo Dungar Hill')
             ->assertSee('₹3,500')
-            ->assertSee('wa.me/919904222293?text=Hi%21+I+want+to+book+a+taxi+for+Bhuj+to+Kalo+Dungar+Hill', false);
+            ->assertSee('wa.me/919773239587?text=Hi%21+I+want+to+book+a+taxi+for+Bhuj+to+Kalo+Dungar+Hill', false);
 
         $taxiResponse = $this->get('/taxi');
         $taxiResponse->assertOk()

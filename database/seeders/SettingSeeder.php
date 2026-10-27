@@ -19,7 +19,7 @@ class SettingSeeder extends Seeder
                 'favicon_path' => 'images/favicon.svg',
                 'contact_number' => '+91 99042 22293',
                 'contact_number_2' => '+91 94274 34567',
-                'whatsapp_number' => '919904222293',
+                'whatsapp_number' => '919773239587',
                 'contact_email' => 'contact@kutchtoursandtaxi.com',
                 'address' => 'Station Road, Near Bus Station, Bhuj, Kutch, Gujarat — 370001',
                 'google_map_link' => 'https://maps.google.com/?q=Bhuj,Kutch,Gujarat',

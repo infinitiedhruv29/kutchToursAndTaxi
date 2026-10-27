@@ -25,7 +25,7 @@ class FrontendTest extends TestCase
             [
                 'business_name' => 'Kutch Tours & Taxi',
                 'contact_number' => '+91 99042 22293',
-                'whatsapp_number' => '919904222293',
+                'whatsapp_number' => '919773239587',
                 'contact_email' => 'contact@kutchtoursandtaxi.com',
                 'address' => 'Bhuj, Kutch, Gujarat',
             ]
@@ -61,7 +61,7 @@ class FrontendTest extends TestCase
             ->assertSee('Kutch Tours & Taxi')
             ->assertSee('White Rann &amp; Dholavira', false)
             ->assertSee('Bhuj to White Rann')
-            ->assertSee('wa.me/919904222293', false);
+            ->assertSee('wa.me/919773239587', false);
     }
 
     public function test_taxi_services_page_loads_with_vehicles_and_fares(): void
@@ -117,7 +117,7 @@ class FrontendTest extends TestCase
             ->assertSee('Kutch Classic Tour')
             ->assertSee('Mandvi Beach Exploration')
             ->assertSee('Vijay Vilas Palace')
-            ->assertSee('wa.me/919904222293', false);
+            ->assertSee('wa.me/919773239587', false);
     }
 
     public function test_gallery_page_loads_successfully(): void

@@ -198,23 +198,49 @@ class PackageBuilderController extends Controller
 
     private function getLogoBase64(?Setting $settings): ?string
     {
-        if ($settings && $settings->dark_logo_path && Storage::disk('public')->exists($settings->dark_logo_path)) {
-            $path = Storage::disk('public')->path($settings->dark_logo_path);
-            try {
-                $data = file_get_contents($path);
-                return 'data:' . mime_content_type($path) . ';base64,' . base64_encode($data);
-            } catch (\Throwable $e) {
-                // Fallback
+        $primaryColor = !empty($settings?->primary_color)
+            ? (str_starts_with($settings->primary_color, '#') ? $settings->primary_color : '#' . $settings->primary_color)
+            : '#a8863e';
+
+        // Prefer SVG vector so we can theme it to the exact primary color for PDFs without altering disk assets
+        $svgCandidates = [];
+        if ($settings?->dark_logo_path && str_ends_with(strtolower($settings->dark_logo_path), '.svg')) {
+            $svgCandidates[] = Storage::disk('public')->path($settings->dark_logo_path);
+            $svgCandidates[] = public_path($settings->dark_logo_path);
+        }
+        $svgCandidates[] = public_path('images/logo/logo-gold.svg');
+        $svgCandidates[] = public_path('images/logo/logo-black.svg');
+
+        foreach ($svgCandidates as $filePath) {
+            if ($filePath && file_exists($filePath) && is_readable($filePath)) {
+                try {
+                    $svgContent = file_get_contents($filePath);
+                    // Dynamically apply the primary color to the vector fill only for PDFs
+                    $themedSvg = preg_replace('/fill="(?:\#[a-fA-F0-9]{3,8}|white|black)"/i', 'fill="' . $primaryColor . '"', $svgContent);
+                    $themedSvg = preg_replace('/#E7BE67/i', $primaryColor, $themedSvg);
+
+                    return 'data:image/svg+xml;base64,' . base64_encode($themedSvg);
+                } catch (\Throwable) {
+                    continue;
+                }
             }
         }
 
-        if ($settings && $settings->logo_path && Storage::disk('public')->exists($settings->logo_path)) {
-            $path = Storage::disk('public')->path($settings->logo_path);
-            try {
-                $data = file_get_contents($path);
-                return 'data:' . mime_content_type($path) . ';base64,' . base64_encode($data);
-            } catch (\Throwable $e) {
-                // Fallback
+        // Fallback to raster assets if SVG is unavailable
+        $rasterCandidates = [
+            public_path('images/logo/logo-gold.png'),
+            public_path('images/logo/logo-black.png'),
+        ];
+
+        foreach ($rasterCandidates as $filePath) {
+            if ($filePath && file_exists($filePath) && is_readable($filePath)) {
+                try {
+                    $mime = mime_content_type($filePath) ?: 'image/png';
+                    $data = file_get_contents($filePath);
+                    return 'data:' . $mime . ';base64,' . base64_encode($data);
+                } catch (\Throwable) {
+                    continue;
+                }
             }
         }
 

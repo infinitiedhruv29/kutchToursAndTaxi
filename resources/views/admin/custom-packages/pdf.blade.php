@@ -3,6 +3,39 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Tour Proposal - {{ $clientName }}</title>
+    @php
+        $bizName = $settings->business_name ?? 'Kutch Tours & Taxi';
+        $bizPhone = $settings->contact_number ?? '+91 99042 22293';
+        $bizEmail = $settings->contact_email ?? 'info@kutchtoursandtaxi.com';
+        $bizAddress = $settings->address ?? 'Station Road, Bhuj, Kutch, Gujarat — 370001';
+        $bizGst = $settings->gst_number ?? '';
+
+        // Dynamic Primary Color from Admin Settings
+        $primaryColor = !empty($settings?->primary_color)
+            ? (str_starts_with($settings->primary_color, '#') ? $settings->primary_color : '#' . $settings->primary_color)
+            : '#a8863e';
+
+        $cleanHex = ltrim($primaryColor, '#');
+        if (strlen($cleanHex) === 3) {
+            $cleanHex = $cleanHex[0].$cleanHex[0].$cleanHex[1].$cleanHex[1].$cleanHex[2].$cleanHex[2];
+        }
+        $r = hexdec(substr($cleanHex, 0, 2));
+        $g = hexdec(substr($cleanHex, 2, 2));
+        $b = hexdec(substr($cleanHex, 4, 2));
+
+        $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+        $primaryContrastText = $luminance > 0.65 ? '#0f172a' : '#ffffff';
+
+        $tintR = round(255 - (255 - $r) * 0.10);
+        $tintG = round(255 - (255 - $g) * 0.10);
+        $tintB = round(255 - (255 - $b) * 0.10);
+        $primaryLightTint = sprintf('#%02x%02x%02x', $tintR, $tintG, $tintB);
+
+        $borderR = round(255 - (255 - $r) * 0.32);
+        $borderG = round(255 - (255 - $g) * 0.32);
+        $borderB = round(255 - (255 - $b) * 0.32);
+        $primaryBorderTint = sprintf('#%02x%02x%02x', $borderR, $borderG, $borderB);
+    @endphp
     <style>
         body {
             font-family: 'DejaVu Sans', sans-serif;
@@ -16,19 +49,29 @@
         .header-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .header-table td {
-            vertical-align: middle;
+            vertical-align: top;
+        }
+
+        .doc-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: {{ $primaryColor }};
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin: 0;
         }
 
         .meta-container {
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 14px 18px;
-            margin-bottom: 25px;
+            border-top: 3px solid {{ $primaryColor }};
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 22px;
         }
 
         .meta-table {
@@ -56,28 +99,28 @@
         }
 
         .section-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #b91c1c;
-            border-bottom: 2px solid #b91c1c;
-            padding-bottom: 5px;
-            margin-top: 25px;
-            margin-bottom: 15px;
+            letter-spacing: 0.8px;
+            color: {{ $primaryColor }};
+            border-bottom: 2px solid {{ $primaryColor }};
+            padding-bottom: 4px;
+            margin-top: 22px;
+            margin-bottom: 12px;
         }
 
         .pricing-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 22px;
         }
 
         .pricing-table th {
-            background-color: #b91c1c;
-            color: #ffffff;
+            background-color: {{ $primaryColor }};
+            color: {{ $primaryContrastText }};
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 9px;
@@ -91,12 +134,13 @@
             font-weight: bold;
             color: #0f172a;
             font-size: 13px;
+            background-color: #ffffff;
         }
 
         .feature-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 22px;
         }
 
         .feature-table td {
@@ -108,19 +152,23 @@
         .feature-header-inc {
             color: #15803d;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 1px solid #bbf7d0;
             padding-bottom: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .feature-header-exc {
             color: #b91c1c;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 1px solid #fecaca;
             padding-bottom: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .feature-list {
@@ -132,7 +180,7 @@
         .feature-list li {
             padding: 3px 0;
             font-size: 11px;
-            color: #475569;
+            color: #334155;
         }
 
         .icon-check {
@@ -148,13 +196,13 @@
         }
 
         .day-row {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             page-break-inside: avoid;
         }
 
         .day-header {
-            background-color: #f1f5f9;
-            border-left: 3px solid #b91c1c;
+            background-color: #f8fafc;
+            border-left: 3px solid {{ $primaryColor }};
             padding: 7px 12px;
             font-weight: bold;
             color: #0f172a;
@@ -175,22 +223,23 @@
         }
 
         .day-note {
-            background-color: #fffbeb;
-            border: 1px dashed #fcd34d;
+            background-color: {{ $primaryLightTint }};
+            border: 1px dashed {{ $primaryBorderTint }};
             border-radius: 6px;
             padding: 5px 8px;
             margin-top: 6px;
             font-size: 10px;
-            color: #92400e;
+            color: #0f172a;
         }
 
         .pdf-footer {
-            margin-top: 35px;
+            margin-top: 30px;
             border-top: 1px solid #e2e8f0;
             padding-top: 12px;
             text-align: center;
             font-size: 9px;
             color: #64748b;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -198,32 +247,34 @@
 
     <table class="header-table">
         <tr>
-            <td style="width: 50%;">
+            <td style="width: 55%;">
                 @if ($logoBase64)
-                    <img src="{{ $logoBase64 }}" alt="Logo" style="max-height: 70px; max-width: 180px;">
+                    <img src="{{ $logoBase64 }}" alt="Logo" style="max-height: 60px; max-width: 175px;">
                 @else
-                    <span style="font-size: 18px; font-weight: bold; color: #0f172a; letter-spacing: 0.5px;">
-                        {{ $settings->business_name ?? 'Kutch Tours & Taxi' }}
+                    <span style="font-size: 18px; font-weight: bold; color: {{ $primaryColor }}; letter-spacing: 0.5px;">
+                        {{ $bizName }}
                     </span>
                 @endif
+                <div style="font-size: 10px; color: #64748b; line-height: 1.45; margin-top: 6px;">
+                    <strong style="color: #0f172a; font-size: 11px;">{{ $bizName }}</strong><br>
+                    {{ $bizAddress }}<br>
+                    Phone: {{ $bizPhone }} | Email: {{ $bizEmail }}
+                    @if (!empty($bizGst))
+                        <br><strong>GSTIN:</strong> {{ $bizGst }}
+                    @endif
+                </div>
             </td>
-            <td style="width: 50%; text-align: right; font-size: 10px; color: #64748b; line-height: 1.4;">
-                <strong style="color: #0f172a; font-size: 11px;">{{ $settings->business_name ?? 'Kutch Tours & Taxi' }}</strong><br>
-                {{ $settings->address ?? 'Bhuj, Kutch, Gujarat, India' }}<br>
-                Phone: {{ $settings->contact_number ?? '+91 99042 22293' }}<br>
-                Email: {{ $settings->contact_email ?? 'info@kutchtoursandtaxi.com' }}<br>
-                @if (!empty($settings->gst_number))
-                    GSTIN: {{ $settings->gst_number }}
-                @endif
+            <td style="width: 45%; text-align: right; vertical-align: top;">
+                <h1 class="doc-title">Tour Proposal</h1>
+                <div style="margin-top: 5px; font-size: 13px; font-weight: bold; color: {{ $primaryColor }};">
+                    {{ $title }}
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 3px;">
+                    Date: {{ date('d M, Y') }}
+                </div>
             </td>
         </tr>
     </table>
-
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; color: #0f172a;">
-            Customized Tour Proposal
-        </h2>
-    </div>
 
     <div class="meta-container">
         <table class="meta-table">
@@ -237,7 +288,7 @@
                 <td class="meta-label">Contact Number</td>
                 <td class="meta-value">{{ $clientPhone ?? 'N/A' }}</td>
                 <td class="meta-label">Tour Title</td>
-                <td class="meta-value" style="color: #b91c1c;">{{ $title }}</td>
+                <td class="meta-value" style="color: {{ $primaryColor }};">{{ $title }}</td>
             </tr>
             <tr>
                 <td class="meta-label">Duration</td>
@@ -343,8 +394,9 @@
     @endif
 
     <div class="pdf-footer">
-        Thank you for choosing {{ $settings->business_name ?? 'Kutch Tours & Taxi' }}. We look forward to hosting you!<br>
-        Generated on {{ date('d-m-Y H:i A') }} • This proposal is subject to vehicle & hotel room availability. Prices may vary during peak Rann Utsav dates.
+        Thank you for choosing {{ $bizName }}! We look forward to hosting you in Kutch.<br>
+        For bookings or inquiries, call {{ $bizPhone }} | {{ $bizEmail }}<br>
+        Generated on {{ date('d-m-Y H:i A') }} • This proposal is subject to vehicle & hotel room availability.
     </div>
 
 </body>

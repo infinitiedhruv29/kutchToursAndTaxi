@@ -1049,3 +1049,64 @@ The project includes a robust administrative management portal for taxi routes, 
 - **Verification**:
   - Executed full test suite: **167/167 tests passed (1,862 assertions)** with zero failures.
   - Cleared caches: `php artisan optimize:clear`.
+
+---
+
+### PDF Action Button Visibility & Brand Consistency Across Proposal and Invoice PDFs
+- **Date**: 2026-10-27
+- **Feature**: High-Visibility PDF Action Button & Unified Brand Theming in Custom Package and Invoice PDFs
+- **Files Modified**:
+  - `resources/views/admin/custom-packages/cell.blade.php`: Upgraded the PDF download button from a washed-out, low-contrast dark teal outline into a solid, high-visibility crimson button (`bg-red-600 hover:bg-red-700 text-white font-bold`) that stands out clearly in both light and dark mode.
+  - `resources/views/admin/invoices/cell.blade.php`: Applied identical high-visibility solid PDF download styling for seamless admin consistency.
+  - `resources/views/admin/custom-packages/pdf.blade.php`: Harmonized typography (`DejaVu Sans`), header layout, metadata container, and accents to dynamically derive from the primary color configured in Admin Settings (`$settings->primary_color`), removing hardcoded red (`#b91c1c`) styles. Computed dynamic contrast text and soft-tint borders/backgrounds for notes and cost tables.
+  - `resources/views/admin/invoices/pdf.blade.php`: Replaced hardcoded green (`#047857`) styles with the exact same dynamic primary color palette, matching font family (`DejaVu Sans`), top-accented metadata box, table header styling, grand-total highlight box, and standardized brand footer.
+  - `app/Http/Controllers/Admin/PackageBuilderController.php`: Enhanced `getLogoBase64` to prioritize dark/black logo on light PDF paper backgrounds and seamlessly resolve relative public disk paths and high-resolution logo fallbacks.
+  - `app/Http/Controllers/Admin/InvoiceController.php`: Enhanced `getLogoBase64` with the same robust logo resolution logic.
+- **Verification**:
+  - `AdminPackageBuilderTest`: 5/5 tests passed (51 assertions).
+  - `AdminInvoiceTest`: 6/6 tests passed (60 assertions).
+  - `AdminToFrontendEndToEndCrudTest`: 9/9 tests passed (179 assertions).
+---
+
+### PDF Action Button Explicit Light & Dark Mode Compatibility & Production Asset Rebuild
+- **Date**: 2026-10-27
+- **Feature**: Full Light and Dark Mode Compatibility for Proposal and Invoice PDF Action Buttons
+- **Files Modified**:
+  - `resources/views/admin/custom-packages/cell.blade.php`: Upgraded PDF button styling to an explicit dual-mode badge (`border border-red-300 bg-red-50 text-red-700 shadow-xs hover:border-red-400 hover:bg-red-100 dark:border-red-700/80 dark:bg-red-950/60 dark:text-red-300 dark:hover:bg-red-900/60 dark:hover:text-red-100`), guaranteeing sharp crimson contrast on light rows and vibrant luminous red on dark rows.
+  - `resources/views/admin/invoices/cell.blade.php`: Applied identical light & dark mode badge button styling.
+  - `public/build/assets/app-lYWxSXn4.css`: Recompiled production CSS via `npm.cmd run build` to package all light and dark classes.
+- **Verification**:
+  - `npm.cmd run build`: Built cleanly with all utility classes.
+  - `AdminPackageBuilderTest`: 5/5 tests passed (51 assertions).
+  - `AdminInvoiceTest`: 6/6 tests passed (60 assertions).
+  - Cleared caches: `php artisan optimize:clear`.
+
+---
+
+### Branded Frontend Gold Logo Integration on Proposal and Invoice PDFs
+- **Date**: 2026-10-27
+- **Feature**: Prioritized Frontend Gold Logo on Proposal and Invoice PDFs
+- **Files Modified**:
+  - `app/Http/Controllers/Admin/PackageBuilderController.php`: Updated `getLogoBase64` to prioritize the frontend gold logo (`images/logo/logo-gold.png` and `images/logo/logo-gold.svg`), matching the exact branding seen on the public website.
+  - `app/Http/Controllers/Admin/InvoiceController.php`: Updated `getLogoBase64` with the same frontend gold logo priority for invoice PDF exports.
+- **Verification**:
+  - `AdminPackageBuilderTest`: 5/5 passed (51 assertions).
+  - `AdminInvoiceTest`: 6/6 passed (60 assertions).
+  - Cleared caches: `php artisan optimize:clear`.
+
+---
+
+### Dynamic Primary Color Theming for PDF Brand Logo
+- **Date**: 2026-10-27
+- **Feature**: Match PDF Logo Color with Active Admin Primary Brand Color
+- **Files Modified**:
+  - `app/Http/Controllers/Admin/PackageBuilderController.php`: Updated `getLogoBase64` to dynamically inject the active `$settings->primary_color` into the SVG logo vector fills strictly in memory when generating the PDF. This avoids washed-out pastel gold on white paper while preserving all static disk assets on the public website and admin panel untouched.
+  - `app/Http/Controllers/Admin/InvoiceController.php`: Applied identical in-memory primary color vector fill mapping for invoice PDFs.
+- **Verification**:
+  - `AdminPackageBuilderTest`: 5/5 passed (51 assertions).
+  - `AdminInvoiceTest`: 6/6 passed (60 assertions).
+  - Cleared caches: `php artisan optimize:clear`.
+
+
+
+

@@ -1107,6 +1107,63 @@ The project includes a robust administrative management portal for taxi routes, 
   - `AdminInvoiceTest`: 6/6 passed (60 assertions).
   - Cleared caches: `php artisan optimize:clear`.
 
+---
+
+### Contact Page Local Office Embedded Google Map with Pin Marker
+- **Date**: 2026-10-27
+- **Feature**: Embedded Google Map Iframe with Red Location Pin Marker on Local Office Card
+- **Files Modified**:
+  - `resources/views/contact.blade.php`: Embedded interactive Google Map `<iframe>` with centered red location pin marker (`https://maps.google.com/maps?q=...&output=embed`) inside the Bhuj Headquarters local office card, alongside an "Open in Maps" external action link.
+  - `tests/Feature/FrontendTest.php`: Added assertions for `iframe-google-map` and embedded Google Map parameters.
+- **Verification**:
+  - `FrontendTest`: 8/8 passed (45 assertions).
+  - Cleared caches: `php artisan optimize:clear`.
+
+---
+
+### Contact Page Wireframe Realignment & Non-Stretching Inquiry Box
+- **Date**: 2026-10-27
+- **Feature**: Wireframe Reorganization (Natural Height Inquiry Box + 2 Top Cards + Full-Width Map Below)
+- **Files Modified**:
+  - `resources/views/contact.blade.php`: 
+    - Removed `items-stretch`, `h-full`, and `justify-between` from the inquiry form and container so the booking inquiry card sits at its natural, compact height with no awkward gaps.
+    - Realigned the layout to match the user's wireframe sketch: Inquiry Form on the left column (`lg:col-span-6`), and on the right column (`lg:col-span-6`), placed WhatsApp Booking and Direct Call side-by-side (`sm:grid-cols-2`) with the Local Office & wide Google Map embedded card directly below them.
+- **Verification**:
+  - Full PHPUnit test suite: **167/167 tests passed (1,865 assertions)**.
+  - Cleared caches: `php artisan optimize:clear`.
+
+---
+
+### Hostinger Poveda Travel Header & Navbar Redesign
+- **Date**: 2026-10-27
+- **Feature**: Hostinger Poveda-Inspired Luxury Travel Navigation Bar
+- **Files Modified**:
+  - `resources/views/partials/header.blade.php`: Retained all existing route links, dynamic package checks (`$hasPackages`), IDs (`#mainNav`, `#nav-link-*`, `#hamburger`, `#navMobile`), and WhatsApp CTA while cleaning up inline styles and standardizing the logo image class to `.nav-logo-img`.
+  - `public/css/style.css`: Redesigned navigation bar from floating pill container to full-bleed edge-to-edge luxury header inspired by Hostinger's Poveda travel template:
+    - Transparent top bar blending over hero background with subtle top-to-bottom dark gradient and ultra-fine border divider (`border-bottom: 1px solid rgba(255,255,255,0.08)`).
+    - Compact frosted glassmorphism on scroll (`.nav.scrolled`) with `backdrop-filter: blur(16px)` and depth shadow.
+    - Clean uppercase navigation links with wide letter spacing (`letter-spacing: 0.15em`), text shadow, and animated bottom accent underline on active/hover.
+    - Pill-shaped "Book Now" CTA (`.nav-cta`) with smooth hover state and box shadow.
+    - Full-width mobile slideout drawer (`.nav-mobile`) aligned to responsive tablet breakpoint (`1024px`).
+- **Verification**:
+  - Full PHPUnit test suite: **167/167 tests passed (1,865 assertions)**.
+  - Cleared caches: `php artisan optimize:clear`.
+
+---
+
+### Navbar Alignment, Transparent Landing & WhatsApp CTA Row Alignment
+- **Date**: 2026-10-27
+- **Feature**: Centered Container Alignment, Pure Transparent Landing, and Single-Row Book Now CTA
+- **Files Modified**:
+  - `resources/views/partials/header.blade.php`: Wrapped inner navigation elements in a `.nav-container` wrapper to prevent items from stretching to the extreme edges on wide viewports and align comfortably with the website's central grid.
+  - `resources/views/layouts/app.blade.php`: Removed golden border-color overrides and inset shadow injections on `.nav` and `.nav.scrolled`. Configured pure transparency at landing (`background: transparent; border: none; box-shadow: none;`) and a clean transparent dark shade on scroll (`background: rgba(16, 12, 10, 0.88)`).
+  - `public/css/style.css`:
+    - Defined `.nav-container` with `max-width: 1280px; width: 100%; margin: 0 auto; padding: 0 32px;` to position the logo and navigation links cleanly in the middle area.
+    - Updated `.nav-links a::after` and active state to white underline accent, removing any golden shades or borders.
+    - Updated `.nav-cta` to `display: inline-flex; flex-direction: row; align-items: center; gap: 8px; white-space: nowrap;` so the WhatsApp icon and "Book Now" label remain strictly on the same horizontal row.
+- **Verification**:
+  - Full PHPUnit test suite: **167/167 tests passed (1,865 assertions)**.
+  - Cleared caches: `php artisan optimize:clear`.
 
 
 

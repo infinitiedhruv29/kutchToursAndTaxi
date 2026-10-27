@@ -142,7 +142,10 @@ class FrontendTest extends TestCase
         $response->assertOk()
             ->assertSee('Get in Touch With Our Team')
             ->assertSee('Send an Instant Booking Inquiry')
-            ->assertSee('Send Booking Inquiry to WhatsApp');
+            ->assertSee('Send Booking Inquiry to WhatsApp')
+            ->assertSee('iframe-google-map')
+            ->assertSee('maps.google.com/maps?q=')
+            ->assertSee('Open in Maps');
     }
 
     public function test_sitemap_xml_returns_valid_xml_with_packages(): void

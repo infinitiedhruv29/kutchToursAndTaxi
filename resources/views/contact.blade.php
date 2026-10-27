@@ -34,82 +34,20 @@
 
 <!-- ══ CONTACT INFO CARDS & INQUIRY FORM ══ -->
 <section class="section py-16 px-[5%] bg-[#FDFDFC]">
-    <div class="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+    <div class="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- LEFT 1 COLUMN: CONTACT DETAILS -->
-        <div class="flex flex-col justify-between gap-5 h-full">
-            <!-- WHATSAPP FAST CARD (THEMED WITH PRIMARY COLOR, GREEN WHATSAPP ELEMENTS) -->
-            <div class="flex-1 flex flex-col justify-between p-6 rounded-[14px] transition-all"
-                 style="background: rgba(var(--orange-rgb, 220, 161, 52), 0.08); border: 1px solid rgba(var(--orange-rgb, 220, 161, 52), 0.35);">
-                <div>
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center shrink-0 shadow-sm">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-                        </div>
-                        <div>
-                            <span class="text-xs font-bold uppercase tracking-wide block" style="color: var(--orange);">Fastest Response</span>
-                            <h4 class="font-display font-bold text-base text-[#16100E]">WhatsApp Booking</h4>
-                        </div>
-                    </div>
-                    <p class="text-xs text-[#16100E]/80 mb-4 leading-relaxed">
-                        Send us your travel dates, preferred vehicle, and pickup time. We usually respond within 5–10 minutes.
-                    </p>
-                </div>
-                <a id="btn-contact-wa-direct"
-                   href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to inquire about Kutch tour packages and cabs.') }}"
-                   target="_blank"
-                   class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-2.5 px-4 rounded-[8px] font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-sm">
-                    <span>Chat on WhatsApp (+91 97732 39587)</span>
-                </a>
-            </div>
-
-            <!-- PHONE CALL CARD -->
-            <div class="flex-1 flex flex-col justify-between bg-white border border-[#e5e7eb] p-6 rounded-[14px] shadow-sm">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--orange);">Direct Call</span>
-                    <h4 class="font-display font-bold text-base text-[#16100E] mb-2">Speak to Our Travel Desk</h4>
-                </div>
-                <div class="space-y-1.5 text-xs">
-                    <p class="text-[#6B7A8D]">Primary Phone:</p>
-                    <a id="link-contact-call-1" href="tel:{{ $phoneTel }}" class="font-bold text-sm text-[#16100E] block hover:text-[var(--orange)] transition-colors">{{ $phoneDisplay }}</a>
-                    @if(!empty($settings->contact_number_2))
-                        <p class="text-[#6B7A8D] mt-2">Secondary Phone:</p>
-                        <a id="link-contact-call-2" href="tel:{{ preg_replace('/[^0-9+]/', '', $settings->contact_number_2) }}" class="font-bold text-sm text-[#16100E] block hover:text-[var(--orange)] transition-colors">{{ $settings->contact_number_2 }}</a>
-                    @endif
-                </div>
-                <span class="text-[0.7rem] text-[#6B7A8D] block mt-2">Available 7 Days: 7:00 AM – 10:30 PM</span>
-            </div>
-
-            <!-- OFFICE ADDRESS CARD -->
-            <div class="flex-1 flex flex-col justify-between bg-white border border-[#e5e7eb] p-6 rounded-[14px] shadow-sm">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--orange);">Local Office</span>
-                    <h4 class="font-display font-bold text-base text-[#16100E] mb-1.5">Bhuj Headquarters</h4>
-                    <p class="text-xs text-[#6B7A8D] leading-relaxed">
-                        {{ $settings->address ?? 'Station Road, Near Bus Station, Bhuj, Kutch, Gujarat — 370001' }}
-                    </p>
-                </div>
-                @if(!empty($settings->contact_email))
-                    <div class="pt-2.5 mt-2.5 border-t border-[#f3f4f6]">
-                        <span class="text-[0.68rem] text-[#6B7A8D] block uppercase font-medium">Email Address</span>
-                        <a href="mailto:{{ $settings->contact_email }}" class="text-xs font-semibold text-[#16100E] hover:underline">{{ $settings->contact_email }}</a>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- RIGHT 2 COLUMNS: INTERACTIVE WHATSAPP INQUIRY GENERATOR -->
-        <div class="lg:col-span-2 h-full flex flex-col">
-            <div class="bg-white p-7 sm:p-8 rounded-[14px] border border-[#e5e7eb] shadow-sm h-full flex flex-col justify-between">
-                <div>
+        <!-- LEFT COLUMN: INTERACTIVE WHATSAPP INQUIRY GENERATOR (NATURAL REQUIRED HEIGHT, NO STRETCH) -->
+        <div class="lg:col-span-6">
+            <div class="bg-white p-7 sm:p-8 rounded-[14px] border border-[#e5e7eb] shadow-sm">
+                <div class="mb-5">
                     <span class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--orange);">Quick Proposal</span>
                     <h3 class="font-display font-bold text-xl md:text-2xl text-[#16100E] mb-1.5">Send an Instant Booking Inquiry</h3>
-                    <p class="text-[#6B7A8D] text-xs leading-relaxed mb-6">
+                    <p class="text-[#6B7A8D] text-xs leading-relaxed">
                         Fill out the quick details below, and click "Send to WhatsApp". It will instantly format your request and open WhatsApp directly. No sign up required!
                     </p>
                 </div>
 
-                <form id="contact-form" onsubmit="handleInquirySubmit(event)" class="space-y-4 flex-1 flex flex-col justify-between">
+                <form id="contact-form" onsubmit="handleInquirySubmit(event)" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#16100E] mb-1">Your Full Name *</label>
@@ -171,6 +109,95 @@
                         <span>Send Booking Inquiry to WhatsApp</span>
                     </button>
                 </form>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: 2 TOP CARDS (WHATSAPP + CALL) + FULL GOOGLE MAP CARD BELOW -->
+        <div class="lg:col-span-6 flex flex-col gap-5">
+            <!-- TOP 2 CARDS SIDE BY SIDE -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- WHATSAPP FAST CARD -->
+                <div class="flex flex-col justify-between p-5 rounded-[14px] transition-all bg-white border border-[#e5e7eb] shadow-sm"
+                     style="background: rgba(var(--orange-rgb, 220, 161, 52), 0.05); border-color: rgba(var(--orange-rgb, 220, 161, 52), 0.25);">
+                    <div>
+                        <div class="flex items-center gap-2.5 mb-2.5">
+                            <div class="w-8 h-8 rounded-full bg-[#25D366] text-white flex items-center justify-center shrink-0 shadow-sm">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                            </div>
+                            <div>
+                                <span class="text-[0.68rem] font-bold uppercase tracking-wide block" style="color: var(--orange);">Fastest</span>
+                                <h4 class="font-display font-bold text-sm text-[#16100E]">WhatsApp</h4>
+                            </div>
+                        </div>
+                        <p class="text-[0.75rem] text-[#16100E]/75 mb-3 leading-relaxed">
+                            Send dates &amp; cab requirements. Response within 5–10 mins.
+                        </p>
+                    </div>
+                    <a id="btn-contact-wa-direct"
+                       href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to inquire about Kutch tour packages and cabs.') }}"
+                       target="_blank"
+                       class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-2 px-3 rounded-[6px] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                        <span>Chat on WhatsApp</span>
+                    </a>
+                </div>
+
+                <!-- PHONE CALL CARD -->
+                <div class="flex flex-col justify-between bg-white border border-[#e5e7eb] p-5 rounded-[14px] shadow-sm">
+                    <div>
+                        <span class="text-[0.68rem] font-bold uppercase tracking-wide block mb-1" style="color: var(--orange);">Direct Call</span>
+                        <h4 class="font-display font-bold text-sm text-[#16100E] mb-2">Speak to Travel Desk</h4>
+                        <div class="space-y-1 text-xs">
+                            <a id="link-contact-call-1" href="tel:{{ $phoneTel }}" class="font-bold text-sm text-[#16100E] block hover:text-[var(--orange)] transition-colors">{{ $phoneDisplay }}</a>
+                            @if(!empty($settings->contact_number_2))
+                                <a id="link-contact-call-2" href="tel:{{ preg_replace('/[^0-9+]/', '', $settings->contact_number_2) }}" class="font-bold text-xs text-[#6B7A8D] block hover:text-[var(--orange)] transition-colors">{{ $settings->contact_number_2 }}</a>
+                            @endif
+                        </div>
+                    </div>
+                    <span class="text-[0.68rem] text-[#6B7A8D] block mt-2 pt-2 border-t border-[#f3f4f6]">7:00 AM – 10:30 PM (7 Days)</span>
+                </div>
+            </div>
+
+            <!-- FULL GOOGLE MAP CARD WITH OFFICE ADDRESS BELOW -->
+            <div class="bg-white border border-[#e5e7eb] p-6 rounded-[14px] shadow-sm">
+                <div class="flex items-start justify-between gap-4 mb-3">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--orange);">Local Office</span>
+                        <h4 class="font-display font-bold text-base text-[#16100E] mb-1">Bhuj Headquarters</h4>
+                        <p class="text-xs text-[#6B7A8D] leading-relaxed">
+                            {{ $settings->address ?? 'Station Road, Near Bus Station, Bhuj, Kutch, Gujarat — 370001' }}
+                        </p>
+                    </div>
+                    @php
+                        $mapUrl = $settings->google_map_link ?: 'https://maps.google.com/?q=' . urlencode($settings->address ?? 'Station Road, Near Bus Station, Bhuj, Kutch, Gujarat — 370001');
+                        $mapEmbedQuery = urlencode($settings->address ?? 'Station Road, Near Bus Station, Bhuj, Kutch, Gujarat 370001');
+                    @endphp
+                    <a id="link-contact-map" href="{{ $mapUrl }}" target="_blank" rel="noopener noreferrer"
+                       class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-[6px] border border-[#e5e7eb] hover:border-[var(--orange)] flex items-center gap-1.5 transition-colors"
+                       style="color: var(--orange);">
+                        <span>Open in Maps</span>
+                        <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                </div>
+
+                <!-- EMBEDDED GOOGLE MAP (FULL WIDTH OF CARD) -->
+                <div class="w-full h-56 sm:h-64 rounded-[10px] overflow-hidden border border-[#e5e7eb] shadow-inner relative my-3">
+                    <iframe
+                        id="iframe-google-map"
+                        src="https://maps.google.com/maps?q={{ $mapEmbedQuery }}&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                        class="w-full h-full border-0 block"
+                        loading="lazy"
+                        allowfullscreen=""
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Office Location Map">
+                    </iframe>
+                </div>
+
+                @if(!empty($settings->contact_email))
+                    <div class="pt-2.5 border-t border-[#f3f4f6] flex items-center justify-between text-xs">
+                        <span class="text-[0.72rem] text-[#6B7A8D] uppercase font-medium">Email Address</span>
+                        <a href="mailto:{{ $settings->contact_email }}" class="font-semibold text-[#16100E] hover:underline">{{ $settings->contact_email }}</a>
+                    </div>
+                @endif
             </div>
         </div>
 

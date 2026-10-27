@@ -80,48 +80,41 @@
 
         /* ── HEADER NAVIGATION SHADE & BORDER ── */
         .nav {
-            height: 98px !important;
-            padding: 0 32px !important;
-            border-color: rgba({{ $primaryRgb }}, 0.18) !important;
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba({{ $primaryRgb }}, 0.25) !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
         }
         .nav.scrolled {
-            height: 72px !important;
-            border-color: rgba({{ $primaryRgb }}, 0.25) !important;
-            box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba({{ $primaryRgb }}, 0.3) !important;
+            background: rgba(16, 12, 10, 0.88) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
         }
         .nav .brand-link img {
-            height: 88px !important;
+            height: 76px !important;
             width: auto !important;
-            max-width: 320px !important;
+            max-width: 280px !important;
             object-fit: contain !important;
-            transition: height 0.3s ease !important;
+            transition: all 0.3s ease !important;
         }
         .nav.scrolled .brand-link img {
-            height: 62px !important;
+            height: 56px !important;
         }
-        @media(max-width:900px) {
-            .nav {
-                height: 86px !important;
-                padding: 0 24px !important;
-            }
+        @media(max-width:1024px) {
             .nav .brand-link img {
-                height: 74px !important;
+                height: 62px !important;
             }
             .nav.scrolled .brand-link img {
-                height: 58px !important;
+                height: 50px !important;
             }
         }
         @media(max-width:600px) {
-            .nav {
-                height: 76px !important;
-                padding: 0 16px !important;
-            }
             .nav .brand-link img {
-                height: 64px !important;
+                height: 52px !important;
             }
             .nav.scrolled .brand-link img {
-                height: 52px !important;
+                height: 44px !important;
             }
         }
 

@@ -74,6 +74,11 @@ abstract class TaxiRouteRequest extends FormRequest
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:4294967295'],
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string', 'max:1000'],
+            'vehicle_fares' => ['nullable', 'array'],
+            'vehicle_fares.*.vehicle_id' => ['required', 'integer'],
+            'vehicle_fares.*.one_way_fare' => $fareRules,
+            'vehicle_fares.*.round_trip_fare' => $fareRules,
+            'default_vehicle_id' => ['nullable', 'integer'],
         ];
     }
 
@@ -112,5 +117,39 @@ abstract class TaxiRouteRequest extends FormRequest
         }
 
         return $data;
+    }
+
+    public function vehicleFaresData(): array
+    {
+        $fares = $this->validated('vehicle_fares', []);
+        if (! is_array($fares)) {
+            return [];
+        }
+
+        $defaultVehicleId = (int) $this->input('default_vehicle_id', 0);
+        $clean = [];
+        $order = 1;
+
+        foreach ($fares as $fare) {
+            $vehicleId = isset($fare['vehicle_id']) ? (int) $fare['vehicle_id'] : null;
+            $oneWay = isset($fare['one_way_fare']) && $fare['one_way_fare'] !== '' && $fare['one_way_fare'] !== null ? $fare['one_way_fare'] : null;
+            $roundTrip = isset($fare['round_trip_fare']) && $fare['round_trip_fare'] !== '' && $fare['round_trip_fare'] !== null ? $fare['round_trip_fare'] : null;
+
+            if ($vehicleId) {
+                $clean[] = [
+                    'vehicle_id' => $vehicleId,
+                    'one_way_fare' => $oneWay,
+                    'round_trip_fare' => $roundTrip,
+                    'is_default' => $defaultVehicleId === $vehicleId,
+                    'sort_order' => $order++,
+                ];
+            }
+        }
+
+        if (! empty($clean) && ! collect($clean)->contains('is_default', true)) {
+            $clean[0]['is_default'] = true;
+        }
+
+        return $clean;
     }
 }

@@ -68,19 +68,22 @@ class AdminVehiclesTest extends TestCase
         $this->assertNull($vehicle->image_path);
         $this->assertFalse($vehicle->is_published);
         $this->assertNull($vehicle->price_per_km);
+        $this->assertNull($vehicle->price_for_12_hrs);
         $this->assertNull($vehicle->min_km_per_day);
-        $this->put('/admin/vehicles/'.$vehicle->id, $this->data(['name' => 'Updated', 'is_published' => true, 'sort_order' => 3, 'price_per_km' => '14.50', 'min_km_per_day' => 250, 'notes' => '<script>plain text</script>']))
+        $this->put('/admin/vehicles/'.$vehicle->id, $this->data(['name' => 'Updated', 'is_published' => true, 'sort_order' => 3, 'price_per_km' => '14.50', 'price_for_12_hrs' => '2500.00', 'min_km_per_day' => 250, 'notes' => '<script>plain text</script>']))
             ->assertRedirect('/admin/vehicles')->assertSessionHas('status');
         $vehicle->refresh();
         $this->assertTrue($vehicle->is_published);
         $this->assertSame(3, $vehicle->sort_order);
         $this->assertSame('14.50', $vehicle->price_per_km);
+        $this->assertSame('2500.00', $vehicle->price_for_12_hrs);
         $this->assertSame(250, $vehicle->min_km_per_day);
         $this->assertSame('<script>plain text</script>', $vehicle->notes);
-        $this->get('/admin/vehicles/'.$vehicle->id.'/edit')->assertOk()->assertSee('&lt;script&gt;plain text&lt;/script&gt;', false);
+        $this->get('/admin/vehicles/'.$vehicle->id.'/edit')->assertOk()->assertSee('&lt;script&gt;plain text&lt;/script&gt;', false)->assertSee('name="price_for_12_hrs"', false);
         $this->putJson('/admin/vehicles/'.$vehicle->id, $this->data())->assertOk();
         $this->assertFalse($vehicle->fresh()->is_published);
         $this->assertNull($vehicle->fresh()->price_per_km);
+        $this->assertNull($vehicle->fresh()->price_for_12_hrs);
     }
 
     public function test_slug_suggestions_manual_duplicates_and_renaming(): void
@@ -120,6 +123,7 @@ class AdminVehiclesTest extends TestCase
         foreach ([
             ['vehicle_type_id' => 999, 'vehicle_capacity_id' => 999], ['slug' => 'Bad Slug'],
             ['price_per_km' => '-1'], ['price_per_km' => '1.001'], ['price_per_km' => '1e3'], ['price_per_km' => '10000000000'],
+            ['price_for_12_hrs' => '-1'], ['price_for_12_hrs' => '1.001'], ['price_for_12_hrs' => '1e3'], ['price_for_12_hrs' => '10000000000'],
             ['min_km_per_day' => -1], ['min_km_per_day' => '1.5'], ['min_km_per_day' => 4294967296],
             ['sort_order' => -1], ['is_published' => 'bad'], ['notes' => str_repeat('x', 5001)],
         ] as $invalid) {
@@ -136,10 +140,12 @@ class AdminVehiclesTest extends TestCase
         $cell = $this->getJson('/admin/vehicles/data')->assertOk()->json('data.0.pricing');
         $this->assertStringContainsString('Price on inquiry', $cell);
         $this->assertStringNotContainsString('km/day', $cell);
-        $this->putJson('/admin/vehicles/'.$vehicle->id, $this->data(['price_per_km' => '0', 'min_km_per_day' => '0']))->assertOk();
+        $this->putJson('/admin/vehicles/'.$vehicle->id, $this->data(['price_per_km' => '0', 'price_for_12_hrs' => '2500.00', 'min_km_per_day' => '0']))->assertOk();
         $this->assertSame('0.00', $vehicle->fresh()->price_per_km);
+        $this->assertSame('2500.00', $vehicle->fresh()->price_for_12_hrs);
         $cell = $this->getJson('/admin/vehicles/data')->json('data.0.pricing');
         $this->assertStringContainsString('₹0.00/km', $cell);
+        $this->assertStringContainsString('₹2,500.00 / 12 hrs', $cell);
         $this->assertStringContainsString('Minimum 0 km/day', $cell);
     }
 

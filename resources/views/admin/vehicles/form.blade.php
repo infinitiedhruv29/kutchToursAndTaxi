@@ -24,10 +24,11 @@
             </div>
         </x-admin.card>
         <x-admin.card title="Pricing and notes" description="All fields in this section are optional, including for published vehicles.">
-            <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+            <div class="grid gap-5 p-5 sm:grid-cols-3 sm:p-6">
                 <x-admin.field name="price_per_km" label="Price per km (₹)" type="number" :value="$vehicle->price_per_km" min="0" max="9999999999.99" step="0.01" hint="Leave blank for Price on inquiry. Zero is an explicit price." />
+                <x-admin.field name="price_for_12_hrs" label="Price for 12 hrs (₹)" type="number" :value="$vehicle->price_for_12_hrs" min="0" max="9999999999.99" step="0.01" hint="Local 12-hour rental package rate. Leave blank if not offered." />
                 <x-admin.field name="min_km_per_day" label="Minimum km per day" type="number" :value="$vehicle->min_km_per_day" min="0" max="4294967295" step="1" hint="Leave blank if unspecified." />
-                <div class="sm:col-span-2"><x-admin.textarea name="notes" label="Notes" :value="$vehicle->notes" maxlength="5000" hint="Plain text only; for example, suitability or service conditions." /></div>
+                <div class="sm:col-span-3"><x-admin.textarea name="notes" label="Notes" :value="$vehicle->notes" maxlength="5000" hint="Plain text only; for example, suitability or service conditions." /></div>
             </div>
         </x-admin.card>
         <x-admin.card title="Image">

@@ -1,6 +1,8 @@
 @php
     $editing = $taxiRoute->exists;
     $duration = $taxiRoute->estimated_duration_minutes;
+    $vehicles = $vehicles ?? \App\Models\Vehicle::with(['type', 'capacity'])->where('is_published', true)->orderBy('sort_order')->get();
+    $routeFares = $routeFares ?? ($taxiRoute->exists ? $taxiRoute->fares->keyBy('vehicle_id') : collect());
 @endphp
 <x-admin.layout :title="$editing ? 'Edit taxi route' : 'Create taxi route'" subtitle="Manage route details, fares, and publication.">
     <form method="POST" action="{{ $editing ? route('admin.routes.update', $taxiRoute) : route('admin.routes.store') }}" enctype="multipart/form-data" data-admin-form data-loading-text="Saving route…" data-route-form data-creating="{{ $editing ? 'false' : 'true' }}" class="space-y-6">
@@ -29,29 +31,79 @@
         <x-admin.card title="Descriptions">
             <div class="space-y-5 p-5 sm:p-6">
                 <x-admin.textarea name="short_description" label="Short description" :value="$taxiRoute->short_description" maxlength="2000" hint="Plain text for route cards and summaries." />
-                <x-admin.rich-text name="description" label="Full description" :value="$taxiRoute->description" />
+                <input type="hidden" name="description" value="{{ old('description', $taxiRoute->description) }}">
             </div>
         </x-admin.card>
 
-        <x-admin.card title="Route image">
-            <div class="grid gap-6 p-5 sm:p-6 md:grid-cols-2">
-                <x-admin.branding-upload name="image" label="Route image" :path="$taxiRoute->image_path" hint="JPEG, PNG, or WebP, up to 2 MB. A new upload takes priority over removal." />
-                <x-admin.field name="image_alt" label="Image description (alt text)" :value="$taxiRoute->image_alt" maxlength="255" hint="Describe the image for visitors using screen readers." />
-            </div>
-        </x-admin.card>
+        <input type="hidden" name="image_alt" value="{{ old('image_alt', $taxiRoute->image_alt) }}">
+        <input type="hidden" name="forward_one_way_fare" value="{{ old('forward_one_way_fare', $taxiRoute->forward_one_way_fare) }}">
+        <input type="hidden" name="forward_round_trip_fare" value="{{ old('forward_round_trip_fare', $taxiRoute->forward_round_trip_fare) }}">
+        <input type="hidden" name="reverse_enabled" value="{{ old('reverse_enabled', $taxiRoute->reverse_enabled ? '1' : '0') }}">
+        <input type="hidden" name="reverse_one_way_fare" value="{{ old('reverse_one_way_fare', $taxiRoute->reverse_one_way_fare) }}">
+        <input type="hidden" name="reverse_round_trip_fare" value="{{ old('reverse_round_trip_fare', $taxiRoute->reverse_round_trip_fare) }}">
 
-        <x-admin.card title="Fares" description="All fares are in INR. Leave an amount empty to use “Price on inquiry”.">
-            <div class="space-y-5 p-5 sm:p-6">
-                <div class="grid gap-5 md:grid-cols-2">
-                    <x-admin.field name="forward_one_way_fare" label="Forward one-way fare (₹)" type="number" :value="$taxiRoute->forward_one_way_fare" min="0" max="9999999999.99" step="0.01" />
-                    <x-admin.field name="forward_round_trip_fare" label="Forward round-trip fare (₹)" type="number" :value="$taxiRoute->forward_round_trip_fare" min="0" max="9999999999.99" step="0.01" />
-                </div>
-                <x-admin.checkbox name="reverse_enabled" label="Allow reverse travel" :checked="$taxiRoute->reverse_enabled" hint="Turning this off retains saved reverse fares. Blank reverse fares inherit the matching forward fare." />
-                <fieldset data-reverse-fares class="grid gap-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-4 md:grid-cols-2">
-                    <legend class="px-2 text-sm font-medium text-slate-700 dark:text-slate-200">Reverse fares</legend>
-                    <div><x-admin.field name="reverse_one_way_fare" label="Reverse one-way override (₹)" type="number" :value="$taxiRoute->reverse_one_way_fare" min="0" max="9999999999.99" step="0.01" /><p data-reverse-summary="one_way" class="mt-2 text-xs text-slate-500 dark:text-slate-400">Blank inherits the forward one-way fare.</p></div>
-                    <div><x-admin.field name="reverse_round_trip_fare" label="Reverse round-trip override (₹)" type="number" :value="$taxiRoute->reverse_round_trip_fare" min="0" max="9999999999.99" step="0.01" /><p data-reverse-summary="round_trip" class="mt-2 text-xs text-slate-500 dark:text-slate-400">Blank inherits the forward round-trip fare.</p></div>
-                </fieldset>
+        <x-admin.card title="Vehicle fleet rates" description="Vehicle fleet rates are managed under the Vehicles section. Select which vehicle is selected by default for this route.">
+            <style>
+                .vehicle-pricing-table, .vehicle-pricing-table th, .vehicle-pricing-table td:not(:has(input[type="number"])) {
+                    user-select: none;
+                    -webkit-user-select: none;
+                }
+                .vehicle-pricing-table ::selection {
+                    background-color: rgba(220, 161, 52, 0.35) !important;
+                    color: inherit !important;
+                }
+            </style>
+            <div class="p-5 sm:p-6 overflow-x-auto vehicle-pricing-table">
+                <table class="w-full text-left text-xs border-collapse select-none">
+                    <thead>
+                        <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[0.7rem]">
+                            <th class="py-2.5 px-3 font-semibold">Vehicle</th>
+                            <th class="py-2.5 px-3 font-semibold">Capacity & Type</th>
+                            <th class="py-2.5 px-3 font-semibold">Fleet Rates</th>
+                            <th class="py-2.5 px-3 font-semibold text-center w-24">Default</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                        @foreach ($vehicles as $index => $veh)
+                            @php
+                                $fare = $routeFares[$veh->id] ?? null;
+                                $oneWayVal = old("vehicle_fares.{$index}.one_way_fare", $fare?->one_way_fare);
+                                $roundTripVal = old("vehicle_fares.{$index}.round_trip_fare", $fare?->round_trip_fare);
+                                $isDefault = old('default_vehicle_id', $fare?->is_default ? $veh->id : ($loop->first ? $veh->id : null)) == $veh->id;
+                            @endphp
+                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-colors">
+                                <td class="py-3 px-3">
+                                    <input type="hidden" name="vehicle_fares[{{ $index }}][vehicle_id]" value="{{ $veh->id }}">
+                                    <input type="hidden" name="vehicle_fares[{{ $index }}][one_way_fare]" value="{{ $oneWayVal }}">
+                                    <input type="hidden" name="vehicle_fares[{{ $index }}][round_trip_fare]" value="{{ $roundTripVal }}">
+                                    <label for="default_veh_{{ $veh->id }}" class="font-bold text-slate-900 dark:text-slate-100 block cursor-pointer hover:text-brand-600 dark:hover:text-brand-300 transition-colors select-none">
+                                        {{ $veh->name }}
+                                    </label>
+                                </td>
+                                <td class="py-3 px-3 select-none">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="inline-flex rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[0.68rem] font-semibold text-slate-700 dark:text-slate-300">{{ $veh->capacity->label ?? '4 Seater' }}</span>
+                                        <span class="inline-flex rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[0.68rem] font-semibold text-slate-700 dark:text-slate-300">{{ $veh->type->name ?? 'Cab' }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-3 text-slate-500 dark:text-slate-400 text-[0.72rem] select-none">
+                                    <span>₹{{ round($veh->price_per_km ?? 13) }}/km</span>
+                                    @if ($veh->price_for_12_hrs)
+                                        <span class="block text-[0.68rem] text-slate-400 dark:text-slate-500">₹{{ number_format((float) $veh->price_for_12_hrs) }} / 12 hrs</span>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-3 text-center">
+                                    <input type="radio"
+                                           id="default_veh_{{ $veh->id }}"
+                                           name="default_vehicle_id"
+                                           value="{{ $veh->id }}"
+                                           {{ $isDefault ? 'checked' : '' }}
+                                           class="size-4 text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-700 cursor-pointer">
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </x-admin.card>
 

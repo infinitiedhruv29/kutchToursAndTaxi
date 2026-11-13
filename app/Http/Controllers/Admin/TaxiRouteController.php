@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\TaxiRouteRequest;
 use App\Http\Requests\Admin\TaxiRouteTableRequest;
 use App\Http\Requests\Admin\UpdateTaxiRouteRequest;
 use App\Models\TaxiRoute;
+use App\Models\Vehicle;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -64,6 +65,7 @@ class TaxiRouteController extends Controller
     private function listingQuery(TaxiRouteTableRequest $request): Builder
     {
         return TaxiRoute::query()
+            ->with(['fares.vehicle'])
             ->when($request->searchTerm() !== '', function (Builder $query) use ($request): void {
                 $search = $request->searchTerm();
                 $query->where(function ($query) use ($search): void {
@@ -90,7 +92,14 @@ class TaxiRouteController extends Controller
 
     public function create(Request $request): View
     {
-        return view('admin.routes.form', ['taxiRoute' => new TaxiRoute, 'returnTo' => $this->returnDestination($request)]);
+        $vehicles = Vehicle::with(['type', 'capacity'])->where('is_published', true)->orderBy('sort_order')->get();
+
+        return view('admin.routes.form', [
+            'taxiRoute' => new TaxiRoute,
+            'vehicles' => $vehicles,
+            'routeFares' => collect(),
+            'returnTo' => $this->returnDestination($request),
+        ]);
     }
 
     public function store(StoreTaxiRouteRequest $request): RedirectResponse|JsonResponse
@@ -102,7 +111,16 @@ class TaxiRouteController extends Controller
 
     public function edit(Request $request, TaxiRoute $taxiRoute): View
     {
-        return view('admin.routes.form', ['taxiRoute' => $taxiRoute, 'returnTo' => $this->returnDestination($request)]);
+        $taxiRoute->load(['fares.vehicle.type', 'fares.vehicle.capacity']);
+        $vehicles = Vehicle::with(['type', 'capacity'])->where('is_published', true)->orderBy('sort_order')->get();
+        $routeFares = $taxiRoute->fares->keyBy('vehicle_id');
+
+        return view('admin.routes.form', [
+            'taxiRoute' => $taxiRoute,
+            'vehicles' => $vehicles,
+            'routeFares' => $routeFares,
+            'returnTo' => $this->returnDestination($request),
+        ]);
     }
 
     public function update(UpdateTaxiRouteRequest $request, TaxiRoute $taxiRoute): RedirectResponse|JsonResponse
@@ -142,6 +160,14 @@ class TaxiRouteController extends Controller
 
                         if (! $route->fill($data)->save()) {
                             throw new RuntimeException('Unable to save the taxi route.');
+                        }
+
+                        if ($request->has('vehicle_fares')) {
+                            $faresData = $request->vehicleFaresData();
+                            $route->fares()->delete();
+                            if (! empty($faresData)) {
+                                $route->fares()->createMany($faresData);
+                            }
                         }
 
                         return $route;

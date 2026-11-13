@@ -2,7 +2,7 @@
 @switch($column)
     @case('vehicle')
         <div class="flex min-w-48 items-center gap-3">
-            @if ($vehicle->image_path)<img src="{{ Storage::disk('public')->url($vehicle->image_path) }}" alt="{{ $vehicle->image_alt ?? '' }}" class="size-12 shrink-0 rounded-lg object-cover" loading="lazy">
+            @if ($vehicle->image_path)<img src="{{ $vehicle->image_url }}" alt="{{ $vehicle->image_alt ?? '' }}" class="size-12 shrink-0 rounded-lg object-cover" loading="lazy">
             @else<span class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400 dark:bg-slate-800"><x-admin.icon name="route" /></span>@endif
             <a href="{{ $editUrl }}" data-return-link class="rounded-sm font-semibold text-slate-900 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-brand-600 dark:text-slate-100 dark:hover:text-brand-200">{{ $vehicle->name }}</a>
         </div>
@@ -13,7 +13,8 @@
         @break
     @case('pricing')
         <p class="whitespace-nowrap">{{ $vehicle->price_per_km === null ? 'Price on inquiry' : '₹'.number_format((float) $vehicle->price_per_km, 2).'/km' }}</p>
-        @if ($vehicle->min_km_per_day !== null)<p class="mt-1 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">Minimum {{ $vehicle->min_km_per_day }} km/day</p>@endif
+        @if ($vehicle->price_for_12_hrs !== null)<p class="mt-0.5 whitespace-nowrap text-xs font-medium text-slate-700 dark:text-slate-300">₹{{ number_format((float) $vehicle->price_for_12_hrs, 2) }} / 12 hrs</p>@endif
+        @if ($vehicle->min_km_per_day !== null)<p class="mt-0.5 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">Minimum {{ $vehicle->min_km_per_day }} km/day</p>@endif
         @break
     @case('visibility')
         <span @class(['inline-flex rounded-full px-2.5 py-1 text-xs font-medium', 'bg-brand-50 text-brand-800 dark:bg-brand-500/10 dark:text-brand-200' => $vehicle->is_published, 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300' => !$vehicle->is_published])>{{ $vehicle->is_published ? 'Published' : 'Draft' }}</span>

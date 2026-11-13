@@ -153,7 +153,6 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
         $taxiResponse->assertOk()
             ->assertSee('Bhuj to Kalo Dungar Hill')
             ->assertSee('95 km')
-            ->assertSee('₹2,500')
             ->assertSee('₹3,500');
 
         // UPDATE
@@ -181,7 +180,6 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
         $updatedTaxi = $this->get('/taxi');
         $updatedTaxi->assertOk()
             ->assertSee('Bhuj to Kalo Dungar &amp; Magnetic Hill', false)
-            ->assertSee('₹2,800')
             ->assertSee('₹3,900');
 
         // UNPUBLISH
@@ -241,6 +239,7 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
             'vehicle_type_id' => $type->id,
             'vehicle_capacity_id' => $capacity->id,
             'price_per_km' => 24,
+            'price_for_12_hrs' => 4500,
             'min_km_per_day' => 300,
             'rate_per_day' => 7200,
             'notes' => 'Hybrid luxury captain seats with dual AC.',
@@ -269,6 +268,8 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
         $taxiVeh->assertOk()
             ->assertSee('Toyota Innova Hycross')
             ->assertSee('₹24/km')
+            ->assertSee('Price for 12 hrs -')
+            ->assertSee('₹4,500')
             ->assertSee('Hybrid luxury captain seats');
 
         // 3. Update Vehicle via Admin
@@ -278,6 +279,7 @@ class AdminToFrontendEndToEndCrudTest extends TestCase
             'vehicle_type_id' => $type->id,
             'vehicle_capacity_id' => $capacity->id,
             'price_per_km' => 27,
+            'price_for_12_hrs' => 5000,
             'min_km_per_day' => 300,
             'rate_per_day' => 8100,
             'notes' => 'Top-spec ottoman luxury seats.',

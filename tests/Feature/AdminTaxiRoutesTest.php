@@ -58,8 +58,10 @@ class AdminTaxiRoutesTest extends TestCase
         $this->get('/admin/routes')->assertOk()->assertSee('No routes found')
             ->assertSee('data-return-link', false)->assertSee(route('admin.routes.create'), false);
         $this->get('/admin/routes/create')->assertOk()->assertSee('Create taxi route')
-            ->assertSee('data-rich-editor', false)->assertSee('data-editor-source', false)
-            ->assertSee('Allow reverse travel')->assertSee('SEO description');
+            ->assertSee('Vehicle fleet rates')->assertSee('Short description')
+            ->assertSee('SEO description')
+            ->assertDontSee('data-rich-editor', false)
+            ->assertDontSee('Allow reverse travel');
     }
 
     public function test_create_requires_core_details_and_suggests_title_and_slug_server_side(): void
@@ -312,7 +314,7 @@ class AdminTaxiRoutesTest extends TestCase
         $route = TaxiRoute::firstOrFail();
         $first = $route->image_path;
         Storage::disk('public')->assertExists($first);
-        $this->get('/admin/routes/'.$route->id.'/edit')->assertOk()->assertSee('src="/storage/'.$first.'"', false);
+        $this->get('/admin/routes')->assertOk()->assertSee('src="/storage/'.$first.'"', false);
         $this->put('/admin/routes/'.$route->id, $this->routeData([
             'image' => UploadedFile::fake()->image('new.webp'), 'remove_image' => '1',
         ]))->assertSessionHasNoErrors();

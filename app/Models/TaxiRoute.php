@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
@@ -55,6 +56,11 @@ class TaxiRoute extends Model
     public function effectiveReverseRoundTripFare(): ?string
     {
         return $this->reverse_enabled ? ($this->reverse_round_trip_fare ?? $this->forward_round_trip_fare) : null;
+    }
+
+    public function fares(): HasMany
+    {
+        return $this->hasMany(TaxiRouteFare::class)->orderBy('sort_order');
     }
 
     public static function suggestedSlug(string $origin, string $destination): string

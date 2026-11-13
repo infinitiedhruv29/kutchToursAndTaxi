@@ -21,7 +21,8 @@ class TaxiController extends Controller
         $types = VehicleType::orderBy('sort_order', 'asc')->get();
         $capacities = VehicleCapacity::orderBy('passenger_capacity', 'asc')->get();
 
-        $routes = TaxiRoute::where('is_published', true)
+        $routes = TaxiRoute::with(['fares.vehicle.type', 'fares.vehicle.capacity'])
+            ->where('is_published', true)
             ->orderBy('sort_order', 'asc')
             ->get();
 

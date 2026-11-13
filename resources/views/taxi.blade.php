@@ -113,8 +113,9 @@
 <section class="section py-16 px-[5%] bg-[#FDFDFC]">
     <div class="max-w-[1240px] mx-auto">
         <style>
-            .filter-cap-btn {
-                padding: 6px 16px;
+            .filter-cap-btn,
+            .filter-type-btn {
+                padding: 6px 14px;
                 border-radius: 6px;
                 font-size: 0.78rem;
                 font-weight: 600;
@@ -127,15 +128,21 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
+                white-space: nowrap;
+                user-select: none;
             }
-            .filter-cap-btn:hover {
+            .filter-cap-btn:hover,
+            .filter-type-btn:hover {
                 border-color: var(--orange) !important;
                 color: var(--orange) !important;
                 background: #ffffff !important;
             }
             .filter-cap-btn.active,
             .filter-cap-btn.active:hover,
-            .filter-cap-btn.active:focus {
+            .filter-cap-btn.active:focus,
+            .filter-type-btn.active,
+            .filter-type-btn.active:hover,
+            .filter-type-btn.active:focus {
                 background-color: var(--orange) !important;
                 border-color: var(--orange) !important;
                 color: #ffffff !important;
@@ -144,18 +151,27 @@
             .vehicle-item {
                 border: 1px solid #e5e7eb;
                 border-radius: 14px;
-                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
             }
             .vehicle-item:hover {
                 border-color: var(--orange) !important;
                 box-shadow: 0 16px 36px rgba(var(--orange-rgb, 220, 161, 52), 0.14), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
                 transform: translateY(-6px);
             }
+            .vehicle-item .vehicle-img-wrapper {
+                isolation: isolate;
+                -webkit-mask-image: -webkit-radial-gradient(white, black);
+                transform: translateZ(0);
+            }
             .vehicle-item .vehicle-img-wrapper img {
+                will-change: transform;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                transform: translateZ(0);
                 transition: transform 0.4s ease;
             }
             .vehicle-item:hover .vehicle-img-wrapper img {
-                transform: scale(1.05);
+                transform: scale(1.05) translateZ(0);
             }
             .why-service-card {
                 border: 1px solid #e5e7eb;
@@ -176,25 +192,49 @@
         </div>
 
         <!-- Filter Controls -->
-        <div class="bg-white p-4 sm:p-5 rounded-[12px] border border-[#e5e7eb] mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-            <!-- Capacity Buttons -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs font-bold text-[#16100E] uppercase tracking-wider mr-1">Capacity:</span>
-                <button type="button" class="filter-cap-btn active" onclick="filterByCapacity('all', this)">All</button>
-                @foreach($capacities as $cap)
-                    <button type="button" class="filter-cap-btn" onclick="filterByCapacity('{{ $cap->passenger_capacity }}', this)">{{ $cap->label }}</button>
-                @endforeach
+        <div class="bg-white p-4 sm:p-5 md:p-6 rounded-[14px] border border-[#e5e7eb] mb-8 shadow-xs">
+            <!-- Header bar with title and reset button -->
+            <div class="flex items-center justify-between pb-3.5 mb-3.5 border-b border-[#f0f2f5]">
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-[#DCA134]/15 text-[#DCA134]">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                        </svg>
+                    </span>
+                    <span class="text-xs font-bold text-[#16100E] uppercase tracking-wider">Filter Vehicles</span>
+                    <span class="text-[0.72rem] text-[#6B7A8D] font-normal hidden sm:inline">— Select capacity or vehicle type</span>
+                </div>
+                <button type="button"
+                        id="btn-reset-filters"
+                        onclick="resetFilters()"
+                        class="text-xs font-semibold text-[#9E2A2B] hover:text-[#7d2021] hover:underline items-center gap-1 transition-colors hidden cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Reset Filters</span>
+                </button>
             </div>
 
-            <!-- Type Dropdown -->
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-[#16100E] uppercase tracking-wider">Car Type:</span>
-                <select id="vehicle-type-filter" class="border border-[#e5e7eb] rounded-[6px] py-1.5 px-3 text-xs font-semibold text-[#4b5563] bg-white outline-none hover:border-[var(--orange)] focus:border-[var(--orange)] transition-colors cursor-pointer" onchange="filterByType(this.value)">
-                    <option value="all">All Types</option>
-                    @foreach($types as $t)
-                        <option value="{{ $t->id }}">{{ $t->name }}</option>
+            <!-- Row 1: Capacity (Above) -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3.5">
+                <span class="text-xs font-bold text-[#16100E] uppercase tracking-wider shrink-0 sm:w-24">Capacity:</span>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button type="button" class="filter-cap-btn active" data-cap="all" onclick="filterByCapacity('all', this)">All</button>
+                    @foreach($capacities as $cap)
+                        <button type="button" class="filter-cap-btn" data-cap="{{ $cap->passenger_capacity }}" onclick="filterByCapacity('{{ $cap->passenger_capacity }}', this)">{{ $cap->label }}</button>
                     @endforeach
-                </select>
+                </div>
+            </div>
+
+            <!-- Row 2: Car Type (Below) -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 pt-3.5 border-t border-[#f0f2f5]">
+                <span class="text-xs font-bold text-[#16100E] uppercase tracking-wider shrink-0 sm:w-24">Car Type:</span>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button type="button" class="filter-type-btn active" data-type="all" onclick="filterByType('all', this)">All Types</button>
+                    @foreach($types as $t)
+                        <button type="button" class="filter-type-btn" data-type="{{ $t->id }}" onclick="filterByType('{{ $t->id }}', this)">{{ $t->name }}</button>
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -206,7 +246,7 @@
                      data-type="{{ $veh->vehicle_type_id }}">
                     <div>
                         <div class="vehicle-img-wrapper h-[160px] rounded-[10px] overflow-hidden bg-[#F6F3EC] mb-3 flex items-center justify-center">
-                            <img src="{{ asset($veh->image_path ?? 'images/taxi-page/dzire.webp') }}"
+                            <img src="{{ $veh->image_url }}"
                                  alt="{{ $veh->image_alt ?? $veh->name }}"
                                  class="w-full h-full object-cover">
                         </div>
@@ -220,7 +260,7 @@
                     </div>
 
                     <div class="pt-3.5 border-t border-[#f3f4f6]">
-                        <div class="flex items-baseline justify-between mb-3 text-xs">
+                        <div class="flex items-baseline justify-between mb-2 text-xs">
                             <div>
                                 <span class="text-[0.68rem] text-[#6B7A8D] block uppercase font-semibold">Rate per Km</span>
                                 <span class="text-base font-bold text-[#16100E]">₹{{ round($veh->price_per_km ?? 13) }}/km</span>
@@ -229,6 +269,17 @@
                                 <span class="text-[0.68rem] text-[#6B7A8D] block uppercase font-semibold">Min Daily</span>
                                 <span class="text-xs font-semibold text-[#16100E]">{{ $veh->min_km_per_day ?? 300 }} km/day</span>
                             </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mb-3 text-xs pt-2 border-t border-[#f3f4f6]">
+                            <span class="text-[0.68rem] text-[#6B7A8D] uppercase font-semibold">Price for 12 hrs -</span>
+                            <span class="text-sm font-bold text-[#16100E]">
+                                @if ($veh->price_for_12_hrs)
+                                    ₹{{ number_format((float) $veh->price_for_12_hrs) }}
+                                @else
+                                    <span class="text-xs font-normal text-[#6B7A8D]">On request</span>
+                                @endif
+                            </span>
                         </div>
 
                         <a id="btn-book-veh-{{ $veh->slug }}"
@@ -251,41 +302,105 @@
 <!-- ══ POPULAR ROUTE FARES TABLE ══ -->
 <section class="section py-16 px-[5%] bg-[#F6F3EC]">
     <div class="max-w-[1240px] mx-auto">
-        <div class="text-center max-w-[640px] mx-auto mb-10">
+        <div class="text-center max-w-[680px] mx-auto mb-10">
             <span class="text-[#9E2A2B] text-xs font-bold uppercase tracking-widest block mb-1">Fixed Fares</span>
             <h2 class="font-display text-[1.8rem] md:text-[2.6rem] font-bold text-[#16100E]">Popular Kutch Taxi Route Rates</h2>
-            <p class="text-[#6B7A8D] text-sm mt-2">Transparent pricing with no unexpected extras. Fares are for standard Sedan / SUV cabs with driver.</p>
+            <p class="text-[#6B7A8D] text-sm mt-2">Choose any vehicle from the dropdown to view its exact 12-hr route fare and per-km rate with driver included.</p>
         </div>
 
-        <div class="bg-white rounded-[10px] border border-[#e5e7eb] shadow-sm overflow-x-auto">
+        <div class="bg-white rounded-[12px] border border-[#e5e7eb] shadow-sm overflow-x-auto">
             <table class="w-full text-left text-xs border-collapse">
                 <thead>
                     <tr class="bg-[#16100E] text-white uppercase tracking-wider text-[0.72rem]">
-                        <th class="py-3.5 px-5 font-bold">Route Destination</th>
-                        <th class="py-3.5 px-5 font-bold">One-Way Distance</th>
-                        <th class="py-3.5 px-5 font-bold">Estimated Time</th>
-                        <th class="py-3.5 px-5 font-bold">One-Way Fare</th>
-                        <th class="py-3.5 px-5 font-bold">Round Trip Fare</th>
+                        <th class="py-3.5 px-5 font-bold min-w-[200px]">Route Destination</th>
+                        <th class="py-3.5 px-4 font-bold whitespace-nowrap">Distance &amp; Time</th>
+                        <th class="py-3.5 px-4 font-bold min-w-[240px]">Select Vehicle &amp; Rates</th>
+                        <th class="py-3.5 px-4 font-bold whitespace-nowrap">Fare (12 hours)</th>
                         <th class="py-3.5 px-5 font-bold text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#f3f4f6]">
                     @foreach($routes as $route)
-                    <tr class="hover:bg-[#FDFDFC] transition-colors">
+                    @php
+                        $hasVehicleFares = $route->fares->isNotEmpty();
+                        $defaultFare = $hasVehicleFares
+                            ? ($route->fares->firstWhere('is_default', true) ?? $route->fares->first())
+                            : null;
+
+                        $defaultVeh = $defaultFare?->vehicle;
+                        $initFarePrice = ($defaultVeh && $defaultVeh->price_for_12_hrs)
+                            ? '₹' . number_format((float) $defaultVeh->price_for_12_hrs)
+                            : ($defaultFare && $defaultFare->round_trip_fare !== null
+                                ? '₹' . number_format((float) $defaultFare->round_trip_fare)
+                                : ($route->forward_round_trip_fare ? '₹' . number_format((float) $route->forward_round_trip_fare) : ($route->forward_one_way_fare ? '₹' . number_format((float) $route->forward_one_way_fare) : 'Price on request')));
+
+                        $initVehName = $defaultVeh?->display_name ?? 'Standard Cab';
+
+                        $initSpecs = '';
+                        if ($defaultVeh) {
+                            $initSpecs = '₹' . round($defaultVeh->price_per_km ?? 13) . '/km • Avg ' . ($defaultVeh->min_km_per_day ?? 300) . ' km/day';
+                        } else {
+                            $initSpecs = 'AC cab with verified driver';
+                        }
+                    @endphp
+                    <tr class="hover:bg-[#FDFDFC] transition-colors"
+                        data-route-title="{{ $route->title }}"
+                        data-wa-number="{{ $waNumber }}">
                         <td class="py-4 px-5">
                             <span class="font-bold text-[#16100E] text-sm block">{{ $route->title }}</span>
-                            <span class="text-[#6B7A8D] text-[0.7rem]">{{ $route->short_description }}</span>
                         </td>
-                        <td class="py-4 px-5 font-semibold text-[#16100E]">{{ round($route->distance_km ?? 0) }} km</td>
-                        <td class="py-4 px-5 text-[#6B7A8D]">{{ round(($route->estimated_duration_minutes ?? 60) / 60, 1) }} hrs</td>
-                        <td class="py-4 px-5 font-bold text-[#16100E]">₹{{ number_format($route->forward_one_way_fare ?? 0) }}</td>
-                        <td class="py-4 px-5 font-bold text-[#9E2A2B]">₹{{ number_format($route->forward_round_trip_fare ?? 0) }}</td>
-                        <td class="py-4 px-5 text-center">
+                        <td class="py-4 px-4 whitespace-nowrap">
+                            <span class="font-semibold text-[#16100E] block">{{ round($route->distance_km ?? 0) }} km</span>
+                            <span class="text-[#6B7A8D] text-[0.7rem]">{{ round(($route->estimated_duration_minutes ?? 60) / 60, 1) }} hrs</span>
+                        </td>
+                        <td class="py-4 px-4">
+                            @if($hasVehicleFares)
+                                <select onchange="onRouteVehicleChange(this)"
+                                        class="route-veh-select w-full bg-[#FBF9F5] hover:bg-white border border-[#d1d5db] focus:border-[var(--orange)] text-[#16100E] text-xs font-semibold rounded-[6px] py-1.5 px-2.5 transition-colors cursor-pointer outline-none shadow-2xs">
+                                    @foreach($route->fares as $fare)
+                                        @php
+                                            $veh = $fare->vehicle;
+                                            $specs = '₹' . round($veh->price_per_km ?? 13) . '/km • Avg ' . ($veh->min_km_per_day ?? 300) . ' km/day';
+                                            $isSelected = $defaultFare && $defaultFare->id === $fare->id;
+                                            $fleetFare = ($veh && $veh->price_for_12_hrs)
+                                                ? '₹' . number_format((float) $veh->price_for_12_hrs)
+                                                : ($fare->round_trip_fare !== null
+                                                    ? '₹' . number_format((float) $fare->round_trip_fare)
+                                                    : ($fare->one_way_fare !== null ? '₹' . number_format((float) $fare->one_way_fare) : 'On request'));
+                                        @endphp
+                                        <option value="{{ $veh->id }}"
+                                                data-veh-name="{{ $veh->display_name }}"
+                                                data-roundtrip="{{ $fleetFare }}"
+                                                data-specs="{{ $specs }}"
+                                                {{ $isSelected ? 'selected' : '' }}>
+                                            {{ $veh->display_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md text-[0.72rem] font-medium">
+                                    Standard AC Cab
+                                </span>
+                            @endif
+                            <div class="mt-1.5 space-y-0.5">
+                                <div class="fare-specs text-[0.68rem] text-[#6B7A8D] font-medium">
+                                    {{ $initSpecs }}
+                                </div>
+                                <div class="text-[0.68rem] text-[#6B7A8D] font-medium">
+                                    12 Hours Duty , Driver Food Extra
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-4 whitespace-nowrap">
+                            <span class="fare-roundtrip fare-price font-bold text-[#9E2A2B] text-sm">{{ $initFarePrice }}</span>
+                        </td>
+                        <td class="py-4 px-5 text-center whitespace-nowrap">
                             <a id="tbl-book-route-{{ $route->slug }}"
-                               href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to book a taxi for ' . $route->title . '. Please share details.') }}"
+                               href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to book a taxi for ' . $route->title . ' (' . $initVehName . '). Please share details.') }}"
                                target="_blank"
-                               class="bg-[#25D366] hover:bg-[#20ba5a] text-white py-1.5 px-3 rounded-[6px] font-bold text-xs inline-flex items-center gap-1 transition-colors">
-                                Book
+                               class="tbl-book-btn bg-[#25D366] hover:bg-[#20ba5a] text-white py-1.5 px-3 rounded-[6px] font-bold text-xs inline-flex items-center gap-1 transition-colors shadow-2xs">
+                                <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                <span>Book</span>
                             </a>
                         </td>
                     </tr>
@@ -495,13 +610,34 @@
         document.querySelectorAll('.filter-cap-btn').forEach(b => {
             b.classList.remove('active');
         });
-        btnEl.classList.add('active');
+        if (btnEl) {
+            btnEl.classList.add('active');
+        } else {
+            const match = document.querySelector(`.filter-cap-btn[data-cap="${cap}"]`);
+            if (match) match.classList.add('active');
+        }
         applyFilters();
     }
 
-    function filterByType(typeId) {
+    function filterByType(typeId, btnEl) {
         activeType = String(typeId);
+        document.querySelectorAll('.filter-type-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        if (btnEl) {
+            btnEl.classList.add('active');
+        } else {
+            const match = document.querySelector(`.filter-type-btn[data-type="${typeId}"]`);
+            if (match) match.classList.add('active');
+        }
         applyFilters();
+    }
+
+    function resetFilters() {
+        const allCap = document.querySelector('.filter-cap-btn[data-cap="all"]');
+        const allType = document.querySelector('.filter-type-btn[data-type="all"]');
+        filterByCapacity('all', allCap);
+        filterByType('all', allType);
     }
 
     function applyFilters() {
@@ -525,6 +661,43 @@
         const noVeh = document.getElementById('no-vehicles-found');
         if (noVeh) {
             noVeh.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        const resetBtn = document.getElementById('btn-reset-filters');
+        if (resetBtn) {
+            if (activeCapacity !== 'all' || activeType !== 'all') {
+                resetBtn.classList.remove('hidden');
+                resetBtn.classList.add('inline-flex');
+            } else {
+                resetBtn.classList.remove('inline-flex');
+                resetBtn.classList.add('hidden');
+            }
+        }
+    }
+
+    function onRouteVehicleChange(selectEl) {
+        const row = selectEl.closest('tr');
+        if (!row) return;
+
+        const opt = selectEl.options[selectEl.selectedIndex];
+        if (!opt) return;
+
+        const roundtrip = opt.getAttribute('data-roundtrip');
+        const specs = opt.getAttribute('data-specs');
+        const vehName = opt.getAttribute('data-veh-name') || 'Cab';
+        const routeTitle = row.getAttribute('data-route-title') || 'Taxi Route';
+        const waNumber = row.getAttribute('data-wa-number') || '';
+
+        const priceEl = row.querySelector('.fare-roundtrip, .fare-price');
+        const specsEl = row.querySelector('.fare-specs');
+        const bookBtn = row.querySelector('.tbl-book-btn');
+
+        if (priceEl && roundtrip) priceEl.textContent = roundtrip;
+        if (specsEl && specs) specsEl.textContent = specs;
+
+        if (bookBtn && waNumber) {
+            const message = `Hi! I want to book a taxi for ${routeTitle} (${vehName}). Please share details.`;
+            bookBtn.href = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
         }
     }
 </script>

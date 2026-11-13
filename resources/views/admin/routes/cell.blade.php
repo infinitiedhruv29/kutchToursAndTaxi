@@ -13,9 +13,28 @@
         </div>
         @break
     @case('fares')
-        <div class="whitespace-nowrap text-xs leading-6 text-slate-500 dark:text-slate-400">
-            <p>One-way: <span class="font-medium text-slate-800 dark:text-slate-200">{{ $taxiRoute->forward_one_way_fare === null ? 'Price on inquiry' : '₹'.number_format((float) $taxiRoute->forward_one_way_fare, 2) }}</span></p>
-            <p>Round-trip: <span class="font-medium text-slate-800 dark:text-slate-200">{{ $taxiRoute->forward_round_trip_fare === null ? 'Price on inquiry' : '₹'.number_format((float) $taxiRoute->forward_round_trip_fare, 2) }}</span></p>
+        <div class="whitespace-nowrap text-xs leading-5 text-slate-500 dark:text-slate-400">
+            @if ($taxiRoute->fares->isNotEmpty())
+                <div class="flex flex-col gap-1 max-w-[220px]">
+                    @foreach ($taxiRoute->fares->take(3) as $fare)
+                        @php
+                            $fleetDisplay = $fare->vehicle?->price_for_12_hrs
+                                ? '₹' . number_format((float) $fare->vehicle->price_for_12_hrs)
+                                : ($fare->round_trip_fare !== null ? '₹' . number_format((float) $fare->round_trip_fare) : ($fare->one_way_fare !== null ? '₹' . number_format((float) $fare->one_way_fare) : 'On inquiry'));
+                        @endphp
+                        <div class="flex items-center justify-between text-[0.72rem] bg-slate-50 dark:bg-slate-900/60 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800">
+                            <span class="font-medium text-slate-700 dark:text-slate-300 truncate mr-1.5">{{ $fare->vehicle->name ?? 'Vehicle' }}</span>
+                            <span class="font-semibold text-slate-900 dark:text-slate-100 shrink-0">{{ $fleetDisplay }}</span>
+                        </div>
+                    @endforeach
+                    @if ($taxiRoute->fares->count() > 3)
+                        <span class="text-[0.68rem] text-brand-600 dark:text-brand-400 font-medium">+{{ $taxiRoute->fares->count() - 3 }} more vehicles</span>
+                    @endif
+                </div>
+            @else
+                <p>One-way: <span class="font-medium text-slate-800 dark:text-slate-200">{{ $taxiRoute->forward_one_way_fare === null ? 'Price on inquiry' : '₹'.number_format((float) $taxiRoute->forward_one_way_fare, 2) }}</span></p>
+                <p>Round-trip: <span class="font-medium text-slate-800 dark:text-slate-200">{{ $taxiRoute->forward_round_trip_fare === null ? 'Price on inquiry' : '₹'.number_format((float) $taxiRoute->forward_round_trip_fare, 2) }}</span></p>
+            @endif
         </div>
         @break
     @case('reverse')

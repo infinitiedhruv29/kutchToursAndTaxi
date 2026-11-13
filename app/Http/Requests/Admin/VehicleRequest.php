@@ -45,6 +45,7 @@ abstract class VehicleRequest extends FormRequest
             'vehicle_type_id' => ['required', 'integer', Rule::exists('vehicle_types', 'id')],
             'vehicle_capacity_id' => ['required', 'integer', Rule::exists('vehicle_capacities', 'id')],
             'price_per_km' => ['nullable', 'numeric', 'decimal:0,2', 'min:0', 'max:9999999999.99'],
+            'price_for_12_hrs' => ['nullable', 'numeric', 'decimal:0,2', 'min:0', 'max:9999999999.99'],
             'min_km_per_day' => ['nullable', 'integer', 'min:0', 'max:4294967295'],
             'notes' => ['nullable', 'string', 'max:5000'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
@@ -57,7 +58,7 @@ abstract class VehicleRequest extends FormRequest
 
     public function vehicleData(): array
     {
-        $fields = ['name', 'slug', 'vehicle_type_id', 'vehicle_capacity_id', 'price_per_km', 'min_km_per_day', 'notes', 'image_alt', 'sort_order'];
+        $fields = ['name', 'slug', 'vehicle_type_id', 'vehicle_capacity_id', 'price_per_km', 'price_for_12_hrs', 'min_km_per_day', 'notes', 'image_alt', 'sort_order'];
 
         return array_replace(array_fill_keys($fields, null), $this->safe()->only($fields), ['is_published' => $this->boolean('is_published')]);
     }

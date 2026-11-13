@@ -11,6 +11,15 @@
     <title>{{ $title }} · {{ $businessSettings->business_name ?? 'Tours & Taxi' }} · Admin</title>
     @include('admin.partials.favicon')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .dark ::selection {
+            background-color: rgba(220, 161, 52, 0.3) !important;
+            color: #ffffff !important;
+        }
+        ::selection {
+            background-color: rgba(220, 161, 52, 0.25);
+        }
+    </style>
 </head>
 
 <body class="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 antialiased">

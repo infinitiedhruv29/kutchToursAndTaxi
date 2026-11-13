@@ -57,17 +57,30 @@
         background-color: var(--orange) !important;
         border-color: var(--orange) !important;
         color: #ffffff !important;
-        box-shadow: 0 2px 10px rgba(var(--orange-rgb, 158, 42, 43), 0.35);
+        box-shadow: 0 2px 10px rgba(var(--orange-rgb, 220, 161, 52), 0.35);
     }
     .gallery-item-card {
         border: 1px solid #e5e7eb;
         border-radius: 14px;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        isolation: isolate;
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
+        transform: translateZ(0);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
     }
     .gallery-item-card:hover {
         border-color: var(--orange) !important;
         box-shadow: 0 16px 36px rgba(var(--orange-rgb, 220, 161, 52), 0.15), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
         transform: translateY(-6px);
+    }
+    .gallery-item-card img {
+        will-change: transform;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        transition: transform 0.5s ease;
+    }
+    .gallery-item-card:hover img {
+        transform: scale(1.05) translateZ(0);
     }
 </style>
 

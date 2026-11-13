@@ -23,6 +23,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TaxiController;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -40,6 +41,88 @@ Route::get('/contact', function () {
     $settings = Setting::current();
     return view('contact', compact('settings'));
 })->name('contact');
+
+Route::get('/storage-link', function () {
+    $options = request()->boolean('force') ? ['--force' => true] : [];
+    Artisan::call('storage:link', $options);
+    $output = trim(Artisan::output());
+
+    return response('<pre>' . ($output !== '' ? $output : 'The storage:link command has executed successfully.') . '</pre>');
+})->name('storage.link');
+
+Route::get('/storage:link', function () {
+    $options = request()->boolean('force') ? ['--force' => true] : [];
+    Artisan::call('storage:link', $options);
+    $output = trim(Artisan::output());
+
+    return response('<pre>' . ($output !== '' ? $output : 'The storage:link command has executed successfully.') . '</pre>');
+});
+
+Route::get('/storage-unlink', function () {
+    Artisan::call('storage:unlink');
+    $output = trim(Artisan::output());
+
+    return response('<pre>' . ($output !== '' ? $output : 'The storage:unlink command has executed successfully.') . '</pre>');
+})->name('storage.unlink');
+
+Route::get('/storage:unlink', function () {
+    Artisan::call('storage:unlink');
+    $output = trim(Artisan::output());
+
+    return response('<pre>' . ($output !== '' ? $output : 'The storage:unlink command has executed successfully.') . '</pre>');
+});
+
+Route::get('/migrate', function () {
+    try {
+        $options = ['--force' => true];
+        if (request()->has('status')) {
+            $exitCode = Artisan::call('migrate:status');
+        } else {
+            $exitCode = Artisan::call('migrate', $options);
+        }
+        $output = trim(Artisan::output());
+
+        return response('<pre>' . ($output !== '' ? $output : ($exitCode === 0 ? 'Migrations executed successfully.' : 'Migration failed.')) . '</pre>', $exitCode === 0 ? 200 : 500);
+    } catch (\Throwable $e) {
+        return response('<pre>Migration Error: ' . $e->getMessage() . '</pre>', 500);
+    }
+})->withoutMiddleware('web')->name('migrate');
+
+Route::get('/migrate-status', function () {
+    try {
+        $exitCode = Artisan::call('migrate:status');
+        $output = trim(Artisan::output());
+
+        return response('<pre>' . ($output !== '' ? $output : 'No migration status output.') . '</pre>', $exitCode === 0 ? 200 : 500);
+    } catch (\Throwable $e) {
+        return response('<pre>Migration Status Error: ' . $e->getMessage() . '</pre>', 500);
+    }
+})->withoutMiddleware('web')->name('migrate.status');
+
+Route::get('/seed-taxi-routes', function () {
+    try {
+        $exitCode = Artisan::call('db:seed', [
+            '--class' => 'Database\\Seeders\\TaxiRouteSeeder',
+            '--force' => true,
+        ]);
+        $output = trim(Artisan::output());
+
+        return response('<pre>' . ($output !== '' ? $output : 'Taxi routes and vehicle fares seeded successfully.') . '</pre>', $exitCode === 0 ? 200 : 500);
+    } catch (\Throwable $e) {
+        return response('<pre>Seeding Error: ' . $e->getMessage() . '</pre>', 500);
+    }
+})->withoutMiddleware('web')->name('seed.taxi_routes');
+
+Route::get('/view-clear', function () {
+    try {
+        $exitCode = Artisan::call('view:clear');
+        $output = trim(Artisan::output());
+
+        return response('<pre>' . ($output !== '' ? $output : 'Blade views cache cleared successfully.') . '</pre>', $exitCode === 0 ? 200 : 500);
+    } catch (\Throwable $e) {
+        return response('<pre>View Clear Error: ' . $e->getMessage() . '</pre>', 500);
+    }
+})->withoutMiddleware('web')->name('view.clear');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {

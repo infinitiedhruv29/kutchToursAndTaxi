@@ -6,11 +6,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --orange: #9E2A2B;
-  --orange-rgb: 158, 42, 43;
-  /* Organic Ajrakh Madder Red */
-  --orange-dark: #7F1D1D;
-  /* Deeper Madder Red */
+  --orange: #DCA134;
+  --orange-rgb: 220, 161, 52;
+  /* Kutch Desert Gold */
+  --orange-dark: #B8862D;
+  /* Deeper Desert Gold */
   --navy: #16100E;
   /* Earthy Charcoal Clay (Midnight Base) */
   --navy-light: #231B19;
@@ -938,7 +938,7 @@ body[data-page="Home"] .page-wrapper {
 .route-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.09);
-  border-color: rgba(var(--primary-rgb, 158, 42, 43), 0.3);
+  border-color: rgba(var(--primary-rgb, 220, 161, 52), 0.3);
 }
 
 .vehicle-card {
@@ -1558,7 +1558,7 @@ body[data-page="Home"] .page-wrapper {
 }
 
 .faq-item:hover {
-  border-color: rgba(158, 42, 43, 0.4);
+  border-color: rgba(var(--primary-rgb, 220, 161, 52), 0.4);
 }
 
 .faq-item.open {

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Kutch Taxi Service & Bhuj Cab Booking — White Rann, Dholavira & Outstation')
+@section('title', 'Kutch Tours and Taxi - Rann of Kutch Taxi and Tour Booking')
+@section('og_title', 'Kutch Tours and Taxi - Rann of Kutch Taxi and Tour Booking')
 @section('page_name', 'Home')
 
 @section('schema_json')
@@ -140,11 +141,19 @@
             <span class="text-white/60">24/7 Bhuj Railway Station &amp; Airport Pickup</span>
         </div>
 
+        <!-- Previously Known As Trust Badge -->
+        <div class="mt-7 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-[#E7BE67]/35 backdrop-blur-md shadow-sm text-xs sm:text-[0.84rem]"
+             style="animation: fadeUp 0.7s 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;">
+            <span class="text-[#E7BE67] text-[11px] leading-none">✦</span>
+            <span class="font-medium text-white/85">Previously known as</span>
+            <span class="font-bold text-[#E7BE67] tracking-wide">Shree Ram Tours and Travels</span>
+        </div>
+
         <!-- Centered Trust Numbers -->
-        <div class="hero-stats grid grid-cols-3 gap-2 sm:gap-8 max-w-[620px] mx-auto mt-12 w-full pt-8 border-t border-white/10"
+        <div class="hero-stats grid grid-cols-3 gap-2 sm:gap-8 max-w-[620px] mx-auto mt-6 w-full pt-6 border-t border-white/10"
              style="animation: fadeUp 0.7s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;">
             <div class="hstat text-center">
-                <div class="hstat-num font-display text-[1.5rem] sm:text-[2rem] font-extrabold text-white leading-none">10+</div>
+                <div class="hstat-num font-display text-[1.5rem] sm:text-[2rem] font-extrabold text-white leading-none">11+</div>
                 <div class="hstat-lbl text-[0.66rem] sm:text-[0.72rem] text-white/60 mt-1.5 uppercase tracking-wider font-semibold">AC Cab Fleet</div>
             </div>
             <div class="hstat text-center">
@@ -152,7 +161,7 @@
                 <div class="hstat-lbl text-[0.66rem] sm:text-[0.72rem] text-white/60 mt-1.5 uppercase tracking-wider font-semibold">Happy Travellers</div>
             </div>
             <div class="hstat text-center">
-                <div class="hstat-num font-display text-[1.5rem] sm:text-[2rem] font-extrabold text-white leading-none">8+ Years</div>
+                <div class="hstat-num font-display text-[1.5rem] sm:text-[2rem] font-extrabold text-white leading-none">10+ Years</div>
                 <div class="hstat-lbl text-[0.66rem] sm:text-[0.72rem] text-white/60 mt-1.5 uppercase tracking-wider font-semibold">Local Drivers</div>
             </div>
         </div>
@@ -199,7 +208,31 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($routes as $route)
-                <div class="route-card bg-white p-6 rounded-[14px] border border-[#e5e7eb] shadow-sm flex flex-col justify-between group">
+                @php
+                    $hasVehicleFares = $route->fares->isNotEmpty();
+                    $defaultFare = $hasVehicleFares
+                        ? ($route->fares->firstWhere('is_default', true) ?? $route->fares->first())
+                        : null;
+
+                    $defaultVeh = $defaultFare?->vehicle;
+                    $initFarePrice = ($defaultVeh && $defaultVeh->price_for_12_hrs)
+                        ? '₹' . number_format((float) $defaultVeh->price_for_12_hrs)
+                        : ($defaultFare && $defaultFare->round_trip_fare !== null
+                            ? '₹' . number_format((float) $defaultFare->round_trip_fare)
+                            : ($route->forward_round_trip_fare ? '₹' . number_format((float) $route->forward_round_trip_fare) : ($route->forward_one_way_fare ? '₹' . number_format((float) $route->forward_one_way_fare) : 'Price on request')));
+
+                    $initVehName = $defaultVeh?->display_name ?? 'Standard Cab';
+
+                    $initSpecs = '';
+                    if ($defaultVeh) {
+                        $initSpecs = '₹' . round($defaultVeh->price_per_km ?? 13) . '/km • Avg ' . ($defaultVeh->min_km_per_day ?? 300) . ' km/day';
+                    } else {
+                        $initSpecs = 'AC Cab with Driver';
+                    }
+                @endphp
+                <div class="route-card bg-white p-6 rounded-[14px] border border-[#e5e7eb] shadow-sm flex flex-col justify-between group"
+                     data-route-title="{{ $route->title }}"
+                     data-wa-number="{{ $waNumber }}">
                     <div>
                         <!-- Route Journey Visual Connector (Dribbble Pattern) -->
                         <div class="bg-[#F6F4EE] rounded-[8px] p-3 mb-4 border border-[#e8e4d9]">
@@ -222,19 +255,60 @@
                         </div>
 
                         <h3 class="font-display font-bold text-base text-[#16100E] mb-2 leading-snug group-hover:text-[#DCA134] transition-colors">{{ $route->title }}</h3>
-                        <p class="text-[#6B7A8D] text-xs line-clamp-2 leading-relaxed mb-4">{{ $route->short_description }}</p>
+                        <p class="text-[#6B7A8D] text-xs line-clamp-2 leading-relaxed mb-3">{{ $route->short_description }}</p>
+
+                        <!-- Vehicle selector dropdown -->
+                        <div class="mb-4 pt-3 border-t border-[#f3f4f6]">
+                            <label class="block text-[0.68rem] uppercase font-bold text-[#6B7A8D] mb-1.5">Select Vehicle</label>
+                            @if($hasVehicleFares)
+                                <select onchange="onHomeRouteVehicleChange(this)"
+                                        class="home-route-veh-select w-full bg-[#FBF9F5] hover:bg-white border border-[#d1d5db] focus:border-[var(--orange)] text-[#16100E] text-xs font-semibold rounded-[6px] py-1.5 px-2.5 transition-colors cursor-pointer outline-none shadow-2xs">
+                                    @foreach($route->fares as $fare)
+                                        @php
+                                            $veh = $fare->vehicle;
+                                            $specs = '₹' . round($veh->price_per_km ?? 13) . '/km • Avg ' . ($veh->min_km_per_day ?? 300) . ' km/day';
+                                            $isSelected = $defaultFare && $defaultFare->id === $fare->id;
+                                            $fleetFare = ($veh && $veh->price_for_12_hrs)
+                                                ? '₹' . number_format((float) $veh->price_for_12_hrs)
+                                                : ($fare->round_trip_fare !== null
+                                                    ? '₹' . number_format((float) $fare->round_trip_fare)
+                                                    : ($fare->one_way_fare !== null ? '₹' . number_format((float) $fare->one_way_fare) : 'On request'));
+                                        @endphp
+                                        <option value="{{ $veh->id }}"
+                                                data-veh-name="{{ $veh->display_name }}"
+                                                data-roundtrip="{{ $fleetFare }}"
+                                                data-specs="{{ $specs }}"
+                                                {{ $isSelected ? 'selected' : '' }}>
+                                            {{ $veh->display_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md text-[0.72rem] font-medium">
+                                    Standard AC Cab
+                                </span>
+                            @endif
+                            <div class="mt-1.5 space-y-0.5">
+                                <div class="home-fare-specs text-[0.68rem] text-[#6B7A8D] font-medium">
+                                    {{ $initSpecs }}
+                                </div>
+                                <div class="text-[0.68rem] text-[#6B7A8D] font-medium">
+                                    12 Hours Duty , Driver Food Extra
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="pt-4 border-t border-[#f3f4f6] flex items-center justify-between">
                         <div>
-                            <span class="text-[0.68rem] text-[#6B7A8D] uppercase block font-semibold">Round Trip Fare</span>
-                            <span class="text-lg font-extrabold text-[#16100E]">₹{{ number_format($route->forward_round_trip_fare ?? $route->forward_one_way_fare) }}</span>
-                            <span class="text-[0.65rem] text-[#6B7A8D] block">AC Cab with Driver</span>
+                            <span class="text-[0.68rem] text-[#6B7A8D] uppercase block font-semibold">Trip Fare (12 hours)</span>
+                            <span class="home-fare-price text-lg font-extrabold text-[#16100E]">{{ $initFarePrice }}</span>
+                            <span class="home-veh-label text-[0.65rem] text-[#6B7A8D] block">{{ $initVehName }}</span>
                         </div>
                         <a id="route-wa-{{ $route->slug }}"
-                           href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to book a taxi for ' . $route->title . '. Please share availability and car options.') }}"
+                           href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to book a taxi for ' . $route->title . ' (' . $initVehName . '). Please share availability and car options.') }}"
                            target="_blank"
-                           class="bg-[#16100E] group-hover:bg-[#DCA134] group-hover:text-[#16100E] text-white text-xs font-bold py-2.5 px-4 rounded-[6px] transition-colors inline-flex items-center gap-1.5 shadow-sm">
+                           class="home-route-book-btn bg-[#16100E] group-hover:bg-[#DCA134] group-hover:text-[#16100E] text-white text-xs font-bold py-2.5 px-4 rounded-[6px] transition-colors inline-flex items-center gap-1.5 shadow-sm">
                             <span>Book Taxi</span> →
                         </a>
                     </div>
@@ -259,8 +333,8 @@
                     <div>
                         <!-- Vehicle Image Container with Zoom effect -->
                         <div class="h-[150px] rounded-[10px] overflow-hidden bg-[#F6F4EE] mb-4 flex items-center justify-center p-2 relative">
-                            <img src="{{ asset($veh->image_path ?? 'images/taxi-page/dzire.webp') }}"
-                                 alt="{{ $veh->name }} AC cab for hire in Kutch"
+                            <img src="{{ $veh->image_url }}"
+                                 alt="{{ $veh->image_alt ?? ($veh->name . ' AC cab for hire in Kutch') }}"
                                  class="w-full h-full object-contain vehicle-thumb-img transition-transform duration-500 group-hover:scale-108">
                         </div>
                         
@@ -274,15 +348,23 @@
                         <p class="text-[#6B7A8D] text-xs mb-3 leading-relaxed">{{ $veh->notes ?? 'Clean AC cab with luggage carrier and verified driver' }}</p>
                     </div>
 
-                    <div class="pt-3.5 border-t border-[#f3f4f6] flex items-center justify-between">
-                        <div>
-                            <span class="text-[0.66rem] text-[#6B7A8D] block uppercase font-medium">Rate / Km</span>
-                            <span class="text-base font-extrabold text-[#16100E]">₹{{ round($veh->price_per_km ?? 13) }}/km</span>
+                    <div class="pt-3.5 border-t border-[#f3f4f6]">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <div>
+                                <span class="text-[0.66rem] text-[#6B7A8D] block uppercase font-medium">Rate / Km</span>
+                                <span class="text-base font-extrabold text-[#16100E]">₹{{ round($veh->price_per_km ?? 13) }}/km</span>
+                            </div>
+                            @if ($veh->price_for_12_hrs)
+                                <div class="text-right">
+                                    <span class="text-[0.66rem] text-[#6B7A8D] block uppercase font-medium">Price for 12 hrs -</span>
+                                    <span class="text-sm font-bold text-[#16100E]">₹{{ number_format((float) $veh->price_for_12_hrs) }}</span>
+                                </div>
+                            @endif
                         </div>
                         <a id="veh-wa-{{ $veh->slug }}"
                            href="https://wa.me/{{ $waNumber }}?text={{ urlencode('Hi! I want to hire ' . $veh->name . ' for a Kutch trip. Please share availability.') }}"
                            target="_blank"
-                           class="text-xs font-bold py-2 px-3.5 rounded-[6px] transition-all inline-flex items-center gap-1.5 shadow-sm hover:opacity-90 hover:shadow-md"
+                           class="w-full text-xs font-bold py-2 px-3.5 rounded-[6px] transition-all inline-flex items-center justify-center gap-1.5 shadow-sm hover:opacity-90 hover:shadow-md"
                            style="background: var(--orange); color: var(--primary-text);">
                             <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                             <span>Enquire</span>
@@ -587,5 +669,37 @@
     </div>
 </section>
 
+@endsection
+
+@section('extra_js')
+<script>
+    function onHomeRouteVehicleChange(selectEl) {
+        const card = selectEl.closest('.route-card');
+        if (!card) return;
+
+        const opt = selectEl.options[selectEl.selectedIndex];
+        if (!opt) return;
+
+        const roundtrip = opt.getAttribute('data-roundtrip');
+        const specs = opt.getAttribute('data-specs');
+        const vehName = opt.getAttribute('data-veh-name') || 'Cab';
+        const routeTitle = card.getAttribute('data-route-title') || 'Taxi Route';
+        const waNumber = card.getAttribute('data-wa-number') || '';
+
+        const priceEl = card.querySelector('.home-fare-price');
+        const labelEl = card.querySelector('.home-veh-label');
+        const specsEl = card.querySelector('.home-fare-specs');
+        const bookBtn = card.querySelector('.home-route-book-btn');
+
+        if (priceEl && roundtrip) priceEl.textContent = roundtrip;
+        if (labelEl) labelEl.textContent = vehName;
+        if (specsEl && specs) specsEl.textContent = specs;
+
+        if (bookBtn && waNumber) {
+            const message = `Hi! I want to book a taxi for ${routeTitle} (${vehName}). Please share availability and car options.`;
+            bookBtn.href = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+        }
+    }
+</script>
 @endsection
 

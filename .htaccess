@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Block direct access to sensitive files
+    RewriteRule ^(\.env|\.git|artisan|composer\.(json|lock)|package\.json|phpunit\.xml) - [F,L,NC]
+
+    # 2. Block direct access to sensitive internal directories
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests)/ - [F,L,NC]
+
+    # 3. Block private storage paths while allowing public storage (/storage/ -> public/storage/)
+    RewriteRule ^storage/(app/(?!public/)|framework|logs)/ - [F,L,NC]
+
+    # 4. Redirect all requests into the public/ directory
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

@@ -58,7 +58,7 @@ class FrontendTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk()
-            ->assertSee('Kutch Tours & Taxi')
+            ->assertSee('Kutch Tours & Taxi', false)
             ->assertSee('White Rann &amp; Dholavira', false)
             ->assertSee('Bhuj to White Rann')
             ->assertSee('wa.me/919773239587', false);
@@ -74,7 +74,9 @@ class FrontendTest extends TestCase
             'slug' => 'dzire',
             'vehicle_type_id' => $type->id,
             'vehicle_capacity_id' => $capacity->id,
+            'image_path' => 'vehicles/dzire-custom.webp',
             'price_per_km' => 13,
+            'price_for_12_hrs' => 2500,
             'min_km_per_day' => 300,
             'is_published' => true,
         ]);
@@ -84,7 +86,10 @@ class FrontendTest extends TestCase
         $response->assertOk()
             ->assertSee('Taxi Services in Kutch &amp; Bhuj', false)
             ->assertSee('Swift Dzire')
-            ->assertSee('₹13/km');
+            ->assertSee('/storage/vehicles/dzire-custom.webp')
+            ->assertSee('₹13/km')
+            ->assertSee('Price for 12 hrs -')
+            ->assertSee('₹2,500');
     }
 
     public function test_packages_index_and_show_pages_load_successfully(): void
@@ -196,6 +201,21 @@ class FrontendTest extends TestCase
             ->assertSee('TouristTrip', false)
             ->assertSee('Dholavira Special', false)
             ->assertSee('BreadcrumbList', false);
+    }
+
+    public function test_migrate_web_routes_execute(): void
+    {
+        $response = $this->get('/migrate');
+        $response->assertOk()
+            ->assertSee('<pre>', false);
+
+        $statusResponse = $this->get('/migrate-status');
+        $statusResponse->assertOk()
+            ->assertSee('<pre>', false);
+
+        $seedResponse = $this->get('/seed-taxi-routes');
+        $seedResponse->assertOk()
+            ->assertSee('<pre>', false);
     }
 }
 

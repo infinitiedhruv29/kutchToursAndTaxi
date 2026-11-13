@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
-    'business_name', 'logo_path', 'dark_logo_path', 'favicon_path', 'primary_color',
+    'business_name', 'logo_path', 'dark_logo_path', 'favicon_path', 'og_image_path', 'primary_color',
     'contact_number', 'contact_number_2', 'whatsapp_number', 'contact_email',
     'address', 'google_map_link', 'instagram_link', 'facebook_link', 'youtube_link',
     'gst_number', 'general_inclusions', 'general_exclusions',
@@ -25,6 +25,7 @@ class Setting extends Model
         'logo' => 'logo_path',
         'dark_logo' => 'dark_logo_path',
         'favicon' => 'favicon_path',
+        'og_image' => 'og_image_path',
     ];
 
     public static function current(): self
@@ -54,6 +55,11 @@ class Setting extends Model
     public function getFaviconUrlAttribute(): string
     {
         return $this->resolveMediaUrl($this->favicon_path, 'images/favicon.svg');
+    }
+
+    public function getOgImageUrlAttribute(): string
+    {
+        return $this->resolveMediaUrl($this->og_image_path, 'images/logo/logo-gold-dark-card.png?v=2');
     }
 
     public function resolveMediaUrl(?string $path, string $fallback): string

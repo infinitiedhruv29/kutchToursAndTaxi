@@ -168,6 +168,7 @@ class AdminSettingsTest extends TestCase
             'logo' => UploadedFile::fake()->image('logo.jpg'),
             'dark_logo' => UploadedFile::fake()->image('dark.webp'),
             'favicon' => UploadedFile::fake()->image('icon.png', 32, 32),
+            'og_image' => UploadedFile::fake()->image('og.png', 1200, 630),
         ])->assertSessionHasNoErrors();
         $initial = Setting::current()->only(array_values(Setting::BRANDING_FILES));
         foreach ($initial as $path) {
@@ -180,6 +181,7 @@ class AdminSettingsTest extends TestCase
             'logo' => UploadedFile::fake()->image('new-logo.png'),
             'dark_logo' => UploadedFile::fake()->image('new-dark.jpg'),
             'favicon' => UploadedFile::fake()->image('new-icon.png', 64, 64),
+            'og_image' => UploadedFile::fake()->image('new-og.jpg', 1080, 1080),
             'remove_logo' => '1',
         ])->assertSessionHasNoErrors();
         $replacement = Setting::current()->only(array_values(Setting::BRANDING_FILES));
@@ -189,7 +191,7 @@ class AdminSettingsTest extends TestCase
             $this->assertNotSame($path, $replacement[$column]);
         }
 
-        $this->put('/admin/settings', ['remove_logo' => '1', 'remove_dark_logo' => '1', 'remove_favicon' => '1'])
+        $this->put('/admin/settings', ['remove_logo' => '1', 'remove_dark_logo' => '1', 'remove_favicon' => '1', 'remove_og_image' => '1'])
             ->assertSessionHasNoErrors();
         foreach (Setting::BRANDING_FILES as $column) {
             $this->assertNull(Setting::current()->getAttribute($column));
@@ -215,11 +217,13 @@ class AdminSettingsTest extends TestCase
             'logo' => UploadedFile::fake()->create('logo.svg', 10, 'image/svg+xml'),
             'dark_logo' => UploadedFile::fake()->image('large.png')->size(2049),
             'favicon' => UploadedFile::fake()->image('not-png.jpg'),
-        ])->assertSessionHasErrors(['logo', 'dark_logo', 'favicon']);
+            'og_image' => UploadedFile::fake()->image('large-og.png')->size(2049),
+        ])->assertSessionHasErrors(['logo', 'dark_logo', 'favicon', 'og_image']);
         $this->put('/admin/settings', [
             'logo' => UploadedFile::fake()->image('logo.gif'),
             'favicon' => UploadedFile::fake()->image('large-icon.png')->size(513),
-        ])->assertSessionHasErrors(['logo', 'favicon']);
+            'og_image' => UploadedFile::fake()->create('og.svg', 10, 'image/svg+xml'),
+        ])->assertSessionHasErrors(['logo', 'favicon', 'og_image']);
         $this->assertDatabaseCount('settings', 0);
         $this->assertSame([], Storage::disk('public')->allFiles('branding'));
     }
@@ -241,6 +245,7 @@ class AdminSettingsTest extends TestCase
                 'logo' => UploadedFile::fake()->image('new-logo.jpg'),
                 'dark_logo' => UploadedFile::fake()->image('new-dark.png'),
                 'favicon' => UploadedFile::fake()->image('new-icon.png'),
+                'og_image' => UploadedFile::fake()->image('new-og.png'),
             ]);
             $this->fail('Expected a database save failure.');
         } catch (RuntimeException $exception) {

@@ -2,6 +2,7 @@
     $settings = $settings ?? \App\Models\Setting::current();
     $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp_number ?? '919773239587');
     $waUrl = "https://wa.me/{$waNumber}?text=" . urlencode("Hi! I am interested in Kutch Tours & Taxi services. Please share details.");
+    $defaultOgImage = $settings->og_image_url;
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -10,23 +11,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Kutch Tours & Taxi — Rann of Kutch Tour Packages & Cab Booking')</title>
+    <title>@yield('title', 'Kutch Tours and Taxi - Rann of Kutch Taxi and Tour Booking')</title>
     <link rel="canonical" href="@yield('canonical', url()->current())">
     <meta name="description" content="@yield('meta_description', 'Book reliable taxi service and all-inclusive tour packages in Kutch, Gujarat. Explore White Rann, Dholavira, Mandvi Beach and Bhuj with local expert drivers.')">
     <meta name="keywords" content="@yield('meta_keywords', 'Kutch tour packages, taxi service in bhuj, kutch cab booking, rann of kutch tour, dholavira cab, road to heaven kutch')">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph / WhatsApp / Facebook -->
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:url" content="@yield('og_url', url()->current())">
-    <meta property="og:title" content="@yield('og_title', 'Kutch Tours & Taxi — Rann of Kutch Tour Packages & Cab Booking')">
+    <meta property="og:title" content="@yield('og_title', 'Kutch Tours and Taxi - Rann of Kutch Taxi and Tour Booking')">
     <meta property="og:description" content="@yield('og_description', 'Book reliable taxi service and all-inclusive tour packages in Kutch, Gujarat.')">
-    <meta property="og:image" content="@yield('og_image', asset('images/index-page/white-rann-hero.webp'))">
+    <meta property="og:image" content="@yield('og_image', $defaultOgImage)">
+    <meta property="og:image:secure_url" content="@yield('og_image', $defaultOgImage)">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('og_title', 'Kutch Tours & Taxi')">
+    <meta name="twitter:title" content="@yield('og_title', 'Kutch Tours and Taxi - Rann of Kutch Taxi and Tour Booking')">
     <meta name="twitter:description" content="@yield('og_description', 'Explore White Rann, Dholavira and Mandvi with expert local cab drivers.')">
-    <meta name="twitter:image" content="@yield('og_image', asset('images/index-page/white-rann-hero.webp'))">
+    <meta name="twitter:image" content="@yield('og_image', $defaultOgImage)">
 
     @yield('schema_json')
 
@@ -237,7 +242,8 @@
             border-color: {{ $primaryColor }} !important;
             color: {{ $primaryColor }} !important;
         }
-        .filter-cap-btn {
+        .filter-cap-btn,
+        .filter-type-btn {
             padding: 6px 16px;
             border-radius: 6px;
             font-size: 0.78rem;
@@ -249,38 +255,55 @@
             transition: all 0.2s ease;
             outline: none;
         }
-        .filter-cap-btn:hover {
+        .filter-cap-btn:hover,
+        .filter-type-btn:hover {
             border-color: {{ $primaryColor }} !important;
             color: {{ $primaryColor }} !important;
             background: #ffffff !important;
         }
         .filter-cap-btn.active,
         .filter-cap-btn.active:hover,
-        .filter-cap-btn.active:focus {
+        .filter-cap-btn.active:focus,
+        .filter-type-btn.active,
+        .filter-type-btn.active:hover,
+        .filter-type-btn.active:focus {
             background-color: {{ $primaryColor }} !important;
             border-color: {{ $primaryColor }} !important;
             color: #ffffff !important;
             box-shadow: 0 2px 10px rgba({{ $primaryRgb }}, 0.35) !important;
         }
-        .vehicle-item, .pkg-card {
+        .vehicle-item, .pkg-card, .gallery-item-card {
             border: 1px solid #e5e7eb;
             border-radius: 14px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
         }
-        .vehicle-item:hover, .pkg-card:hover {
+        .vehicle-item:hover, .pkg-card:hover, .gallery-item-card:hover {
             border-color: {{ $primaryColor }} !important;
             box-shadow: 0 16px 36px rgba({{ $primaryRgb }}, 0.14), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
             transform: translateY(-6px) !important;
         }
+        .vehicle-item .vehicle-img-wrapper,
+        .pkg-card .pkg-card-thumb,
+        .gallery-item-card {
+            isolation: isolate;
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+            transform: translateZ(0);
+        }
         .vehicle-item .vehicle-img-wrapper img,
         .pkg-card .relative img,
-        .pkg-card img.pkg-thumb-img {
+        .pkg-card img.pkg-thumb-img,
+        .gallery-item-card img {
+            will-change: transform;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
             transition: transform 0.4s ease !important;
         }
         .vehicle-item:hover .vehicle-img-wrapper img,
         .pkg-card:hover .relative img,
-        .pkg-card:hover img.pkg-thumb-img {
-            transform: scale(1.05) !important;
+        .pkg-card:hover img.pkg-thumb-img,
+        .gallery-item-card:hover img {
+            transform: scale(1.05) translateZ(0) !important;
         }
         .ticker-wrap {
             background-color: {{ $primaryColor }} !important;

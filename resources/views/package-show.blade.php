@@ -5,7 +5,9 @@
 @section('meta_description', !empty($package->seo_description) ? $package->seo_description : Str::limit(strip_tags($package->description), 160))
 @section('og_title', !empty($package->seo_title) ? $package->seo_title : $package->title . ' — Kutch Tours & Taxi')
 @section('og_description', !empty($package->seo_description) ? $package->seo_description : Str::limit(strip_tags($package->description), 160))
-@section('og_image', !empty($package->image_path) ? asset($package->image_path) : asset('images/index-page/white-rann-hero.webp'))
+@if(!empty($package->image_path))
+@section('og_image', asset($package->image_path))
+@endif
 
 @section('schema_json')
 <script type="application/ld+json">

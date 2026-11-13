@@ -22,7 +22,7 @@
                         autocomplete="organization" />
                     <x-admin.field name="gst_number" label="GST number" :value="$settings->gst_number" maxlength="30" />
                 </div>
-                <div class="grid gap-6 lg:grid-cols-3">
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     <x-admin.branding-upload name="logo" label="Logo for light backgrounds" :path="$settings->logo_path"
                         hint="JPEG, PNG, or WebP. Maximum 2 MB. A transparent PNG or WebP works well." />
                     <x-admin.branding-upload name="dark_logo" label="Logo for dark backgrounds" :path="$settings->dark_logo_path"
@@ -30,6 +30,9 @@
                         hint="JPEG, PNG, or WebP. Maximum 2 MB. Use a light-colored logo for the slate sidebar." />
                     <x-admin.branding-upload name="favicon" label="Favicon" :path="$settings->favicon_path" accept="image/png"
                         hint="PNG only, maximum 512 KB. A square image is recommended." />
+                    <x-admin.branding-upload name="og_image" label="Social share image (WhatsApp / Link preview)" :path="$settings->og_image_path"
+                        :dark="true"
+                        hint="PNG, JPEG, or WebP. 1200×630 or 1080×1080. Used for link sharing previews on WhatsApp, Teams & social media." />
                 </div>
                 <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">New uploads replace the current images when you save. A
                     replacement upload takes priority over its removal checkbox.</p>

@@ -1165,5 +1165,500 @@ The project includes a robust administrative management portal for taxi routes, 
   - Full PHPUnit test suite: **167/167 tests passed (1,865 assertions)**.
   - Cleared caches: `php artisan optimize:clear`.
 
+---
+
+### WhatsApp & Social Link Preview Branding & Title Customization
+- **Date**: 2026-10-28
+- **Feature**: OpenGraph Title Customization & Golden Logo Card for WhatsApp / Social Media Link Sharing
+- **Files Modified**:
+  - `resources/views/layouts/app.blade.php`:
+    - Updated default `<title>`, `<meta property="og:title">`, and `<meta name="twitter:title">` to `"Kutch Tours and Taxi - Rann of Kutch Taxi and Tour Booking"`.
+    - Switched OpenGraph default `og:image` and `twitter:image` from `white-rann-hero.webp` to `public/images/logo/logo-gold-dark-card.png`.
+    - Added OpenGraph image metadata tags (`og:image:secure_url`, `og:image:type`, `og:image:width="1200"`, `og:image:height="630"`) for optimal crawler compatibility.
+  - `resources/views/index.blade.php`:
+    - Explicitly set `@section('title')`, `@section('og_title')` to `"Kutch Tours and Taxi - Rann of Kutch Taxi and Tour Booking"`.
+    - Explicitly bound `@section('og_image')` to `images/logo/logo-gold-dark-card.png`.
+  - `resources/views/package-show.blade.php`:
+    - Updated fallback image in `@section('og_image')` to `images/logo/logo-gold-dark-card.png`.
+  - `public/images/logo/logo-gold-dark-card.png`:
+    - Formatted to 1200x630 (standard 1.91:1 Open Graph ratio, 79 KB) with centered golden brand emblem on midnight dark canvas (`#111111`) so WhatsApp renders without vertical or horizontal cropping.
+- **Verification**:
+  - View cache cleared: `php artisan view:clear`.
+  - Image verified: 1200x630, 79 KB PNG.
+- **Pending Tasks**:
+  - Deploy changes to Hostinger production server.
+  - Test link sharing on WhatsApp (or scrape again via Facebook Debugger to refresh cached preview).
+
+---
+
+### Storage Link & Unlink Web Routes
+- **Date**: 2026-10-28
+- **Feature**: Artisan Storage Link and Storage Unlink Web Endpoints
+- **Files Modified**:
+  - `routes/web.php`
+- **Logic Changes**:
+  - Added `use Illuminate\Support\Facades\Artisan;`.
+  - Registered web routes for `/storage-link` and `/storage:link` executing `Artisan::call('storage:link')` (with optional `?force=1` query parameter support).
+  - Registered web routes for `/storage-unlink` and `/storage:unlink` executing `Artisan::call('storage:unlink')`.
+  - Both routes return preformatted command output for clear browser feedback.
+- **Verification**:
+  - Tested route registration via `php artisan route:list --path=storage`.
+  - Verified route execution and HTTP status 200 responses.
+
+---
+
+### Hero Trust Badge: Former Brand Name Subtext
+- **Date**: 2026-10-28
+- **Feature**: Shree Ram Tours and Travels Former Brand Subtext on Hero Section
+- **Files Modified**:
+  - `resources/views/index.blade.php`
+- **Logic Changes**:
+  - Relocated former brand name notice from bottom void to directly above the stats divider line (`border-t border-white/10`).
+  - Restyled into an elegant frosted glass pill badge (`rounded-full bg-white/[0.06] border border-[#E7BE67]/35 backdrop-blur-md shadow-sm`) with a golden star `✦` accent.
+  - Highlighted "Shree Ram Tours and Travels" in brand gold (`#E7BE67`) with bold weight (`font-bold`) and balanced spacing (`mt-7` / `mt-6` / `pt-6`).
+- **Verification**:
+  - View cache cleared (`php artisan view:clear`).
+- **Pending Tasks**:
+  - Deploy to production.
+
+---
+
+### Storage 403 Forbidden Fix on Public Uploads
+- **Date**: 2026-10-31
+- **Feature**: Apache Root `.htaccess` Storage Rule Whitelisting
+- **Files Modified**:
+  - `.htaccess`
+- **Logic Changes**:
+  - Fixed root `.htaccess` rule blocking all requests to `/storage/*` with `403 Forbidden` (`RewriteRule ^(...|storage|...)/ - [F,L,NC]`).
+  - Removed `storage` from the blanket directory blocklist so requests to `/storage/...` can be rewritten to `public/storage/...`.
+  - Added targeted protection rule (`RewriteRule ^storage/(app/(?!public/)|framework|logs)/ - [F,L,NC]`) to keep internal logs, framework cache, and private files secure while allowing public uploads (`storage/vehicles/`, `storage/packages/`, `storage/gallery/`) to serve without 403 errors.
+- **Pending Tasks**:
+  - Upload updated `.htaccess` to Hostinger production server root (`public_html/.htaccess`).
+  - Verify `https://kutchtoursandtaxi.com/storage/vehicles/7RhGRRwViQ7xdybtUdjgXCXz4uWj0ng9MiKgS8M0.webp` loads in the browser.
+
+---
+
+### Frontend Vehicle Image 404 Resolution via Storage Accessor
+- **Date**: 2026-10-31
+- **Feature**: Vehicle Image Storage URL Resolution & Frontend Template Synchronization
+- **Files Modified**:
+  - `app/Models/Vehicle.php`
+  - `resources/views/taxi.blade.php`
+  - `resources/views/index.blade.php`
+  - `resources/views/admin/vehicles/cell.blade.php`
+  - `tests/Feature/FrontendTest.php`
+- **Logic Changes**:
+  - Identified root cause of frontend 404: backend uploads images to the `public` storage disk (`vehicles/...`), but frontend templates were calling `asset($veh->image_path)`, outputting `/vehicles/...` rather than `/storage/vehicles/...`.
+  - Added `imageUrl` accessor attribute to `Vehicle` model via `Attribute::make()` that smoothly handles:
+    - Empty/null paths (defaults to `images/taxi-page/dzire.webp`).
+    - Full URLs (`http://` / `https://`).
+    - Static asset paths in `public/` (e.g. seeded `images/taxi-page/...`).
+    - Storage disk uploaded assets (`Storage::disk('public')->url($this->image_path)` -> `/storage/vehicles/...`).
+  - Replaced hardcoded `asset($veh->image_path ?? 'images/taxi-page/dzire.webp')` with `$veh->image_url` across `taxi.blade.php` and `index.blade.php`.
+  - Updated `admin/vehicles/cell.blade.php` to use `$vehicle->image_url` for unified image path resolution.
+  - Updated `FrontendTest.php` to verify vehicle storage URL rendering on `/taxi`.
+- **Verification**:
+  - Executed `FrontendTest`: 8/8 tests passed.
+  - Executed `AdminVehiclesTest`: 15/15 tests passed.
+  - Executed `AdminToFrontendEndToEndCrudTest`: 9/9 tests passed.
+- **Pending Tasks**:
+  - Deploy changes to production server.
+
+---
+
+### Price for 12 Hours Field Integration across Cards & Backend
+- **Date**: 2026-10-31
+- **Feature**: 12-Hour Rental Package Pricing in Vehicle Cards and Admin Backend
+- **Files Modified / Created**:
+  - `database/migrations/2026_10_31_120000_add_price_for_12_hrs_to_vehicles_table.php` (created)
+  - `app/Models/Vehicle.php`
+  - `app/Http/Requests/Admin/VehicleRequest.php`
+  - `resources/views/admin/vehicles/form.blade.php`
+  - `resources/views/admin/vehicles/cell.blade.php`
+  - `resources/views/taxi.blade.php`
+  - `resources/views/index.blade.php`
+  - `database/seeders/VehicleSeeder.php`
+  - `tests/Feature/AdminVehiclesTest.php`
+  - `tests/Feature/FrontendTest.php`
+  - `tests/Feature/AdminToFrontendEndToEndCrudTest.php`
+- **Logic Changes**:
+  - **Database Migration**: Created additive migration adding `price_for_12_hrs` (`decimal(12, 2)`, unsigned, nullable) positioned after `min_km_per_day` with clean `down()` rollback support.
+  - **Eloquent Model**: Added `'price_for_12_hrs'` to `#[Fillable]` attribute and registered decimal casting `'price_for_12_hrs' => 'decimal:2'` in `Vehicle::casts()`.
+  - **Validation & Request**: Added decimal/numeric validation (`decimal:0,2`, `min:0`, `max:9999999999.99`) and mapped `price_for_12_hrs` into `VehicleRequest::vehicleData()`.
+  - **Admin Vehicle Management**:
+    - `form.blade.php`: Added "Price for 12 hrs (₹)" numeric field under "Pricing and notes" with 3-column responsive layout and helpful tooltip hint.
+    - `cell.blade.php`: Displayed `₹{amount} / 12 hrs` under the pricing column in the server-side DataTable.
+  - **Public Customer Vehicle Cards**:
+    - `taxi.blade.php`: Added dedicated row `Price for 12 hrs -` with formatted price (or `On request` fallback if unpriced) right above the WhatsApp booking button.
+    - `index.blade.php`: Added `Price for 12 hrs -` alongside the per-km rate in the fleet showcase card.
+  - **Seeders**: Configured realistic 12-hour local tour package rates in `VehicleSeeder.php` for standard sedans, SUVs, and luxury vans.
+  - **Testing**: Updated `AdminVehiclesTest`, `FrontendTest`, and `AdminToFrontendEndToEndCrudTest` verifying persistence, validation, admin display, and public card rendering.
+- **Pending Tasks**:
+  - Run `php artisan migrate` when MySQL service is started.
+  - Deploy changes to production server.
+
+---
+
+### Web Migration Endpoints (`/migrate` & `/migrate-status`)
+- **Date**: 2026-10-31
+- **Feature**: Browser-Triggered Artisan Migration Web Endpoints
+- **Files Modified**:
+  - `routes/web.php`
+  - `tests/Feature/FrontendTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - Registered web routes `/migrate` and `/migrate-status`:
+    - `/migrate`: Executes `Artisan::call('migrate', ['--force' => true])` (or `migrate:status` when `?status=1` query parameter is present) and prints the console output inside `<pre>`.
+    - `/migrate-status`: Executes `Artisan::call('migrate:status')` to inspect migration batch state.
+    - Excluded `web` middleware group via `->withoutMiddleware('web')` so the route executes cleanly even if database session store (`sessions` table) is unmigrated or unavailable.
+    - Wrapped execution in `try / catch (\Throwable $e)` returning clear error output and appropriate HTTP 500 status on database failure.
+  - Added feature test in `FrontendTest.php` verifying HTTP 200 response and `<pre>` output.
+- **Pending Tasks**:
+  - Deploy to production and visit `https://<domain>/migrate` to run migrations.
+
+---
+
+### Taxi Fleet Filter Redesign: Stacked Capacity & Vehicle Type Filter Bar
+- **Date**: 2026-10-31
+- **Feature**: Responsive Stacked Filter Bar with Dedicated Capacity and Car Type Tiers
+- **Files Modified**:
+  - `resources/views/taxi.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Solved Filter Collision & Orphan Wrapping**: Relocated the layout from a cramped single flex row (`justify-between` where 10 capacity buttons collided with the Car Type dropdown and orphaned "56 Seater" on a separate line) to a clean, structured two-tier card layout.
+  - **Tier 1 (Capacity Above)**: Placed passenger capacity pills on the top row spanning full container width, fitting all capacity buttons comfortably without premature wrapping on desktop screens and wrapping naturally on mobile.
+  - **Tier 2 (Car Type Below)**: Placed car types on their own dedicated row below Capacity with matching pill buttons (`All Types`, `Sedan`, `SUV`, etc.), eliminating the clunky `<select>` dropdown in favor of immediate 1-click filtering.
+  - **Alignment & Polish**: Standardized both label widths (`sm:w-24`) so filter pill buttons in both rows start at the exact same horizontal alignment. Added a subtle divider (`border-t border-[#f0f2f5]`) and header bar with a filter icon and an auto-appearing "Reset Filters" action button when any filter is active.
+  - **Dynamic Branding**: Added `.filter-type-btn` to dynamic theme stylesheet in `layouts/app.blade.php` for seamless brand color synchronisation.
+  - **Interactive Filtering Script**: Enhanced JavaScript `filterByType(typeId, btnEl)` and `filterByCapacity(cap, btnEl)` to update active pill states, support programmatic reset via `resetFilters()`, and toggle the reset button visibility.
+- **Verification**:
+  - Cleared Blade view cache (`php artisan view:clear`).
+- **Pending Tasks**:
+  - Deploy updated Blade templates to production server.
+
+---
+
+### Taxi Routes Multi-Vehicle Pricing & Fleet Rate Integration
+- **Date**: 2026-11-05
+- **Feature**: Multi-Vehicle Pricing per Route, Admin Table Inputs & Frontend Dynamic Dropdown with Fleet Rates
+- **Files Modified / Created**:
+  - `database/migrations/2026_11_05_140000_create_taxi_route_fares_table.php` (created)
+  - `app/Models/TaxiRouteFare.php` (created)
+  - `app/Models/TaxiRoute.php` (added `fares()` relationship)
+  - `app/Models/Vehicle.php` (added `routeFares()` relationship)
+  - `app/Http/Requests/Admin/TaxiRouteRequest.php` (added `vehicle_fares` validation and `vehicleFaresData()` extraction)
+  - `app/Http/Controllers/Admin/TaxiRouteController.php` (eager-loaded `fares.vehicle`, passed vehicles to view, and synced vehicle fares on store/update)
+  - `resources/views/admin/routes/form.blade.php` (added "Vehicle-specific pricing" table card with One-way & Round-trip fare inputs per fleet vehicle)
+  - `resources/views/admin/routes/cell.blade.php` (rendered vehicle fare preview badges in the DataTables fares column)
+  - `app/Http/Controllers/TaxiController.php` (eager-loaded `fares.vehicle.type` and `capacity` on routes)
+  - `app/Http/Controllers/HomeController.php` (eager-loaded `fares.vehicle.type` and `capacity` on featured routes)
+  - `resources/views/taxi.blade.php` (added vehicle selector dropdown in routes table, dynamic One-Way/Round-Trip fare updates, fleet specs line, and dynamic WhatsApp book URL)
+  - `resources/views/index.blade.php` (added vehicle selector dropdown on route cards, round trip fare switch, fleet specs line, and dynamic WhatsApp book URL)
+  - `database/seeders/TaxiRouteSeeder.php` (seeded 11 live server routes with Dzire, Ertiga, Crysta, and Tempo Traveller fares)
+  - `tests/Feature/TaxiRouteVehicleFaresTest.php` (created 4 feature tests covering create, update, and frontend reflection)
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Relational Schema**: Created `taxi_route_fares` table linking `taxi_route_id` and `vehicle_id` with `one_way_fare`, `round_trip_fare`, `is_default`, and `sort_order`, with foreign key cascades and unique constraints.
+  - **Graceful Fallback**: If a route has no rows in `taxi_route_fares`, both the admin and frontend cleanly fall back to the route's base `forward_one_way_fare` and `forward_round_trip_fare`, ensuring existing live data remains completely functional.
+  - **Admin Vehicle Pricing Card**: When creating or editing a route, the admin sees an organized table of all active fleet vehicles (Dzire, Ertiga, Innova Crysta, etc.) with their capacity and fleet rates, and inputs for One-way and Round-trip fares. Blank rows are automatically excluded.
+  - **Frontend Dynamic Dropdowns**: On `/taxi` and the Home page (`/`), each route provides a vehicle `<select>` dropdown. Selecting a vehicle instantly updates the displayed One-way/Round-trip fare, shows the vehicle's fleet rate specs (`₹/km • ₹/12 hrs • 300 km/day avg`), and generates the WhatsApp booking inquiry containing the exact vehicle name.
+  - **FTP & Deployment Compatibility**: The migration runs via the existing `GET /migrate` browser endpoint on production without needing shell access.
+- **Verification**:
+  - Authored `tests/Feature/TaxiRouteVehicleFaresTest.php`: 4/4 tests passed (22 assertions).
+  - Executed full test suite: **172/172 tests passed (1,906 assertions)** with zero failures.
+- **Pending Tasks**:
+  - Upload modified files to production server via FTP.
+  - Visit `https://<domain>/migrate` in browser to run the new table migration.
+
+---
+
+### Taxi Routes Browser Seeder Endpoint (`/seed-taxi-routes`)
+- **Date**: 2026-11-05
+- **Feature**: Browser-Triggered Taxi Routes & Multi-Vehicle Fares Seeder Web Endpoint
+- **Files Modified**:
+  - `routes/web.php`
+  - `tests/Feature/FrontendTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - Added public browser endpoint `GET /seed-taxi-routes` (without `web` middleware) that calls `Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\TaxiRouteSeeder', '--force' => true])`.
+  - Enables servers managed via FTP to populate all 11 routes with their multi-vehicle fares (Dzire, Ertiga, Innova Crysta, Tempo Traveller) simply by loading `https://<domain>/seed-taxi-routes` in the browser once.
+- **Verification**:
+  - Verified with `tests/Feature/FrontendTest.php`: 9/9 tests passed (54 assertions).
+
+---
+
+### Admin Vehicle Pricing Table Dark Theme & Text Selection Fix
+- **Date**: 2026-11-05
+- **Feature**: Prevent Accidental White Text Selection & Dark Theme Selection Styling
+- **Files Modified**:
+  - `resources/views/admin/routes/form.blade.php`
+  - `resources/views/components/admin/layout.blade.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Disabled Accidental Text Drag/Selection**: Added `user-select: none` (`select-none`) across table headers, vehicle names, badges, rates, and default radio columns so clicking or dragging around rows never accidentally triggers browser text selection across rows.
+  - **Harmonized Dark Selection**: Configured global `.dark ::selection` styling with a subtle amber/gold hue (`rgba(220, 161, 52, 0.3)`) instead of the stark white/light-blue browser default.
+  - **Clickable Labels**: Bound vehicle names directly to the default vehicle radio button via `<label for="default_veh_{{ $veh->id }}">` for seamless 1-click default selection without text selection.
+- **Verification**:
+  - Ran `tests/Feature/TaxiRouteVehicleFaresTest.php`: 4/4 passed.
+  - Cleared Blade view cache (`php artisan view:clear`).
+
+---
+
+### Automated Fleet Route Pricing Engine & Dynamic Seeder
+- **Date**: 2026-11-05
+- **Feature**: Dynamic Multi-Vehicle Pricing Calculation for All Server Fleet Vehicles & FTP Seeder
+- **Files Modified**:
+  - `database/seeders/TaxiRouteSeeder.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - Implemented an intelligent fleet calculation formula in `TaxiRouteSeeder`:
+    - Preserves exact server baseline fares for Swift Dzire.
+    - Automatically calculates One-Way and Round-Trip fares for ALL vehicles present in the database (Dzire, Amaze, Ertiga, Innova Crysta, Urbania, Tempo Traveller, Mini Bus, Buses) based on distance, rate per km (min 300 km/day avg rule), and 12-hr package thresholds.
+    - Clean market rounding (`cleanFare()` to nearest ₹100 or ₹500).
+    - Can be executed on production anytime via browser endpoint `/seed-taxi-routes`.
+- **Verification**:
+  - Verified local database population (77 route fares generated across 11 routes).
+  - Feature test suite passed: 4/4 tests passed.
+
+---
+
+### Vehicle Dropdown Seating Capacity Deduplication
+- **Date**: 2026-11-05
+- **Feature**: Prevent Duplicate Seating Capacity Labels in Frontend Vehicle Dropdowns
+- **Files Modified**:
+  - `app/Models/Vehicle.php`
+  - `resources/views/taxi.blade.php`
+  - `resources/views/index.blade.php`
+  - `tests/Feature/TaxiRouteVehicleFaresTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - Added modern Laravel 13 `displayName(): Attribute` accessor on `Vehicle` model that checks if the vehicle title already contains the capacity label or a `\b\d+\s*seater\b` pattern before appending `({$capLabel})`.
+  - Preserves exact database record titles without requiring any renaming in database or admin.
+  - Replaced manual bracket appending in `resources/views/taxi.blade.php` and `resources/views/index.blade.php` with `$veh->display_name`.
+  - Prevents unsightly duplicates such as `Force Urbania (12 Seater) (12 Seater)` so it renders cleanly as `Force Urbania (12 Seater)`, while cars like `Swift Dzire` render as `Swift Dzire (4 Seater)`.
+- **Verification**:
+  - Added `test_vehicle_display_name_deduplicates_seater_in_brackets` to `tests/Feature/TaxiRouteVehicleFaresTest.php`.
+  - Full test suite passed: 173/173 tests passed (1,914 assertions).
+  - View cache cleared (`php artisan view:clear`).
 
 
+
+
+
+
+
+
+
+
+
+
+
+---
+
+### Image Hover GPU Layer Stabilization & Elimination of Red Compositing Flicker
+- **Date**: 2026-11-05
+- **Feature**: Resolve WebP Image Hover Compositing Glitch and Eliminate Red Fallback Flashing Across Fleet & Gallery Cards
+- **Files Modified**:
+  - `resources/views/taxi.blade.php`
+  - `resources/views/gallery.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `public/css/style.css`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **GPU Layer Pre-Allocation**: Added `-webkit-backface-visibility: hidden`, `backface-visibility: hidden`, `will-change: transform`, and `transform: translateZ(0)` to `.vehicle-item .vehicle-img-wrapper img` and `.gallery-item-card img`. Forces Chromium/Blink to maintain WebP images on dedicated GPU compositing layers continuously, preventing dynamic layer promotion drops and texture buffer rasterization flashes during scale animations.
+  - **Container Isolation & Edge Masking**: Added `isolation: isolate`, `-webkit-mask-image: -webkit-radial-gradient(white, black)`, and `transform: translateZ(0)` to `.vehicle-img-wrapper` and `.gallery-item-card` to hardware-accelerate rounded border-radius overflow clipping.
+  - **Eliminated `transition: all` Layout Thrashing**: Replaced blanket `transition: all` on `.vehicle-item` and `.gallery-item-card` with discrete, GPU-friendly transitions (`transform`, `box-shadow`, `border-color`), preventing full subtree reflow and paint thrashing when cursor moves quickly between cards.
+  - **Fallback Brand Color Alignment**: Updated `--orange` and `--orange-rgb` in `public/css/style.css` from legacy `#9E2A2B` (Madder Red) to brand gold `#DCA134` / `220, 161, 52` to prevent fallback color flashes during cascade initialization.
+- **Verification**:
+  - Verified view rendering for `taxi.blade.php` and `gallery.blade.php` with 0 syntax or runtime errors.
+  - Verified in browser via Chrome DevTools DOM evaluation.
+
+---
+
+### Browser Endpoint for Blade View Cache Clearing (`/view-clear`)
+- **Date**: 2026-11-05
+- **Feature**: Add Browser Endpoint to Clear Blade View Cache for Remote/FTP Deployments
+- **Files Modified**:
+  - `routes/web.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - Registered `GET /view-clear` endpoint (named `view.clear`) using `Artisan::call('view:clear')` without web middleware.
+  - Allows server administrators on shared hosting / cPanel (without SSH terminal access) to clear compiled Blade views simply by browsing to `https://yourdomain.com/view-clear`.
+- **Verification**:
+  - Verified route registration via `php artisan route:list --path=view-clear`.
+
+
+---
+
+### 12-Hour Duty Route Pricing Harmonization & UI Alignment
+- **Date**: 2026-11-12
+- **Feature**: Taxi Page Rates Table & Home Page Route Cards 12-Hour Duty UI Alignment
+- **Files Modified**:
+  - `resources/views/taxi.blade.php`
+  - `resources/views/index.blade.php`
+  - `tests/Feature/TaxiRouteVehicleFaresTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Taxi Rates Table (`taxi.blade.php`)**:
+    - Consolidated separate "One-Way Fare" and "Round Trip Fare" columns into a single unified column: `Fare (12 hours)`.
+    - Bound dynamic vehicle fare update to the `Fare (12 hours)` column when user changes vehicle selection in the dropdown.
+    - Removed route short description from the table row destination cell for a cleaner, compact tabular view.
+    - Streamlined the rates note beneath the dropdown to remove duplicate 12-hr package price, keeping `₹.../km • Avg 300 km/day`, and added dedicated policy line: `12 Hours Duty , Driver Food Extra`.
+  - **Home Page Route Cards (`index.blade.php`)**:
+    - Updated card fare label from `Round Trip Fare` to `Trip Fare (12 hours)` with dynamic pricing reflecting the chosen vehicle.
+    - Streamlined the vehicle specs under the dropdown to display `₹.../km • Avg 300 km/day` with policy line: `12 Hours Duty , Driver Food Extra`.
+  - **Backend & Database Integrity**:
+    - Preserved existing database schema, migrations, Eloquent models, and Admin route pricing form intact without breaking changes or regressions.
+  - **Automated Verification**:
+    - Updated test assertions in `tests/Feature/TaxiRouteVehicleFaresTest.php` to validate `Fare (12 hours)`, `Trip Fare (12 hours)`, `12 Hours Duty`, `Driver Food Extra`, and `Avg 300 km/day`.
+    - Executed in-memory view render validation verifying 100% of required headers, labels, and policy lines render properly.
+    - Cleared compiled Blade views via `php artisan view:clear`.
+
+---
+
+### Taxi Route Backend Simplification & Fleet Price Alignment
+- **Date**: 2026-11-12
+- **Feature**: Hide Full Description, Route Image, Fares Card, and 1-Way/2-Way Fare Inputs in Admin View; Connect Frontend Route Pricing to Vehicle Fleet Rates
+- **Files Modified**:
+  - `resources/views/admin/routes/form.blade.php`
+  - `resources/views/admin/routes/cell.blade.php`
+  - `app/Http/Requests/Admin/TaxiRouteRequest.php`
+  - `resources/views/taxi.blade.php`
+  - `resources/views/index.blade.php`
+  - `tests/Feature/AdminTaxiRoutesTest.php`
+  - `tests/Feature/AdminToFrontendEndToEndCrudTest.php`
+  - `tests/Feature/TaxiRouteVehicleFaresTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Admin Route Form (`admin/routes/form.blade.php`)**:
+    - **Hidden from View**: Removed full description rich text editor, route image card, and base fares card (forward/reverse one-way and round-trip fares) from the form UI.
+    - **Hidden One-Way & Two-Way Fare Inputs**: In the "Vehicle fleet rates" table, removed the `One-way Fare (₹)` and `Round-trip Fare (₹)` input columns, displaying only `Vehicle`, `Capacity & Type`, `Fleet Rates` (`₹.../km` and `₹... / 12 hrs`), and the `Default` vehicle radio button.
+    - **Data Preservation & Backward Compatibility**: Maintained existing values via hidden form inputs (`description`, `image_alt`, `forward_one_way_fare`, `forward_round_trip_fare`, `reverse_enabled`, `reverse_one_way_fare`, `reverse_round_trip_fare`, and existing vehicle fares) so saving or editing a route retains all underlying data and will never wipe existing fields.
+  - **Admin DataTable Fares Cell (`admin/routes/cell.blade.php`)**:
+    - Updated vehicle fare previews in the DataTable to prioritize vehicle fleet 12-hr rates with graceful fallback to round-trip / one-way fares.
+  - **Frontend Fleet Price Connection (`taxi.blade.php` & `index.blade.php`)**:
+    - Verified and confirmed user finding: routes on `/taxi` and `/` were taking the vehicle's 2-way round-trip fare instead of the vehicle's 12-hour fleet rate.
+    - Connected both the initial load display and dynamic vehicle dropdown change to take the selected vehicle's fleet rate (`$veh->price_for_12_hrs`, e.g., ₹2,500 for Dzire, ₹3,200 for Ertiga, ₹4,500 for Crysta), with graceful fallback to round-trip / one-way / on-request if unpriced.
+    - Preserved dynamic WhatsApp booking URL generation, vehicle specs (`₹.../km • Avg 300 km/day`), and policy line (`12 Hours Duty , Driver Food Extra`).
+  - **Automated Verification**:
+    - Updated and verified feature test suites:
+      - `TaxiRouteVehicleFaresTest`: 6/6 tests passed (36 assertions).
+      - `AdminTaxiRoutesTest`: 24/24 tests passed (201 assertions).
+      - `AdminToFrontendEndToEndCrudTest`: 9/9 tests passed (179 assertions).
+      - `FrontendTest`: 9/9 tests passed (54 assertions).
+    - Cleared compiled views and application caches (`php artisan view:clear`, `php artisan optimize:clear`).
+
+
+---
+
+### Dynamic Social Link Preview Branding & Backend Settings Integration
+- **Date**: 2026-11-13
+- **Feature**: Link Share Preview (`og:image` / `twitter:image`) Direct Backend Integration & New Emblem Card Asset
+- **Files Modified**:
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/index.blade.php`
+  - `resources/views/package-show.blade.php`
+  - `public/images/logo/logo-gold-dark-card.png`
+  - `storage/app/public/branding/logo-gold-dark-card.png`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Dynamic Backend Settings Binding (`layouts/app.blade.php`)**:
+    - Connected Open Graph (`og:image`, `og:image:secure_url`) and Twitter card (`twitter:image`) default fallbacks to `$settings->dark_logo_url`.
+    - Added raster format validation: if `$settings->dark_logo_url` is a raster image (PNG, JPG, WebP uploaded via Admin Branding), it is served directly. If it is an `.svg` (or empty), it safely falls back to `logo-gold-dark-card.png?v=2` so WhatsApp, Facebook, LinkedIn, and Microsoft Teams previews never fail due to unsupported SVG formats.
+  - **Inheritance Cleanup (`index.blade.php` & `package-show.blade.php`)**:
+    - Removed hardcoded `@section('og_image', asset('images/logo/logo-gold-dark-card.png'))` from `index.blade.php` so the home page dynamically uses the backend setting.
+    - Updated `package-show.blade.php` to define `@section('og_image')` only when the package has a custom image path, otherwise inheriting the dynamic brand setting.
+  - **New Logo Emblem Card Asset**:
+    - Centered the uploaded transparent high-res new emblem (car, camel, airplane with gold typography) onto a 1200x630px `#111111` card canvas for `logo-gold-dark-card.png` with cache-buster `?v=2`.
+  - **Cache Clear**:
+    - Cleared compiled Blade views via `php artisan view:clear`.
+- **Pending Tasks**:
+  - User verification on WhatsApp / Microsoft Teams / Facebook debugger.
+
+
+---
+
+### Dedicated Social Share Image (WhatsApp / Link Preview) in Admin Branding
+- **Date**: 2026-11-13
+- **Feature**: Dedicated `og_image_path` in Admin Settings Branding with Schema Migration, Validation, Model Accessor & View Integration
+- **Files Modified / Created**:
+  - `database/migrations/2026_11_13_123000_add_og_image_path_to_settings_table.php` (created)
+  - `app/Models/Setting.php`
+  - `app/Http/Requests/Admin/UpdateSettingsRequest.php`
+  - `resources/views/admin/settings/edit.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `tests/Feature/AdminSettingsTest.php`
+  - `PROJECT_HISTORY.md`
+- **Logic & UI Changes**:
+  - **Schema & Model**:
+    - Created migration adding nullable `og_image_path` column to `settings` table.
+    - Added `og_image_path` to `Setting` fillable attributes and mapped `'og_image' => 'og_image_path'` in `BRANDING_FILES`.
+    - Added accessor `$settings->og_image_url` with fallback to `images/logo/logo-gold-dark-card.png?v=2`.
+  - **Admin Settings Form (`admin/settings/edit.blade.php`)**:
+    - Expanded branding grid from 3 to 4 responsive columns (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`).
+    - Added dedicated `<x-admin.branding-upload>` component for "Social share image (WhatsApp / Link preview)" supporting PNG, JPEG, and WebP uploads and removal checkbox.
+  - **Validation (`UpdateSettingsRequest.php`)**:
+    - Added validation rules for `og_image` (`nullable|image|mimes:jpg,jpeg,png,webp|max:2048`) and `remove_og_image` (`sometimes|boolean`).
+  - **Frontend Layout (`layouts/app.blade.php`)**:
+    - Directly bound `og:image`, `og:image:secure_url`, and `twitter:image` to `$settings->og_image_url`.
+  - **Automated Verification**:
+    - Updated `tests/Feature/AdminSettingsTest.php` to test upload, replacement, removal, and rejection of invalid/oversized `og_image` files.
+    - Verified test suite: **20/20 passed (205 assertions)** in `AdminSettingsTest`, and **9/9 passed (54 assertions)** in `FrontendTest`.
+    - Cleared compiled Blade views via `php artisan view:clear`.
+
+---
+
+### Working Tree Consolidation & Clean Commit to Main
+- **Date**: 2026-11-13
+- **Feature**: Commit and Merge All Uncommitted Working Tree Changes onto Main Branch
+- **Files Modified / Created**:
+  - `.htaccess` (created)
+  - `app/Http/Controllers/Admin/TaxiRouteController.php`
+  - `app/Http/Controllers/HomeController.php`
+  - `app/Http/Controllers/TaxiController.php`
+  - `app/Http/Requests/Admin/TaxiRouteRequest.php`
+  - `app/Http/Requests/Admin/UpdateSettingsRequest.php`
+  - `app/Http/Requests/Admin/VehicleRequest.php`
+  - `app/Models/Setting.php`
+  - `app/Models/TaxiRoute.php`
+  - `app/Models/TaxiRouteFare.php` (created)
+  - `app/Models/Vehicle.php`
+  - `database/migrations/2026_10_31_120000_add_price_for_12_hrs_to_vehicles_table.php` (created)
+  - `database/migrations/2026_11_05_140000_create_taxi_route_fares_table.php` (created)
+  - `database/migrations/2026_11_13_123000_add_og_image_path_to_settings_table.php` (created)
+  - `database/seeders/TaxiRouteSeeder.php`
+  - `database/seeders/VehicleSeeder.php`
+  - `public/css/style.css`
+  - `public/images/logo/logo-gold-dark-card.png`
+  - `resources/views/admin/routes/cell.blade.php`
+  - `resources/views/admin/routes/form.blade.php`
+  - `resources/views/admin/settings/edit.blade.php`
+  - `resources/views/admin/vehicles/cell.blade.php`
+  - `resources/views/admin/vehicles/form.blade.php`
+  - `resources/views/components/admin/layout.blade.php`
+  - `resources/views/gallery.blade.php`
+  - `resources/views/index.blade.php`
+  - `resources/views/layouts/app.blade.php`
+  - `resources/views/package-show.blade.php`
+  - `resources/views/taxi.blade.php`
+  - `routes/web.php`
+  - `tests/Feature/AdminSettingsTest.php`
+  - `tests/Feature/AdminTaxiRoutesTest.php`
+  - `tests/Feature/AdminToFrontendEndToEndCrudTest.php`
+  - `tests/Feature/AdminVehiclesTest.php`
+  - `tests/Feature/FrontendTest.php`
+  - `tests/Feature/TaxiRouteVehicleFaresTest.php` (created)
+  - `PROJECT_HISTORY.md`
+- **Logic Changes**:
+  - **Branch Verification**:
+    - Checked all existing feature branches (`feature/admin-gallery`, `feature/admin-invoices`, `feature/admin-package-builder`, `feature/website-redesign`, `master`) against `main`. Confirmed 100% of feature branches are already fully merged into `main`.
+  - **Working Tree Commit onto `main`**:
+    - Consolidated and staged all pending modifications, untracked migrations, models, server configurations, tests, and view assets onto `main`.
+    - Included:
+      1. Taxi route rates simplification and vehicle fleet 12-hour pricing alignment (`TaxiRouteFare` model, migrations, seeders, views, and controller).
+      2. Social share link preview branding with dedicated `og_image_path` in admin settings and dynamic `og:image` / `twitter:image` tags.
+      3. UI styling enhancements (Kutch desert gold theme accents, gallery card hover transitions, admin text selection highlights).
+      4. Root `.htaccess` for Apache rewrite and security isolation, plus admin maintenance web routes (`/storage-link`, `/migrate`, `/seed-taxi-routes`, `/view-clear`).
+- **Pending Tasks**:
+  - None. Working tree is clean on `main`.
